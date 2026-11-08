@@ -4,6 +4,32 @@ La app ya está preparada para vivir bajo esa subruta (`BASE_PATH=/casos/vetcole
 
 `www.ultimamilla.com.ar` pasa por **Cloudflare**, así que hay dos caminos según dónde esté el sitio principal.
 
+## Hostinger (VPS de Última Milla): camino recomendado
+
+El VPS ya corre otros servicios, entre ellos SITREP. `deploy/hostinger/deploy.sh` se ejecuta desde una máquina que ya tiene el alias SSH `ultimamilla`, parado en la raíz del repo, y **sólo toca lo de vetcole**:
+
+- la carpeta `/opt/vetcole`, marcada con `.vetcole`;
+- el contenedor y el volumen `vetcole` (proyecto compose `vetcole`), en `127.0.0.1:4310`;
+- dos bloques `location` en el server de www.ultimamilla.com.ar.
+
+Nunca hace `prune` ni reinicia otros contenedores. Aborta sin tocar nada si:
+
+- `/opt/vetcole` existe y no es de vetcole;
+- ya hay un contenedor `vetcole` de otro proyecto;
+- el puerto lo usa otro servicio (se cambia con `PUERTO=...`).
+
+```bash
+./deploy/hostinger/deploy.sh relevar            # 1. sólo lectura: contenedores, quién atiende 80/443, nginx, puerto libre
+./deploy/hostinger/deploy.sh app                # 2. construye la imagen en el VPS y levanta la demo (sin token de GHCR)
+./deploy/hostinger/deploy.sh proxy              # 3. SIMULA: muestra el diff del nginx, no cambia nada
+./deploy/hostinger/deploy.sh proxy --aplicar    # 4. backup + nginx -t + reload; si nginx -t falla, restaura el backup
+./deploy/hostinger/deploy.sh verificar          # 5. prueba la URL pública
+```
+
+El paso `proxy` sirve si www.ultimamilla.com.ar lo atiende el **nginx del host**. Si `relevar` muestra Traefik, Caddy u otro proxy en contenedor, no se aplica: hay que agregar la ruta `/casos/vetcole` a ese proxy, con prioridad sobre el sitio Astro.
+
+Para sacar la demo: `cd /opt/vetcole && docker compose -p vetcole down`, y restaurar el `.bak-vetcole-*` del nginx.
+
 ## 1. La imagen (automática)
 
 Cada push a `main` dispara `.github/workflows/deploy.yml`:
