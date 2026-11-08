@@ -80,7 +80,11 @@ Con Docker:
 docker compose up --build   # http://localhost:4000 (la base se recrea en cada arranque)
 ```
 
-Otros comandos: `npm test` (tests de la API) y `npm run reseed` (vuelve los datos al estado inicial).
+Otros comandos:
+
+- `npm test`: 10 tests de integración de la API sobre una base propia.
+- `npm run e2e`: con la demo corriendo en :4000, recorre las pantallas de las 5 aplicaciones y los flujos que las cruzan (73 verificaciones, Playwright). Después vuelve a cargar los datos.
+- `npm run reseed`: vuelve los datos al estado inicial.
 
 ## Cuentas de la demo
 

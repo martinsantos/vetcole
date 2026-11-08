@@ -12,10 +12,11 @@ export default function MapView({ items, selected, onSelect, popup, height = '10
     map.current = L.map(el.current, { scrollWheelZoom: scrollWheel }).setView(center, zoom);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap · © CARTO', subdomains: 'abcd', maxZoom: 19 }).addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
-    return () => map.current.remove();
+    return () => { map.current.stop(); map.current.off(); map.current.remove(); map.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
+    if (!map.current) return;
     layer.current.clearLayers(); marks.current = {};
     (items || []).forEach(e => {
       const icon = L.divIcon({ className: '', html: `<div class="mk" style="background:${guardiaColor(e)}"><b>${kind(e)}</b></div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28] });
@@ -25,12 +26,12 @@ export default function MapView({ items, selected, onSelect, popup, height = '10
       marks.current[e.codigo] = m;
     });
     (circles || []).forEach(c => L.circle(c.ll, { radius: c.r, color: c.color || '#c0392b', fillColor: c.color || '#c0392b', fillOpacity: 0.25, weight: 1 }).addTo(layer.current).bindPopup(c.label));
-    if (items?.length > 1 && !circles) map.current.fitBounds(L.latLngBounds(items.map(e => [e.lat, e.lng])).pad(0.15), { maxZoom: 13 });
+    if (items?.length > 1 && !circles) map.current.fitBounds(L.latLngBounds(items.map(e => [e.lat, e.lng])).pad(0.15), { maxZoom: 13, animate: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, circles]);
   useEffect(() => {
     const m = selected && marks.current[selected];
-    if (m) { map.current.setView(m.getLatLng(), 14); m.openPopup(); }
+    if (m && map.current) { map.current.setView(m.getLatLng(), 14); m.openPopup(); }
   }, [selected]);
   return <div ref={el} style={{ height, width: '100%', background: '#e9e4e8' }} />;
 }

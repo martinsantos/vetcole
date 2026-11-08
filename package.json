@@ -9,6 +9,7 @@
     "start": "npm run start --prefix backend",
     "demo": "npm run build && npm run start",
     "test": "npm test --prefix backend",
-    "reseed": "npm run db:seed --prefix backend"
+    "reseed": "npm run db:seed --prefix backend",
+    "e2e": "node e2e/smoke.mjs http://localhost:4000 && npm run reseed"
   }
 }
