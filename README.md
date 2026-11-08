@@ -59,6 +59,12 @@ frontend/src/
 docs/prototipo-html.html prototipo navegable original
 ```
 
+## Probarla sin instalar nada
+
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/martinsantos/vetcole?quickstart=1)
+
+Arma la demo en la nube de GitHub, carga los datos y la abre en el navegador en unos 3 minutos. Para compartirla, en la pestaña **Puertos** poné el 4000 como **Público** y copiá el link.
+
 ## Cómo correrla
 
 Requiere Node.js 22.
