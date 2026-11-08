@@ -86,6 +86,19 @@ Otros comandos:
 - `npm run e2e`: con la demo corriendo en :4000, recorre las pantallas de las 5 aplicaciones y los flujos que las cruzan (73 verificaciones, Playwright). Después vuelve a cargar los datos.
 - `npm run reseed`: vuelve los datos al estado inicial.
 
+## Publicarla online
+
+La demo se publica en **www.ultimamilla.com.ar/casos/vetcole/**. Cada push a `main` corre los tests y publica la imagen `ghcr.io/martinsantos/vetcole`. Los pasos del servidor, nginx o Cloudflare están en [`deploy/DEPLOY.md`](deploy/DEPLOY.md).
+
+Para correrla localmente bajo la misma subruta:
+
+```bash
+BASE_PATH=/casos/vetcole/ npm run build --prefix frontend
+```
+```bash
+BASE_PATH=/casos/vetcole npm start --prefix backend   # http://localhost:4000/casos/vetcole/
+```
+
 ## Cuentas de la demo
 
 Todas con contraseña `demo1234`. La barra superior de la demo cambia de rol en un clic.

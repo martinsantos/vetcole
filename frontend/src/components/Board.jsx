@@ -1,5 +1,6 @@
 // Tablero de guardia (público, home y administración). Datos en vivo de /public/guardias, reloj cada segundo.
 import { useEffect, useState } from 'react';
+import { url } from '../lib/base.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../lib/api.js';
 import { telFmt, ZONAS } from '../lib/format.js';
@@ -32,7 +33,7 @@ export default function Board({ limit, full, onFicha }) {
       <div className="bcols"><span>Estado</span><span>Establecimiento</span><span>Zona</span><span>Modalidad</span><span>Horario</span><span>Teléfono</span><span /></div>
       {gaps.map(z => (
         <div key={z} className="brow gap"><span className="bst"><span className="led" />SIN COBERTURA</span>
-          <span className="bgap"><b>{z}</b>: ninguna clínica declaró guardia hoy. <a href="/directorio?domicilio=1" onClick={e => { e.preventDefault(); nav('/directorio?domicilio=1'); }}>Ver profesionales que atienden a domicilio →</a></span></div>
+          <span className="bgap"><b>{z}</b>: ninguna clínica declaró guardia hoy. <a href={url('/directorio?domicilio=1')} onClick={e => { e.preventDefault(); nav('/directorio?domicilio=1'); }}>Ver profesionales que atienden a domicilio →</a></span></div>
       ))}
       {shown.map(e => { const c = e.status.code === 'activa' ? 'on' : e.status.code === 'pasiva' ? 'pas' : 'off'; return (
         <div key={e.codigo} className={`brow ${c}`}>

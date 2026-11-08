@@ -1,5 +1,6 @@
 // Home del sitio público: búsqueda universal, próximos turnos, urgencia, mapa, tablero, libreta, servicios y novedades.
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { url } from '../../lib/base.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { Badge, Kicker } from '../../components/ui.jsx';
@@ -40,7 +41,7 @@ function Search({ onVet, onEst }) {
           {!!res.e.length && <div className="grp">Establecimientos</div>}
           {res.e.map(x => <a key={x.codigo} href="#" onClick={e => { e.preventDefault(); setOpen(false); onEst(x); }}><div className="av" style={{ width: 34, height: 34 }}>⌂</div><div><b>{x.nombre}</b><div className="tiny muted">{x.tipo} · {x.departamento}{x.guardia ? ` · guardia ${x.guardia}` : ''}</div></div></a>)}
           {!!res.t.length && <div className="grp">Trámites</div>}
-          {res.t.map(t => <a key={t.k} href="/tramites" onClick={e => { e.preventDefault(); nav('/tramites'); }}><div className="av" style={{ width: 34, height: 34 }}>⇄</div><div><b>{t.t}</b></div></a>)}
+          {res.t.map(t => <a key={t.k} href={url('/tramites')} onClick={e => { e.preventDefault(); nav('/tramites'); }}><div className="av" style={{ width: 34, height: 34 }}>⇄</div><div><b>{t.t}</b></div></a>)}
           {empty && <div className="empty">Sin resultados para «{q}»</div>}
         </div>
       )}

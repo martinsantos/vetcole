@@ -1,10 +1,11 @@
 // Kit de UI compartido. Usa las clases del sistema de diseño (styles.css): card, btn, badge, chip, seg, tbl, kpi...
 import { useEffect, useRef, useState } from 'react';
+import { url } from '../lib/base.js';
 import { create } from 'zustand';
 import qrcode from 'qrcode-generator';
 import { EVT, fdate } from '../lib/format.js';
 
-export const LOGO = '/logo-colegio.svg';
+export const LOGO = url('/logo-colegio.svg');
 export const cx = (...a) => a.filter(Boolean).join(' ');
 
 // ── Toasts
@@ -93,7 +94,7 @@ export function QR({ text, size = 96, style }) {
   }, [text]);
   return <div className="qrbox" style={{ width: size + 14, height: size + 14, ...style }}><div ref={ref} style={{ width: size, height: size }} /></div>;
 }
-export const verifyUrl = path => `${window.location.origin}${path}`;
+export const verifyUrl = path => `${window.location.origin}${url(path)}`;
 
 // ── Gráficos simples
 export function VBars({ data, keys, colors = ['var(--leaf)', 'var(--leaf-2)'], label = 'mes', height = 150 }) {

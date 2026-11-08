@@ -1,0 +1,20 @@
+# Producción de la demo. Uso en el servidor:
+#   cp .env.example .env   (y completar JWT_SECRET)
+#   docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d
+services:
+  vetcole:
+    image: ghcr.io/martinsantos/vetcole:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      BASE_PATH: /casos/vetcole/
+      DEMO_RESET_HOURS: "24"
+    ports:
+      - "127.0.0.1:4310:4000"   # sólo accesible desde el nginx del mismo servidor
+    volumes:
+      - vetcole-data:/data
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+volumes:
+  vetcole-data:

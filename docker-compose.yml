@@ -1,7 +1,13 @@
+# Demo local en la raíz: http://localhost:4000 (los datos se recargan en cada arranque).
 services:
   colvet:
-    build: .
+    build:
+      context: .
+      args:
+        BASE_PATH: /
     ports:
       - "4000:4000"
     environment:
-      JWT_SECRET: "cambiar-en-produccion"
+      BASE_PATH: /
+      JWT_SECRET: "solo-para-uso-local"
+      RESEED_ON_START: "true"

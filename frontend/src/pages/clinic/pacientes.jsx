@@ -1,5 +1,7 @@
 // Pacientes e historia clínica. La historia clínica ES la libreta sanitaria: lo público lo ve el tutor/a.
 import { useState } from 'react';
+import { LOGO } from '../../components/ui.jsx';
+import { url } from '../../lib/base.js';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { fdate, ftime, chipFmt, edad, estadoCls, isoDate, EVT, DEPTOS } from '../../lib/format.js';
@@ -145,7 +147,7 @@ function CertModal({ paciente, ev, onClose }) {
   return (
     <Modal open onClose={onClose}>
       <div className="rx">
-        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>CERTIFICADO DE SALUD PARA VIAJAR</div><b className="mono">CV-{paciente.libreta}-{isoDate(ev.fecha).replace(/-/g, '')}</b></div><img src="/logo-colegio.svg" alt="" /></div>
+        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>CERTIFICADO DE SALUD PARA VIAJAR</div><b className="mono">CV-{paciente.libreta}-{isoDate(ev.fecha).replace(/-/g, '')}</b></div><img src={LOGO} alt="" /></div>
         <div className="rx-b">
           <p className="small" style={{ marginTop: 0 }}>Certifico que el animal fue examinado y no presenta signos clínicos de enfermedades infectocontagiosas, encontrándose apto para viajar.</p>
           <div className="facts" style={{ padding: 0 }}>
@@ -178,7 +180,7 @@ export function Paciente() {
       <PageHead kicker={`Libreta ${p.libreta}`} title={p.nombre}>
         <Link className="btn" to="/vet/recetas">Emitir receta</Link>
         <Link className="btn" to="/vet/consultorio/agenda">Dar turno</Link>
-        <a className="btn" href={`/libreta/${p.libreta}`} target="_blank" rel="noreferrer">Ver como el tutor/a</a>
+        <a className="btn" href={url(`/libreta/${p.libreta}`)} target="_blank" rel="noreferrer">Ver como el tutor/a</a>
       </PageHead>
       <div className="libdet">
         <div>

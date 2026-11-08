@@ -1,9 +1,10 @@
 // Cliente HTTP (mismo patrón que Psicole: axios + JWT en interceptor).
 import axios from 'axios';
+import { BASE } from './base.js';
 import { useAuth } from './store.js';
 import { useCallback, useEffect, useState } from 'react';
 
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api/v1' });
+export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || `${BASE}/api/v1` });
 
 api.interceptors.request.use(cfg => {
   const { token, clinicId } = useAuth.getState();

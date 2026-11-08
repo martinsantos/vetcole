@@ -1,5 +1,6 @@
 // Barra superior de la demo: cambia de aplicación/rol en un clic (inicia sesión con la cuenta demo correspondiente).
 import { useLocation, useNavigate } from 'react-router-dom';
+import { url } from '../lib/base.js';
 import { api } from '../lib/api.js';
 import { useAuth, homeFor } from '../lib/store.js';
 import { toast } from '../components/ui.jsx';
@@ -32,7 +33,7 @@ export default function DemoBar() {
       <div className="wrap">
         <span className="tag">DEMO</span>
         <span className="desc"><b>ColVet Digital</b> · Colegio + consultorio + zoonosis municipal</span>
-        <nav>{APPS.map(a => <a key={a[0]} href={a[2]} className={cur === a[0] ? 'on' : ''} onClick={e => { e.preventDefault(); go(a); }}>{a[1]}</a>)}</nav>
+        <nav>{APPS.map(a => <a key={a[0]} href={url(a[2])} className={cur === a[0] ? 'on' : ''} onClick={e => { e.preventDefault(); go(a); }}>{a[1]}</a>)}</nav>
       </div>
     </div>
   );

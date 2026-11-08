@@ -1,6 +1,7 @@
 // Zoonosis municipal como servicio (estilo VetCard): panel, credenciales, ficha, campañas con modo offline,
 // mordeduras, perros potencialmente peligrosos y configuración de la identidad de la credencial.
 import { useEffect, useMemo, useState } from 'react';
+import { url } from '../../lib/base.js';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { fdate, isoDate, estadoCls, norm, edad, DEPTOS } from '../../lib/format.js';
@@ -178,7 +179,7 @@ export function Animal() {
     <>
       <Link to="/muni/credenciales" className="small">← Credenciales</Link>
       <PageHead kicker={`Credencial N.º ${String(a.credencialNro || '—').padStart(6, '0')} · Libreta ${a.libreta}`} title={a.nombre}>
-        <a className="btn" href={`/libreta/${a.libreta}`} target="_blank" rel="noreferrer">Ver libreta pública</a>
+        <a className="btn" href={url(`/libreta/${a.libreta}`)} target="_blank" rel="noreferrer">Ver libreta pública</a>
         <button className="btn btn-primary" onClick={() => setAten(true)}>+ Registrar atención</button>
       </PageHead>
       <div className="muni-grid">

@@ -2,4 +2,9 @@ node_modules
 **/node_modules
 frontend/dist
 **/*.db
+**/*.db-journal
 .git
+.github
+e2e
+docs
+backend/.env

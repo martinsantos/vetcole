@@ -1,0 +1,9 @@
+name = "vetcole-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+routes = [
+  { pattern = "www.ultimamilla.com.ar/casos/vetcole*", zone_name = "ultimamilla.com.ar" }
+]
+
+[vars]
+ORIGIN = "https://vetcole.umdev.com.ar"

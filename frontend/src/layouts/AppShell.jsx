@@ -1,6 +1,7 @@
 // Panel con barra lateral para Veterinario/a, Consultorio, Colegio y Municipio.
 // items: [{ to, label, icon?, badge?, section? }]
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { url } from '../lib/base.js';
 import { useAuth } from '../lib/store.js';
 import { Av } from '../components/ui.jsx';
 import { ini } from '../lib/format.js';
@@ -20,7 +21,7 @@ export default function AppShell({ items, dark, who, whoSub, accent, header }) {
           : <NavLink key={it.to} to={it.to} end={it.end} className={({ isActive }) => `it ${isActive ? 'on' : ''}`}>{it.icon && <span className="ic">{it.icon}</span>}{it.label}{it.badge ? <span className="new">{it.badge}</span> : null}</NavLink>)}
         <div className="sep" style={{ borderTop: '1px solid var(--line)', margin: '12px 0', opacity: dark ? 0.2 : 1 }} />
         <NavLink to="/" className="it">↩ Sitio público</NavLink>
-        <a href="/" className="it" onClick={e => { e.preventDefault(); logout(); nav('/'); }}>Salir</a>
+        <a href={url('/')} className="it" onClick={e => { e.preventDefault(); logout(); nav('/'); }}>Salir</a>
       </aside>
       <div className="content"><Outlet /></div>
     </div>
