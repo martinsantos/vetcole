@@ -1,0 +1,17 @@
+/* App del tutor/a */
+.tpad{padding:16px 16px 24px;flex:1}
+.ttitle{font-size:26px;margin:2px 0 14px}
+.petcardlite{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:10px;color:inherit}
+.petcardlite:hover{border-color:var(--leaf)}
+.lostcard{padding:12px 14px;border-left:4px solid var(--line)}
+.lostcard.on{border-left-color:var(--bad);background:var(--bad-l)}
+.turnocard{display:flex;gap:12px;align-items:flex-start;padding:12px;margin-bottom:10px}
+.turnocard.cancelado{opacity:.55}
+.tdate{width:48px;flex:none;text-align:center;border-radius:6px;background:var(--leaf-l);color:var(--leaf);padding:6px 0;font-family:var(--mono)}
+.tdate b{display:block;font-size:20px;line-height:1}
+.tdate span{font-size:10px;text-transform:uppercase}
+.thhead{padding:12px 14px;border-bottom:1px solid var(--line);background:#faf7f1}
+.tapp-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--plum-dd);color:#fff}
+.tapp-top b{font-family:var(--serif);font-size:16px}
+.tabbar-app .ti{font-size:18px;line-height:1}
+@media(min-width:700px){.tutor-bg{background:#e7e1d6;padding:20px 0}}

@@ -1,0 +1,19 @@
+/* Municipio (zoonosis) y credencial sanitaria animal */
+.credcard{max-width:420px;width:100%}
+.credname{font-family:var(--serif);font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.05}
+.credsigla{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.1em;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:4px 8px;border-radius:4px}
+.credst{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:3px;background:#d6f5e6;color:#0f5132;text-transform:uppercase}
+.credst.por_vencer{background:#fdf0d9;color:#7a4a00}
+.credst.vencida,.credst.sin{background:#fbe6e3;color:#9b2c20}
+.credlogo{position:absolute;right:14px;top:14px;height:22px;background:#fff;border-radius:4px;padding:2px 5px;display:none}
+.muni-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:960px){.muni-grid{grid-template-columns:1fr}}
+.op-panel{border:2px solid var(--leaf);border-radius:8px;background:var(--card);padding:18px}
+.op-status{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;padding:8px 12px;border-radius:5px}
+.op-status.on{background:var(--ok-l);color:var(--ok)}
+.op-status.off{background:var(--warn-l);color:var(--warn)}
+.op-queue{list-style:none;margin:10px 0 0;padding:0;max-height:220px;overflow:auto}
+.op-queue li{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;border-bottom:1px dashed var(--line);font-size:13px}
+.cd{font-family:var(--mono);font-size:12px;font-weight:700}
+.cd.urg{color:var(--bad)}
+.legend-sq i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}

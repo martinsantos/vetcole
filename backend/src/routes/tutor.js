@@ -18,9 +18,9 @@ r.get('/mascotas', h(async (req, res) => {
   })));
 }));
 r.get('/mascotas/:id', h(async (req, res) => {
-  const a = await prisma.animal.findFirst({ where: { id: Number(req.params.id), tutorId: tid(req) }, include: { municipio: true, eventos: { include: { vet: true, municipio: true, est: true }, orderBy: { fecha: 'desc' } }, recetas: { include: { vet: true } } } });
+  const a = await prisma.animal.findFirst({ where: { id: Number(req.params.id), tutorId: tid(req) }, include: { municipio: true, vetCabecera: true, eventos: { include: { vet: true, municipio: true, est: true }, orderBy: { fecha: 'desc' } }, recetas: { include: { vet: true } } } });
   if (!a) return fail(res, 404, 'No encontrado.');
-  ok(res, { ...a, estado: estadoSanitario(a, a.eventos), eventos: a.eventos.filter(e => e.publico).map(e => ({ id: e.id, tipo: e.tipo, fecha: e.fecha, titulo: e.titulo, detalle: e.detalle, proximo: e.proximo, firma: e.vet ? `${vetName(e.vet)} · MP ${e.vet.mp}` : e.municipio ? `Zoonosis ${e.municipio.nombre}` : '', lugar: e.est?.nombre })), recetas: a.recetas.map(x => ({ codigo: x.codigo, tipo: x.tipo, estado: x.estado, fecha: x.fecha, items: parse(x.itemsJson), prescriptor: vetName(x.vet) })) });
+  ok(res, { ...a, vetCabecera: a.vetCabecera ? { mp: a.vetCabecera.mp, titulo: vetName(a.vetCabecera) } : null, estado: estadoSanitario(a, a.eventos), eventos: a.eventos.filter(e => e.publico).map(e => ({ id: e.id, tipo: e.tipo, fecha: e.fecha, titulo: e.titulo, detalle: e.detalle, proximo: e.proximo, firma: e.vet ? `${vetName(e.vet)} · MP ${e.vet.mp}` : e.municipio ? `Zoonosis ${e.municipio.nombre}` : '', lugar: e.est?.nombre })), recetas: a.recetas.map(x => ({ codigo: x.codigo, tipo: x.tipo, estado: x.estado, fecha: x.fecha, items: parse(x.itemsJson), prescriptor: vetName(x.vet) })) });
 }));
 r.patch('/mascotas/:id/perdido', h(async (req, res) => {
   const a = await prisma.animal.findFirst({ where: { id: Number(req.params.id), tutorId: tid(req) } });

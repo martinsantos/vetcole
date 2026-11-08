@@ -8,7 +8,7 @@ export const isoDate = d => { const x = new Date(d); x.setMinutes(x.getMinutes()
 export const chipFmt = c => (c ? String(c).replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ') : '');
 export const ini = n => String(n || '').split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
 export const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-export const edad = nac => { const y = (Date.now() - new Date(nac)) / 3.156e10; return y < 1 ? `${Math.max(1, Math.round(y * 12))} meses` : `${Math.floor(y)} años`; };
+export const edad = nac => { const y = (Date.now() - new Date(nac)) / 3.156e10; if (y < 1) { const m = Math.max(1, Math.round(y * 12)); return `${m} ${m === 1 ? 'mes' : 'meses'}`; } const a = Math.floor(y); return `${a} ${a === 1 ? 'año' : 'años'}`; };
 export const telFmt = t => (t && t.length === 10 ? `${t.slice(0, 3)} ${t.slice(3, 6)}-${t.slice(6)}` : t && t.length === 7 ? `0261 ${t.slice(0, 3)}-${t.slice(3)}` : t);
 
 export const DEPTOS = ['Capital', 'Godoy Cruz', 'Guaymallén', 'Las Heras', 'Luján de Cuyo', 'Maipú', 'Lavalle', 'San Martín', 'Rivadavia', 'Junín', 'Santa Rosa', 'La Paz', 'Tunuyán', 'Tupungato', 'San Carlos', 'San Rafael', 'General Alvear', 'Malargüe'];
