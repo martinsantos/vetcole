@@ -1,0 +1,169 @@
+{
+  "estandar": "LSAA",
+  "version": "0.1",
+  "nivel": "publico",
+  "libreta": {
+    "numero": "MZA-000231",
+    "verificacion": "https://www.ultimamilla.com.ar/casos/vetcole/libreta/MZA-000231",
+    "luscyf": null,
+    "credencialMunicipal": {
+      "municipio": "Godoy Cruz",
+      "numero": "4217"
+    }
+  },
+  "animal": {
+    "nombre": "Luna",
+    "especie": "canino",
+    "raza": "Mestiza",
+    "sexo": "hembra",
+    "nacimiento": "2022-03-10",
+    "pelaje": "Atigrada",
+    "castrado": true,
+    "microchip": {
+      "numero": "032097000123456",
+      "norma": "ISO 11784/11785",
+      "fechaColocacion": "2022-06-15",
+      "colocadoPor": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      }
+    },
+    "estado": {
+      "perdido": false,
+      "fallecido": false
+    }
+  },
+  "emisor": {
+    "institucion": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+    "jurisdiccion": "AR-M",
+    "generado": "2026-11-09T12:00:00.000Z"
+  },
+  "estadoSanitario": {
+    "codigo": "al_dia",
+    "etiqueta": "Antirrábica al día",
+    "vence": "2027-11-08"
+  },
+  "eventos": [
+    {
+      "id": "3141",
+      "tipo": "vacuna",
+      "fecha": "2026-11-08",
+      "titulo": "Antirrábica",
+      "detalle": "Laboratorio de ejemplo · lote RB-24-0912",
+      "producto": {
+        "nombre": "Antirrábica",
+        "laboratorio": null,
+        "lote": "RB-24-0912",
+        "vencimiento": null
+      },
+      "stickerLuscyf": "S-1342-000231",
+      "proximo": "2027-11-08",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3143",
+      "tipo": "desparasitacion",
+      "fecha": "2026-10-18",
+      "titulo": "Desparasitación interna",
+      "detalle": "Peso 10,2 kg",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-01-17",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3142",
+      "tipo": "vacuna",
+      "fecha": "2026-10-18",
+      "titulo": "Séxtuple (refuerzo anual)",
+      "detalle": "Laboratorio de ejemplo · lote SX-26-311",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-10-18",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3146",
+      "tipo": "certificado_viaje",
+      "fecha": "2026-09-30",
+      "titulo": "Certificado de viaje",
+      "detalle": "Certificado de salud para viajar · Chile",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": null,
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3147",
+      "tipo": "castracion",
+      "fecha": "2023-05-22",
+      "titulo": "Castración (ovariohisterectomía)",
+      "detalle": "Sin complicaciones",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": null,
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1204",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dr. Diego Ojeda",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3148",
+      "tipo": "identificacion",
+      "fecha": "2022-06-15",
+      "titulo": "Microchip colocado",
+      "detalle": "032 097 000 123 456",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": null,
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1342",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Lucía Ferreyra",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    }
+  ]
+}

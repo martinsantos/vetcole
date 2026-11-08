@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { fdate } from '../../lib/format.js';
-import { VetModal, EstModal, useTurno } from './shared.jsx';
+import { VetModal, EstModal, useTurno, MapSection } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
 import heroFoto from '../../assets/hero-veterinaria.jpg';
 import { COLEGIO } from '../../content/colegio.js';
 import { useNoticias, imgColegio } from '../../lib/noticias.js';
 import { DemoLink } from './IdentidadAnimal.jsx';
 import Buscador from './Buscador.jsx';
+import { LibretaDestacada } from './EstandarLibreta.jsx';
 
 // Enlace a la nota completa: en el sitio del Colegio si viene de ahí.
 const NotaLink = ({ n, children, className }) => (n.url ? <a className={className} href={n.url} target="_blank" rel="noopener noreferrer">{children}</a> : <span className={className}>{children}</span>);
@@ -71,6 +72,14 @@ export default function Home() {
         </div>
         <span className="ihf-credit">Foto: Unsplash</span>
       </section>
+
+      <section className="sec"><div className="wrap">
+        <div className="sec-head"><h2>Veterinarias de turno y guardias</h2><Link className="lnk" to="/mapa">Abrir el mapa completo →</Link></div>
+        <p className="muted" style={{ margin: '-6px 0 14px' }}>Quién atiende urgencias ahora y los próximos turnos libres, en el mapa.</p>
+        <MapSection home initialChip="guardia" />
+      </div></section>
+
+      <LibretaDestacada />
 
       <section className="sec"><div className="wrap">
         <div className="sec-head"><h2>Matriculados</h2><Link className="lnk" to="/tramites">Todos los trámites →</Link></div>

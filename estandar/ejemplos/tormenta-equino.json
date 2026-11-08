@@ -1,0 +1,124 @@
+{
+  "estandar": "LSAA",
+  "version": "0.1",
+  "nivel": "publico",
+  "libreta": {
+    "numero": "EQ-000017",
+    "verificacion": "https://www.ultimamilla.com.ar/casos/vetcole/libreta/EQ-000017",
+    "luscyf": null,
+    "lsed": null,
+    "credencialMunicipal": null
+  },
+  "animal": {
+    "nombre": "Tormenta",
+    "especie": "equino",
+    "raza": "Criollo",
+    "sexo": "hembra",
+    "nacimiento": "2018-10-05",
+    "pelaje": "Zaina",
+    "castrado": false,
+    "microchip": {
+      "numero": "032098000555017",
+      "norma": "ISO 11784/11785",
+      "fechaColocacion": "2026-04-02",
+      "colocadoPor": {
+        "matricula": "1015",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Carolina Videla",
+        "vigenteAlFirmar": true
+      }
+    },
+    "estado": {
+      "perdido": false,
+      "fallecido": false
+    }
+  },
+  "emisor": {
+    "institucion": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+    "jurisdiccion": "AR-M",
+    "generado": "2026-11-09T12:00:00.000Z"
+  },
+  "estadoSanitario": {
+    "codigo": "al_dia",
+    "etiqueta": "AIE al día",
+    "vence": "2027-08-10"
+  },
+  "eventos": [
+    {
+      "id": "3157",
+      "tipo": "vacuna",
+      "fecha": "2026-08-20",
+      "titulo": "Encefalomielitis equina",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-08-20",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1015",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Carolina Videla",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3156",
+      "tipo": "vacuna",
+      "fecha": "2026-08-20",
+      "titulo": "Influenza equina",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-02-18",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1015",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Carolina Videla",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3158",
+      "tipo": "analisis",
+      "fecha": "2026-08-10",
+      "titulo": "AIE (anemia infecciosa equina): negativo",
+      "detalle": "Laboratorio de red de ejemplo · protocolo 26-4471",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-08-10",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1015",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Carolina Videla",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3159",
+      "tipo": "identificacion",
+      "fecha": "2026-04-02",
+      "titulo": "Microchip colocado",
+      "detalle": "032 098 000 555 017",
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": null,
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1015",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Carolina Videla",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    }
+  ]
+}

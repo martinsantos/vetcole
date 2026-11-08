@@ -1,0 +1,121 @@
+{
+  "estandar": "LSAA",
+  "version": "0.1",
+  "nivel": "publico",
+  "libreta": {
+    "numero": "MZA-000198",
+    "verificacion": "https://www.ultimamilla.com.ar/casos/vetcole/libreta/MZA-000198",
+    "luscyf": null,
+    "credencialMunicipal": {
+      "municipio": "Godoy Cruz",
+      "numero": "4218"
+    }
+  },
+  "animal": {
+    "nombre": "Michi",
+    "especie": "felino",
+    "raza": "Europeo de pelo corto",
+    "sexo": "macho",
+    "nacimiento": "2020-08-01",
+    "pelaje": "Gris",
+    "castrado": true,
+    "microchip": {
+      "numero": "032097000198877",
+      "norma": "ISO 11784/11785",
+      "fechaColocacion": null,
+      "colocadoPor": null
+    },
+    "estado": {
+      "perdido": false,
+      "fallecido": false
+    }
+  },
+  "emisor": {
+    "institucion": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+    "jurisdiccion": "AR-M",
+    "generado": "2026-11-09T12:00:00.000Z"
+  },
+  "estadoSanitario": {
+    "codigo": "por_vencer",
+    "etiqueta": "Antirrábica vence en 23 días",
+    "vence": "2026-12-01"
+  },
+  "eventos": [
+    {
+      "id": "3151",
+      "tipo": "desparasitacion",
+      "fecha": "2026-03-02",
+      "titulo": "Desparasitación interna y externa",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2026-06-02",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1301",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Micaela Arancibia",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3149",
+      "tipo": "vacuna",
+      "fecha": "2026-03-02",
+      "titulo": "Triple felina",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": "2027-03-02",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1301",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Micaela Arancibia",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3150",
+      "tipo": "vacuna",
+      "fecha": "2025-12-01",
+      "titulo": "Antirrábica",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": "S-1301-000088",
+      "proximo": "2026-12-01",
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1301",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Micaela Arancibia",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    },
+    {
+      "id": "3152",
+      "tipo": "castracion",
+      "fecha": "2020-12-10",
+      "titulo": "Castración",
+      "detalle": null,
+      "producto": null,
+      "stickerLuscyf": null,
+      "proximo": null,
+      "origen": "consultorio",
+      "lugar": null,
+      "firma": {
+        "matricula": "1301",
+        "colegio": "Colegio de Médicos Veterinarios (demo ColVet Digital)",
+        "nombre": "Dra. Micaela Arancibia",
+        "vigenteAlFirmar": true
+      },
+      "visibilidad": "publico"
+    }
+  ]
+}

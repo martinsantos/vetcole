@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martinsantos/vetcole/blob/main/estandar/libreta-sanitaria.schema.json",
+  "title": "Libreta Sanitaria Animal Abierta (LSAA) · borrador 0.1",
+  "description": "Formato abierto para intercambiar la libreta sanitaria de un animal entre consultorios, colegios profesionales, municipios y registros públicos. Pensado para el registro provincial de animales de compañía en discusión en Mendoza, la LUSCyF y la Libreta Sanitaria Equina Digital de SENASA.",
+  "type": "object",
+  "required": ["estandar", "version", "libreta", "animal", "emisor", "eventos"],
+  "additionalProperties": false,
+  "properties": {
+    "estandar": { "const": "LSAA" },
+    "version": { "type": "string", "pattern": "^0\\.1(\\.\\d+)?$" },
+    "nivel": { "$ref": "#/$defs/visibilidad", "description": "Nivel de acceso con el que se generó este documento. Un documento de nivel «publico» no contiene datos del tutor ni eventos privados." },
+    "libreta": {
+      "type": "object",
+      "required": ["numero", "verificacion"],
+      "additionalProperties": false,
+      "properties": {
+        "numero": { "type": "string", "minLength": 3, "description": "Identificador de la libreta en la jurisdicción emisora (ej.: MZA-000231)." },
+        "verificacion": { "type": "string", "format": "uri", "description": "URL pública que abre el QR de la libreta y permite verificarla." },
+        "luscyf": { "type": ["string", "null"], "description": "Número de la Libreta Única Sanitaria Canina y Felina en papel, si existe." },
+        "lsed": { "type": ["string", "null"], "description": "Número de la Libreta Sanitaria Equina Digital de SENASA (sólo equinos)." },
+        "credencialMunicipal": { "type": ["object", "null"], "additionalProperties": false, "properties": { "municipio": { "type": "string" }, "numero": { "type": "string" } } }
+      }
+    },
+    "animal": {
+      "type": "object",
+      "required": ["nombre", "especie", "sexo"],
+      "additionalProperties": false,
+      "properties": {
+        "nombre": { "type": "string" },
+        "especie": { "enum": ["canino", "felino", "equino", "bovino", "caprino", "ovino", "porcino", "ave", "exotico", "otro"] },
+        "raza": { "type": ["string", "null"] },
+        "sexo": { "enum": ["hembra", "macho", "desconocido"] },
+        "nacimiento": { "type": ["string", "null"], "format": "date" },
+        "pelaje": { "type": ["string", "null"] },
+        "castrado": { "type": ["boolean", "null"] },
+        "microchip": {
+          "type": ["object", "null"],
+          "required": ["numero", "norma"],
+          "additionalProperties": false,
+          "description": "Identificación electrónica. El proyecto de registro provincial prevé microchip desde los 3 meses, colocado y validado por un/a veterinario/a matriculado/a.",
+          "properties": {
+            "numero": { "type": "string", "pattern": "^[0-9]{15}$", "description": "15 dígitos según ISO 11784/11785 (FDX-B). En el nivel público puede ir parcialmente oculto en la interfaz, no en el dato." },
+            "norma": { "const": "ISO 11784/11785" },
+            "fechaColocacion": { "type": ["string", "null"], "format": "date" },
+            "colocadoPor": { "oneOf": [{ "$ref": "#/$defs/firma" }, { "type": "null" }] }
+          }
+        },
+        "estado": { "type": "object", "additionalProperties": false, "properties": { "perdido": { "type": "boolean" }, "mordedor": { "type": "boolean" }, "potencialmentePeligroso": { "type": "boolean" }, "fallecido": { "type": "boolean" } } }
+      }
+    },
+    "tutor": {
+      "type": ["object", "null"],
+      "description": "Sólo en niveles «tutor», «profesional» o «autoridad». Nunca en el nivel público.",
+      "additionalProperties": false,
+      "properties": { "nombre": { "type": "string" }, "documento": { "type": "string" }, "telefono": { "type": "string" }, "domicilio": { "type": "string" }, "departamento": { "type": "string" } }
+    },
+    "emisor": {
+      "type": "object",
+      "required": ["institucion", "jurisdiccion"],
+      "additionalProperties": false,
+      "description": "Institución que da fe de las matrículas de quienes firman.",
+      "properties": {
+        "institucion": { "type": "string" },
+        "jurisdiccion": { "type": "string", "description": "Código ISO 3166-2 (ej.: AR-M para Mendoza)." },
+        "generado": { "type": "string", "format": "date-time" }
+      }
+    },
+    "estadoSanitario": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": { "codigo": { "enum": ["al_dia", "por_vencer", "vencida", "sin"] }, "etiqueta": { "type": "string" }, "vence": { "type": ["string", "null"], "format": "date" } }
+    },
+    "eventos": { "type": "array", "items": { "$ref": "#/$defs/evento" } }
+  },
+  "$defs": {
+    "visibilidad": { "enum": ["publico", "tutor", "profesional", "autoridad"] },
+    "firma": {
+      "type": "object",
+      "required": ["matricula", "colegio"],
+      "additionalProperties": false,
+      "description": "Firma de un/a veterinario/a matriculado/a, o de un servicio de zoonosis municipal.",
+      "properties": {
+        "matricula": { "type": ["string", "null"], "description": "Matrícula provincial (MP)." },
+        "colegio": { "type": "string", "description": "Colegio que otorgó la matrícula, o el municipio si firma zoonosis." },
+        "nombre": { "type": ["string", "null"] },
+        "vigenteAlFirmar": { "type": "boolean", "description": "La matrícula estaba vigente en el padrón al momento de firmar." }
+      }
+    },
+    "evento": {
+      "type": "object",
+      "required": ["tipo", "fecha", "titulo", "firma", "visibilidad"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "tipo": { "enum": ["vacuna", "desparasitacion", "castracion", "identificacion", "analisis", "certificado_viaje", "consulta", "cirugia", "mordedura", "otro"] },
+        "fecha": { "type": "string", "format": "date" },
+        "titulo": { "type": "string" },
+        "detalle": { "type": ["string", "null"] },
+        "producto": { "type": ["object", "null"], "additionalProperties": false, "properties": { "nombre": { "type": "string" }, "laboratorio": { "type": ["string", "null"] }, "lote": { "type": ["string", "null"] }, "vencimiento": { "type": ["string", "null"], "format": "date" } } },
+        "stickerLuscyf": { "type": ["string", "null"] },
+        "proximo": { "type": ["string", "null"], "format": "date", "description": "Fecha del próximo refuerzo o control." },
+        "origen": { "enum": ["consultorio", "zoonosis", "campania"] },
+        "lugar": { "type": ["string", "null"] },
+        "firma": { "$ref": "#/$defs/firma" },
+        "visibilidad": { "$ref": "#/$defs/visibilidad" }
+      }
+    }
+  }
+}

@@ -36,6 +36,17 @@ export function useTurno() {
   return { open, forVet, modal, ests };
 }
 
+// Mapa de la ficha individual: dónde atiende el profesional o dónde está el establecimiento.
+export function FichaMapa({ lugares, alto = 220 }) {
+  const items = (lugares || []).filter(e => e.lat != null && e.lng != null);
+  if (!items.length) return null;
+  return (
+    <div className="ficha-mapa" style={{ height: alto }}>
+      <MapView items={items} center={[items[0].lat, items[0].lng]} zoom={15} scrollWheel={false} popup={e => `<b>${String(e.nombre).replace(/[<>&]/g, '')}</b><div class="small muted">${String(e.direccion || '').replace(/[<>&]/g, '')}</div>`} />
+    </div>
+  );
+}
+
 export function VetModal({ vet, onClose, onTurno }) {
   const ests = useCached('/public/establecimientos');
   if (!vet) return null;
@@ -58,6 +69,7 @@ export function VetModal({ vet, onClose, onTurno }) {
           {e.turnosOnline && <Badge>Turnos online</Badge>}
         </div>
       )) : <div className="small">Atención {vet.domicilio ? 'a domicilio / a campo' : 'particular'} en {vet.departamento} y alrededores.</div>}
+      <FichaMapa lugares={mine} />
       <hr className="s" />
       <div className="row">
         {vigente && vet.turnosOnline && conTurnos && <button className="btn btn-primary" onClick={() => onTurno(conTurnos.codigo, vet.mp)}>Pedir turno</button>}
@@ -84,6 +96,7 @@ export function EstModal({ est, onClose, onTurno }) {
           <div><div className="tiny muted">Habilitación</div><b className="small">{e.habilitacion} · <Badge cls="b-ok">Vigente</Badge></b></div>
         </> : <div style={{ gridColumn: '1/-1' }}><div className="tiny muted">Fuente</div><span className="small">Listado público de Guardias 24 hs del Colegio. Cada establecimiento completa su ficha y equipo desde su portal.</span></div>}
       </div>
+      <FichaMapa lugares={[e]} />
       {!!e.equipo?.length && <><hr className="s" /><div className="tiny muted" style={{ marginBottom: 8 }}>Equipo profesional</div>
         {e.equipo.map(v => <div key={v.mp} className="row" style={{ marginBottom: 6 }}><Av style={{ width: 32, height: 32, fontSize: 12 }}>{ini(v.titulo.replace(/^Dra?\. /, ''))}</Av><span className="small"><b>{v.titulo}</b> · {v.especialidad}</span></div>)}</>}
       <hr className="s" />

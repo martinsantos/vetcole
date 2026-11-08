@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { Badge, Kicker, QR, Spinner, verifyUrl } from '../../components/ui.jsx';
 import { fdate, statusCls } from '../../lib/format.js';
-import { useTurno, horario } from './shared.jsx';
+import { useTurno, horario, FichaMapa } from './shared.jsx';
 
 export function VerificarVet() {
   const { mp } = useParams(), nav = useNavigate();
@@ -85,6 +85,7 @@ export function VerificarEst() {
           <p className="muted" style={{ marginTop: 10 }}>Establecimiento informado en el listado de guardias del Colegio. En producción, acá se ve su habilitación, su director técnico y su equipo.</p></div>
       )}
       <div className="card flat" style={{ marginTop: 16 }}><div className="row between"><div><div className="tiny muted">Horario</div><b className="small">{horario(e)}</b></div><Badge cls={statusCls(e.status)}><span className="dot" />{e.status.label}</Badge></div></div>
+      <div style={{ marginTop: 16 }}><FichaMapa lugares={[e]} alto={280} /></div>
       {!!e.equipo.length && <>
         <h3 style={{ marginTop: 22 }}>Profesionales que atienden acá</h3>
         <div className="grid g2">{e.equipo.map(v => <Link key={v.mp} to={`/verificar/${v.mp}`} className="card vcard"><div className="av">✓</div><div><b>{v.titulo}</b><div className="tiny muted">MP {v.mp} · {v.especialidad}</div>{v.turnosOnline && <Badge>Turnos online</Badge>}</div></Link>)}</div>

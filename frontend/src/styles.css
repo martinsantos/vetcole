@@ -857,3 +857,47 @@ main:focus{outline:none}
 }
 .ihero-foto .bsearch input{color:var(--ink)}
 @media(max-width:800px){.ihero-foto:before{background:linear-gradient(180deg,rgba(36,10,32,.45) 0%,rgba(36,10,32,.78) 45%,rgba(36,10,32,.93) 100%)}}
+
+/* ===== Directorio: vista mapa y miniaturas ===== */
+.vista-toggle{display:inline-flex;border:1px solid #d9ccd4;border-radius:8px;overflow:hidden;margin:0 0 12px}
+.vista-toggle button{border:0;background:#fff;padding:8px 16px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.vista-toggle button.on{background:var(--plum);color:#fff}
+.dir-mapa{height:600px;border:1px solid #e6dde2;border-radius:10px;overflow:hidden;background:#fff}
+.dir-mapa>div:first-child{height:100%!important}
+.dir-mapa:has(p){height:auto}
+.dir-mapa:has(p)>div:first-child{height:560px!important}
+.lnk-btn{display:block;border:0;background:none;padding:4px 0;color:var(--plum);font-weight:600;cursor:pointer;text-align:left;font-size:13.5px}
+.lnk-btn:hover{text-decoration:underline}
+
+/* ===== Libreta sanitaria destacada ===== */
+.lib-band{background:linear-gradient(180deg,#f6eef3,#faf8f6);border-top:1px solid #ece4e9;border-bottom:1px solid #ece4e9}
+.lib-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center}
+@media(max-width:920px){.lib-grid{grid-template-columns:1fr}}
+.lib-h2{font-size:clamp(28px,3.4vw,40px)!important;line-height:1.12;margin:0 0 12px!important}
+.lib-lead{font-size:17px;color:var(--ink-2);margin:0 0 20px;max-width:620px}
+.lib-puntos{list-style:none;padding:0;margin:0 0 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+.lib-puntos li{display:flex;flex-direction:column;gap:2px;padding-left:14px;border-left:3px solid var(--plum)}
+.lib-puntos b{font-size:15px}
+.lib-puntos span{font-size:13.5px;color:var(--ink-2)}
+@media(max-width:560px){.lib-puntos{grid-template-columns:1fr}}
+.lib-form{display:flex;gap:8px;max-width:560px;flex-wrap:wrap}
+.lib-form input{flex:1;min-width:220px;height:46px;border:1px solid #d9ccd4;border-radius:8px}
+.lib-form .btn{height:46px}
+.lib-card{display:block;background:#fff;border-radius:14px;overflow:hidden;color:var(--ink);box-shadow:0 24px 60px rgba(80,20,70,.16);border:1px solid #eadfe6;max-width:480px;justify-self:center;width:100%;transition:transform .2s}
+.lib-card:hover{transform:translateY(-3px)}
+.lib-skel{min-height:380px;display:grid;place-items:center}
+.lib-head{display:flex;justify-content:space-between;align-items:center;background:var(--plum);color:#fff;padding:12px 18px;font-weight:600;font-size:14px}
+.lib-num{font-variant-numeric:tabular-nums;opacity:.9}
+.lib-body{padding:18px}
+.lib-id{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.lib-avatar{width:56px;height:56px;border-radius:50%;background:#f3e7ef;color:var(--plum);display:grid;place-items:center;font:600 24px "Source Serif 4",Georgia,serif}
+.lib-name{font-family:"Source Serif 4",Georgia,serif;font-size:26px;font-weight:600;display:block;line-height:1.1}
+.lib-estado{margin:14px 0 6px;padding:8px 12px;border-radius:8px;font-weight:600;font-size:14px;background:var(--ok-l);color:var(--ok)}
+.lib-estado.por_vencer{background:var(--warn-l);color:var(--warn)}
+.lib-estado.vencida,.lib-estado.sin{background:var(--bad-l);color:var(--bad)}
+.lib-ev{list-style:none;padding:0;margin:0}
+.lib-ev li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #f0e9ed}
+.lib-ev li>div{display:flex;flex-direction:column}
+@media(max-width:420px){.lib-id{grid-template-columns:auto 1fr}.lib-id .qrbox{display:none}}
+.ficha-mapa{margin-top:14px;border:1px solid #e6dde2;border-radius:10px;overflow:hidden}
+.ficha-mapa>div{height:100%!important}

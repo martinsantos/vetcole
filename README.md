@@ -38,6 +38,10 @@ Plataforma del **Colegio de Médicos Veterinarios de Mendoza**: una sola base de
 | Campañas y operativos sin conexión | Campañas con cola local y sincronización |
 | Panel de estadísticas | Panel por municipio + datos abiertos por departamento |
 
+## Estándar abierto de libreta sanitaria (LSAA)
+
+La carpeta [`estandar/`](estandar/) publica una propuesta de formato abierto para la libreta sanitaria animal, pensada para el registro provincial de animales de compañía en discusión en Mendoza: especificación, esquema JSON, ejemplos y licencia (CC BY 4.0 para la especificación, MIT para el código de referencia). La API la expone en `GET /api/v1/public/libretas/{numero}/estandar` y un test valida la salida contra el esquema. En el sitio se explica en `/estandar-libreta`.
+
 ## Stack
 
 El mismo que Psicole, para poder converger con el producto de gestión de colegios:

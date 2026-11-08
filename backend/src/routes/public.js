@@ -1,4 +1,5 @@
 // Endpoints públicos (sin login): directorio, mapa, guardias, turnos, libreta, verificación, recetas, datos abiertos.
+import { aLsaa } from '../lib/estandar.js';
 import { Router } from 'express';
 import { prisma, ok, fail, h, parse, publicVet, publicEst, openStatus, zonaOf, ZONAS, DEPTOS, estadoSanitario, vetName, startOfDay, addDays } from '../lib/core.js';
 import { asistente } from '../lib/asistente.js';
@@ -152,6 +153,18 @@ r.get('/libretas/:q', h(async (req, res) => {
       firma: e.vet ? { mp: e.vet.mp, titulo: vetName(e.vet) } : e.municipio ? { zoonosis: e.municipio.nombre } : null,
     })),
   });
+}));
+
+// Libreta en el formato abierto LSAA (nivel público). Especificación: /estandar en el repositorio.
+r.get('/libretas/:q/estandar', h(async (req, res) => {
+  const q = decodeURIComponent(req.params.q).trim().toUpperCase().replace(/\s/g, '');
+  const a = await prisma.animal.findFirst({
+    where: { OR: [{ libreta: q }, { microchip: q.replace(/\D/g, '') || '—' }] },
+    include: { eventos: { include: { vet: true, municipio: true } }, municipio: true, tutor: true },
+  });
+  if (!a) return fail(res, 404, 'No encontramos esa libreta o microchip.');
+  res.set({ 'Cache-Control': 'public, max-age=120' });
+  ok(res, aLsaa(a, 'publico'));
 }));
 
 // Aviso "me encontraste": avisa a la familia sin exponer su número.

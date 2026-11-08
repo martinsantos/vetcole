@@ -12,6 +12,7 @@ import { useNoticias } from '../../lib/noticias.js';
 
 const PAGINAS = [
   ['/libreta', 'Libreta sanitaria digital', 'Consultá las vacunas de un animal por número de libreta o microchip.'],
+  ['/estandar-libreta', 'Estándar abierto de libreta sanitaria', 'Formato libre para la libreta digital y el registro provincial de animales: microchip, firma y QR.'],
   ['/verificar', 'Verificar matrícula', 'Comprobá que un profesional esté matriculado y vigente.'],
   ['/receta', 'Verificar receta', 'Para farmacias: verificá una receta veterinaria por su QR.'],
   ['/viajar', 'Viajar con mascotas', 'Certificado de salud y requisitos de SENASA.'],

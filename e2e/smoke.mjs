@@ -24,13 +24,21 @@ const visit = async (path, expectText) => {
 };
 
 // 1) Sitio público
-for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
 // Buscador de la portada: profesionales y establecimientos en la misma búsqueda
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
 await page.fill('.bsearch input', 'godoy cruz'); await page.waitForTimeout(300);
 { const t = await page.textContent('.bres'); ok(t.includes('Profesionales') && t.includes('AsisVet 24 hs.'), 'buscador de la portada: profesionales y establecimientos'); }
 ok(page.url().includes('q=godoy'), 'buscador: la búsqueda queda en la dirección para compartirla');
+await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
+{ const t = await page.textContent('body'); ok(t.includes('Una libreta para cada animal') && t.includes('Veterinarias de turno y guardias') && !!(await page.$('.lib-card .qrbox')), 'portada: libreta sanitaria destacada y mapa de guardias'); }
+await page.goto(BASE + '/directorio', { waitUntil: 'networkidle' }).catch(() => {});
+await page.click('.vcard'); await page.waitForTimeout(500);
+ok(!!(await page.$('.modal .ficha-mapa .leaflet-container')), 'directorio: la ficha individual muestra el mapa');
+await page.goto(BASE + '/directorio?vista=mapa', { waitUntil: 'networkidle' }).catch(() => {});
+ok((await page.$$('.dir-mapa .leaflet-marker-icon')).length > 5, 'directorio: vista de mapa con todos los puntos filtrados');
+await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
 await page.fill('.bsearch input', 'cirujia'); await page.waitForTimeout(300);
 { const t = await page.textContent('.bres'); ok(t.includes('más parecidos') && t.includes('Cirugía'), 'buscador: tolera errores de tipeo'); }
 await page.goto(BASE + '/institucional', { waitUntil: 'networkidle' }).catch(() => {});
