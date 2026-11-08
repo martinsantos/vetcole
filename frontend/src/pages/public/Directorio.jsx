@@ -29,9 +29,9 @@ export default function Directorio() {
       <div className="card flat" style={{ marginBottom: 16 }}>
         <div className="filters" style={tab === 'estab' ? { gridTemplateColumns: '2fr 1fr 1fr' } : undefined}>
           <input type="search" value={f.q} onChange={e => set('q', e.target.value)} placeholder={tab === 'vets' ? 'Nombre o N° de matrícula' : 'Nombre, dirección o tipo'} />
-          {tab === 'vets' && <select value={f.especialidad} onChange={e => set('especialidad', e.target.value)}><option value="">Todas las especialidades</option>{ESPECIALIDADES.map(x => <option key={x}>{x}</option>)}</select>}
-          <select value={f.especie} onChange={e => set('especie', e.target.value)}><option value="">Todas las especies</option>{ESPECIES.map(x => <option key={x}>{x}</option>)}</select>
-          <select value={f.departamento} onChange={e => set('departamento', e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(x => <option key={x}>{x}</option>)}</select>
+          {tab === 'vets' && <select aria-label="Especialidad" value={f.especialidad} onChange={e => set('especialidad', e.target.value)}><option value="">Todas las especialidades</option>{ESPECIALIDADES.map(x => <option key={x}>{x}</option>)}</select>}
+          <select aria-label="Especie" value={f.especie} onChange={e => set('especie', e.target.value)}><option value="">Todas las especies</option>{ESPECIES.map(x => <option key={x}>{x}</option>)}</select>
+          <select aria-label="Departamento" value={f.departamento} onChange={e => set('departamento', e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(x => <option key={x}>{x}</option>)}</select>
         </div>
         {tab === 'vets' && <div className="row" style={{ marginTop: 10 }}>
           <Switch checked={f.domicilio} onChange={v => set('domicilio', v)}>Atiende a domicilio / a campo</Switch>

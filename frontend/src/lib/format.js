@@ -19,7 +19,7 @@ export const ESPECIALIDADES = ['Clínica de pequeños animales', 'Cirugía', 'De
 // Tipos de registro de la libreta / historia clínica
 export const EVT = {
   vac: ['VAC', 'Vacuna', '#2d6b5a'], des: ['DES', 'Desparasitación', '#3b6ea5'], cas: ['CAS', 'Castración', '#7c1c6f'], chip: ['CHIP', 'Microchip', '#3f3a36'],
-  con: ['CON', 'Consulta', '#8a6d3b'], lab: ['LAB', 'Análisis', '#5b5b9a'], inc: ['INC', 'Incidente / mordedura', '#c0392b'], via: ['VIAJE', 'Certificado de viaje', '#b26a00'], cir: ['CIR', 'Cirugía', '#4f1047'],
+  con: ['CON', 'Consulta', '#8a6d3b'], lab: ['LAB', 'Análisis', '#5b5b9a'], inc: ['INC', 'Incidente / mordedura', '#c0392b'], via: ['VIAJE', 'Certificado de viaje', '#94580a'], cir: ['CIR', 'Cirugía', '#4f1047'],
 };
 export const estadoCls = c => ({ al_dia: 'b-ok', por_vencer: 'b-warn', vencida: 'b-bad', sin: 'b-bad' }[c] || 'b-grey');
 export const guardiaColor = e => (e.guardia === 'activa' ? '#c0392b' : e.guardia === 'pasiva' ? '#e08a00' : e.turnosOnline ? '#2d6b5a' : '#7c1c6f');

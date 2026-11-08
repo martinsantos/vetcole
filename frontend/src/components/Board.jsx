@@ -23,11 +23,11 @@ export default function Board({ limit, full, onFicha }) {
       <div className="bhead">
         <div><div className="lbl">Tablero de guardia veterinaria</div><h2>Provincia de Mendoza</h2></div>
         {full && <Seg dark value={zona} onChange={setZona} options={[['', 'Todas las zonas'], ...ZONAS.map(z => [z, z])]} />}
-        <div style={{ textAlign: 'right' }}><div className="bclock">{now.toLocaleTimeString('es-AR', { hour12: false })}</div><div className="lbl" style={{ color: '#8f8189' }}>{now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
+        <div style={{ textAlign: 'right' }}><div className="bclock">{now.toLocaleTimeString('es-AR', { hour12: false })}</div><div className="lbl" style={{ color: 'var(--b-mute, #8f8189)' }}>{now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
       </div>
       <div className="bsum">
-        <span>En guardia activa <b style={{ color: '#4ade80' }}>{data.activas}</b></span><span>Pasiva <b style={{ color: '#fbbf24' }}>{data.pasivas}</b></span>
-        <span>Zonas sin cobertura <b style={{ color: data.sinCobertura.length ? '#f87171' : '#4ade80' }}>{data.sinCobertura.length}</b></span>
+        <span>En guardia activa <b style={{ color: 'var(--b-ok, #4ade80)' }}>{data.activas}</b></span><span>Pasiva <b style={{ color: 'var(--b-warn, #fbbf24)' }}>{data.pasivas}</b></span>
+        <span>Zonas sin cobertura <b style={{ color: data.sinCobertura.length ? 'var(--b-bad, #f87171)' : 'var(--b-ok, #4ade80)' }}>{data.sinCobertura.length}</b></span>
         <span className="bsr">En vivo · lo declara cada clínica desde su portal</span>
       </div>
       <div className="bcols"><span>Estado</span><span>Establecimiento</span><span>Zona</span><span>Modalidad</span><span>Horario</span><span>Teléfono</span><span /></div>

@@ -15,13 +15,13 @@ function Lookup() {
     <>
       <section className="libband"><div className="wrap libgrid">
         <div>
-          <Kicker style={{ color: 'var(--leaf-2)' }}>Libreta sanitaria digital</Kicker>
-          <h1 style={{ color: '#fff', fontSize: 'clamp(30px,4vw,50px)', marginTop: 10 }}>La libreta de tu mascota, en tu celular y firmada por su veterinario/a.</h1>
+          <Kicker>Libreta sanitaria digital</Kicker>
+          <h1 style={{ marginTop: 10 }}>La libreta de tu mascota, en tu celular y firmada por su veterinario/a.</h1>
           <p>Ingresá el número de libreta o de microchip, o escaneá el QR de la libreta o del sticker de vacunación.</p>
           <form className="libform" onSubmit={e => { e.preventDefault(); if (q.trim()) nav(`/libreta/${encodeURIComponent(q.trim())}`); }}>
-            <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="Ej.: MZA-000231 o 032097000123456" /><button className="btn btn-light">Consultar</button>
+            <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="Ej.: MZA-000231 o 032097000123456" /><button className="btn btn-primary">Consultar</button>
           </form>
-          <div className="tiny" style={{ marginTop: 12, color: '#cdbfc8' }}>Probá: {EJEMPLOS.map(([k, l], i) => <span key={k}>{i ? ' · ' : ''}<Link to={`/libreta/${k}`} style={{ color: 'var(--leaf-2)' }}>{l}</Link></span>)}</div>
+          <div className="tiny" style={{ marginTop: 12, color: 'var(--ink-3)' }}>Probá: {EJEMPLOS.map(([k, l], i) => <span key={k}>{i ? ' · ' : ''}<Link to={`/libreta/${k}`} style={{ color: 'var(--plum)' }}>{l}</Link></span>)}</div>
         </div>
         <div className="card" style={{ color: 'var(--ink)' }}>
           <Kicker>Cómo funciona</Kicker>

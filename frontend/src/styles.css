@@ -746,3 +746,89 @@ pre.json,code{font-family:ui-monospace,Menlo,monospace}
 @media(max-width:900px){.inst-grid{grid-template-columns:1fr}}
 .inst-lead{font-size:17px;color:var(--ink-2);margin:0 0 18px}
 @media(max-width:620px){.bsearch input[type=search]{height:58px;font-size:16px;padding-left:50px}.bsearch svg{left:16px}.bres{padding:4px 14px 16px}}
+
+/* ===== Páginas internas del sitio: mismo estilo institucional que la portada ===== */
+.site-inst .kicker{color:var(--plum);font-size:14px;font-weight:600;border-left:3px solid var(--plum);padding-left:9px}
+.site-inst .hero,.site-inst .libband{background:#fff;background-image:none;color:var(--ink);border-bottom:1px solid #ece4e9;border-top:0}
+.site-inst .hero h1,.site-inst .libband h1,.site-inst .libband h2{color:#1e1a1c}
+.site-inst .hero p.lead,.site-inst .libband p{color:var(--ink-2)}
+.site-inst .libband .libform input{border:1px solid #d9ccd4}
+.site-inst .btn-light{background:#fff;border-color:#d9ccd4;color:var(--ink)}
+.site-inst .btn-light:hover{border-color:var(--plum);color:var(--plum)}
+.site-inst .libprev{transform:none;box-shadow:0 8px 24px rgba(80,20,70,.08);border-top-color:var(--plum)}
+.site-inst .shead h1,.site-inst .ph h1{margin-top:8px}
+/* tablero de guardia en versión clara */
+.site-inst .board{background:#fff;color:var(--ink);border:1px solid #e6dde2}
+.site-inst .bhead,.site-inst .bsum,.site-inst .bcols{border-color:#eee6eb}
+.site-inst .bhead h2{color:#1e1a1c;font-family:"Source Serif 4",Georgia,serif}
+.site-inst .bhead .lbl{color:var(--plum)}
+.site-inst .bclock{color:var(--plum-d)}
+.site-inst .bsum{color:var(--ink-2)}
+.site-inst .bsr{color:var(--ink-3)}
+.site-inst .bcols{color:var(--ink-3);background:#faf7f9}
+.site-inst .brow{border-color:#f0e9ed}
+.site-inst .brow:nth-of-type(even){background:#fcfafb}
+.site-inst .brow small{color:var(--ink-3)}
+.site-inst .brow .bn b{color:var(--ink)}
+.site-inst .brow.on .bst{color:var(--ok)}
+.site-inst .brow.on .led{background:#22a35a;box-shadow:none}
+.site-inst .brow.pas .bst{color:var(--warn)}
+.site-inst .brow.pas .led{box-shadow:none}
+.site-inst .brow.gap{background:#fdf0ee}
+.site-inst .brow.gap .bst{color:var(--bad)}
+.site-inst .brow.gap .led{box-shadow:none}
+.site-inst .bgap a{color:var(--bad)}
+.site-inst .bbtn{border-color:#d9ccd4;color:var(--ink)}
+.site-inst .bbtn:hover{border-color:var(--plum);color:var(--plum)}
+.site-inst .bbtn.call{background:var(--bad);border-color:var(--bad);color:#fff}
+.site-inst .bfoot{color:var(--ink-2);border-top:1px solid #eee6eb}
+.site-inst .bfoot a{color:var(--plum)}
+.site-inst .seg.dark{background:#f3eef1}
+.site-inst .seg.dark button{color:var(--ink-2)}
+.site-inst .seg.dark button.on{background:#fff;color:var(--plum)}
+/* noticias con imagen */
+.news-card{display:flex;flex-direction:column;color:var(--ink);padding:0;overflow:hidden}
+.news-card img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top;background:#f3eef1;display:block}
+.news-card .nc-body{padding:14px 16px 16px}
+.news-card h3{font-size:17px;margin:4px 0 6px}
+.news-card p{margin:0}
+a.news-card:hover h3,a.news-main:hover h3,a.news-item:hover h3{color:var(--plum);text-decoration:underline}
+.news-main{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;color:var(--ink)}
+.news-main img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border-radius:6px;background:#f3eef1}
+.news-main:not(:has(img)){grid-template-columns:1fr}
+.news-item{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start;color:var(--ink)}
+.news-item img{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:6px;background:#f3eef1}
+.news-item:not(:has(img)){grid-template-columns:1fr}
+@media(max-width:620px){.news-main{grid-template-columns:1fr}.news-main img{aspect-ratio:16/10}}
+.marca-fig{margin:0;display:grid;place-items:center;background:#fff;border:1px solid #ece4e9;border-radius:10px;padding:28px}
+.marca-fig img{width:min(260px,70%);height:auto}
+.vision{border-left:4px solid var(--plum);padding:6px 0 6px 20px;max-width:880px}
+.vision h2{margin-bottom:8px}
+.vision p{font-family:"Source Serif 4",Georgia,serif;font-size:19px;line-height:1.5;color:#3a3236;margin:0}
+.autoridades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.autoridad-r{display:flex;flex-direction:column;gap:2px;padding:16px 18px;border-top:3px solid var(--plum)}
+.autoridad-r b{font-family:"Source Serif 4",Georgia,serif;font-size:19px;font-weight:600}
+@media(max-width:900px){.autoridades{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.autoridades{grid-template-columns:1fr}}
+.doc-list a{color:var(--ink)}
+.doc-list a:hover{color:var(--plum);text-decoration:underline}
+/* accesibilidad */
+.skip{position:absolute;left:12px;top:-60px;z-index:3000;background:var(--plum);color:#fff;padding:10px 14px;border-radius:6px;font-weight:600}
+.skip:focus{top:12px}
+main:focus{outline:none}
+:focus-visible{outline:3px solid #b04aa0;outline-offset:2px}
+.site-inst{--ink-3:#6a6166}
+.site-inst .muted{color:#6a6166}
+:root{--ok:#11683f;--warn:#8a5200;--bad:#a8301f}
+.leaflet-control-attribution a{color:#00506e}
+.site-inst .board{--b-ok:var(--ok);--b-warn:var(--warn);--b-bad:var(--bad);--b-mute:var(--ink-3)}
+.site-inst .bgap a{text-decoration:underline}
+.site-inst .brow.off{opacity:1;background:#f8f6f7}
+.site-inst .brow.off .bst,.site-inst .brow.off .bn b,.site-inst .brow.off .bz,.site-inst .brow.off .bm,.site-inst .brow.off .bh,.site-inst .brow.off .bt,.site-inst .brow.off small{color:var(--ink-3)}
+.leaflet-control-attribution a{text-decoration:underline}
+.seg .ct{opacity:1;color:var(--ink-3)}
+.seg button.on .ct{color:inherit;opacity:.85}
+.demotab{position:fixed;left:16px;bottom:16px;z-index:1200;background:#1b1916;color:#f3e6f0;border:0;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.demotab:hover{background:var(--plum-d)}
+.demohide{margin-left:12px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#f3e6f0;border-radius:6px;padding:4px 10px;font-size:12.5px;cursor:pointer}
+.demohide:hover{border-color:#fff}

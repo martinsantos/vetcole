@@ -1,4 +1,5 @@
 // Barra superior de la demo: cambia de aplicación/rol en un clic (inicia sesión con la cuenta demo correspondiente).
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { url, CLAUDE } from '../lib/base.js';
 import { api } from '../lib/api.js';
@@ -29,6 +30,10 @@ export default function DemoBar() {
     if (!email || user?.email === email) return nav(to);
     try { await loginAs(email, nav, to); } catch (e) { toast(e.message, 'error'); }
   };
+  // La barra se puede achicar a una pestaña discreta; la elección queda guardada en el navegador.
+  const [min, setMinS] = useState(() => { try { return localStorage.getItem('colvet-demobar') !== 'abierta'; } catch { return true; } });
+  const setMin = v => { setMinS(v); try { localStorage.setItem('colvet-demobar', v ? 'mini' : 'abierta'); } catch { /* sin almacenamiento */ } };
+  if (min) return <button type="button" className="demotab" onClick={() => setMin(false)} aria-label="Abrir la barra de la demo para cambiar de vista">Demo · cambiar de vista</button>;
   return (
     <div className="demobar">
       <div className="wrap">
@@ -37,6 +42,7 @@ export default function DemoBar() {
         <nav>{APPS.map(a => <a key={a[0]} href={url(a[2])} className={cur === a[0] ? 'on' : ''} onClick={e => { e.preventDefault(); go(a); }}>{a[1]}</a>)}
           {CLAUDE && <a href="#" title="Vuelve los datos de la demo al estado inicial" onClick={async e => { e.preventDefault(); const { resetDemo } = await import('../demo/server.js'); await resetDemo(); useAuth.getState().logout(); nav('/'); toast('Datos de la demo reiniciados'); }}>↺ Reiniciar datos</a>}
         </nav>
+        <button type="button" className="demohide" onClick={() => setMin(true)} aria-label="Ocultar la barra de la demo">Ocultar</button>
       </div>
     </div>
   );

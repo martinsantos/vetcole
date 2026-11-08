@@ -30,6 +30,11 @@ for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/director
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
 await page.fill('.bsearch input', 'godoy cruz'); await page.waitForTimeout(300);
 { const t = await page.textContent('.bres'); ok(t.includes('Profesionales') && t.includes('AsisVet 24 hs.'), 'buscador de la portada: profesionales y establecimientos'); }
+ok(page.url().includes('q=godoy'), 'buscador: la búsqueda queda en la dirección para compartirla');
+await page.fill('.bsearch input', 'cirujia'); await page.waitForTimeout(300);
+{ const t = await page.textContent('.bres'); ok(t.includes('más parecidos') && t.includes('Cirugía'), 'buscador: tolera errores de tipeo'); }
+await page.goto(BASE + '/institucional', { waitUntil: 'networkidle' }).catch(() => {});
+{ const t = await page.textContent('body'); ok(t.includes('Comisión Directiva') && t.includes('Código de Ética Profesional'), 'institucional con el contenido del sitio vigente'); }
 
 // 2) Tutora reserva un turno online → aparece en la agenda del consultorio
 const tVet = (await tokenOf('lucia.ferreyra@demo.colvet')).token;
@@ -70,7 +75,7 @@ await asUser('sofia.rios@demo.colvet');
 for (const p of ['/tutor', `/tutor/mascotas/${luna.id}`, '/tutor/turnos', '/tutor/mensajes', '/tutor/perfil']) await visit(p);
 
 // 7) Barra de demo: cambiar de rol en un clic
-await page.goto(BASE + '/'); await page.click('.demobar nav a:has-text("Municipio")'); await page.waitForURL('**/muni**');
+await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Municipio")'); await page.waitForURL('**/muni**');
 ok(page.url().includes('/muni'), 'barra de demo cambia de rol (municipio)');
 
 // 8) Celular: sin scroll horizontal

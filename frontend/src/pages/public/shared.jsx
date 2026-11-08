@@ -156,7 +156,7 @@ export function MapSection({ home, initialChip = 'all' }) {
         <Seg value={chip} onChange={setChip} options={CHIPS.map(([k, l]) => [k, l, (ests ? base.filter(e => match(e, k)).length : undefined)])} />
         <div className="mapx-tools">
           <div className="mapx-search"><input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="Nombre, calle o tipo" style={{ paddingLeft: 12 }} /></div>
-          <select value={dep} onChange={e => setDep(e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(d => <option key={d}>{d}</option>)}</select>
+          <select aria-label="Departamento" value={dep} onChange={e => setDep(e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(d => <option key={d}>{d}</option>)}</select>
           <button className="btn btn-sm" onClick={cercaMio}>◎ Cerca mío</button>
         </div>
       </div>

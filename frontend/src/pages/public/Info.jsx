@@ -1,5 +1,7 @@
 // Páginas informativas y de trámites del sitio público.
 import { BRAND } from '../../lib/brand.js';
+import { COLEGIO } from '../../content/colegio.js';
+import { useNoticias } from '../../lib/noticias.js';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
@@ -96,43 +98,85 @@ export function Inscripcion() {
   );
 }
 
+// Lista de documentos: enlaza al PDF publicado en el sitio del Colegio cuando existe.
+const Docs = ({ items }) => (
+  <ul className="doc-list">{items.map(d => (
+    <li key={d.t}>{d.url ? <a href={d.url} target="_blank" rel="noopener noreferrer">{d.t}</a> : <span>{d.t}</span>}<span className="small muted">{d.url ? (d.url.endsWith('.pdf') ? 'PDF' : 'Ver') : ''}</span></li>
+  ))}</ul>
+);
+
 export function Institucional() {
-  const cargos = ['Presidencia', 'Vicepresidencia', 'Secretaría', 'Tesorería'];
+  const C = COLEGIO;
+  const SUBCOM = ['Formación Continua', 'Caninos y Felinos', 'Rumiantes', 'Equinos', 'Exóticos y No Convencionales', 'Salud Pública, Zoonosis y Tenencia Responsable', 'Jóvenes'];
   return (
     <>
       <section className="ihero ihero-sm"><div className="wrap">
         <p className="ihero-org">Institucional</p>
         <h1>{BRAND.nombre}</h1>
-        <p className="lead">Creado por la ley de colegiatura obligatoria, el Colegio matricula a quienes ejercen la medicina veterinaria en la provincia, aplica el Código de Ética, defiende las condiciones de trabajo de sus colegiados y contribuye a la salud de la comunidad.</p>
+        <p className="lead">{C ? C.institucion.sobre : 'Creado por la ley de colegiatura obligatoria, el Colegio matricula a quienes ejercen la medicina veterinaria en la provincia, aplica el Código de Ética, defiende las condiciones de trabajo de sus colegiados y contribuye a la salud de la comunidad.'}</p>
       </div></section>
+
+      {C && <section className="sec" style={{ paddingBottom: 0 }}><div className="wrap">
+        <div className="vision"><h2>Visión</h2><p>{C.institucion.vision}</p></div>
+      </div></section>}
+
       <section className="sec"><div className="wrap">
-        <div className="sec-head"><h2>Comisión Directiva</h2></div>
-        <div className="grid g4">{cargos.map(c => <div key={c} className="card autoridad"><div className="aut-foto" aria-hidden="true" /><b>{c}</b><span className="small muted">Nombre a cargar desde la administración</span></div>)}</div>
-        <div className="grid g3" style={{ marginTop: 16 }}>
-          {[['Asamblea', 'Órgano máximo del Colegio. Aprueba balances, cuotas y reglamentos.'], ['Tribunal de Disciplina', 'Juzga las faltas al Código de Ética y al ejercicio profesional.'], ['Tribunal Revisor de Cuentas', 'Controla la administración y los estados contables.']].map(([t, d]) => <div key={t} className="inst-item"><h3>{t}</h3><p className="small">{d}</p></div>)}
-        </div>
+        <div className="sec-head"><h2>Comisión Directiva</h2>{C && <span className="small muted">Período {C.comision.periodo}</span>}</div>
+        {C ? (
+          <div className="autoridades">{C.comision.miembros.map(([cargo, nombre, mp, mail]) => (
+            <div key={cargo + nombre} className="card autoridad-r">
+              <span className="small" style={{ color: 'var(--plum)', fontWeight: 600 }}>{cargo}</span>
+              <b>{nombre}</b>
+              <span className="small muted">Matrícula {mp}</span>
+              {mail && <a className="small" href={`mailto:${mail}`}>{mail}</a>}
+            </div>
+          ))}</div>
+        ) : (
+          <div className="grid g4">{['Presidencia', 'Vicepresidencia', 'Secretaría', 'Tesorería'].map(c => <div key={c} className="card autoridad"><div className="aut-foto" aria-hidden="true" /><b>{c}</b><span className="small muted">Nombre a cargar desde la administración</span></div>)}</div>
+        )}
       </div></section>
+
       <section className="sec sec-alt"><div className="wrap grid g2" style={{ alignItems: 'start' }}>
         <div>
-          <h2>Legislación</h2>
-          <ul className="doc-list">{[BRAND.ley, 'Estatuto del Colegio', 'Código de Ética', 'Reglamento de especialidades', 'Normativa de habilitación de establecimientos'].map(d => <li key={d}><span>{d}</span><span className="small muted">PDF</span></li>)}</ul>
+          <div className="sec-head"><h2>Tribunal de Disciplina</h2>{C && <span className="small muted">{C.tribunal.periodo}</span>}</div>
+          {C ? <><ul className="doc-list">{C.tribunal.miembros.map(([c, n]) => <li key={c + n}><span>{n}</span><span className="small muted">{c}</span></li>)}</ul><p className="small">Contacto: <a href={`mailto:${C.tribunal.mail}`}>{C.tribunal.mail}</a></p></>
+            : <p className="muted">Juzga las faltas al Código de Ética y al ejercicio profesional.</p>}
+        </div>
+        <div>
+          <div className="sec-head"><h2>Comisión Revisora de Cuentas</h2></div>
+          {C ? <ul className="doc-list">{C.revisora.map(([n, mp]) => <li key={n}><span>{n}</span><span className="small muted">Matrícula {mp}</span></li>)}</ul>
+            : <p className="muted">Controla la administración y los estados contables.</p>}
+          <div className="sec-head" style={{ marginTop: 28 }}><h2>Asamblea</h2></div>
+          <p>{C ? C.asamblea.texto : 'Órgano máximo del Colegio. Aprueba balances, cuotas y reglamentos y elige a las autoridades.'}</p>
+          {C && <p className="small"><a href={C.asamblea.padron} target="_blank" rel="noopener noreferrer">Padrón de la última asamblea (PDF)</a></p>}
+        </div>
+      </div></section>
+
+      <section className="sec"><div className="wrap grid g2" style={{ alignItems: 'start' }}>
+        <div>
+          <div className="sec-head"><h2>Legislación vigente</h2></div>
+          <Docs items={C ? C.leyes : [{ t: BRAND.ley }, { t: 'Código de Ética' }, { t: 'Reglamento de especialidades' }]} />
+          {C && <><h3 style={{ marginTop: 24 }}>Resoluciones y convenios</h3><Docs items={C.resoluciones} /></>}
           <p className="small"><Link className="lnk" to="/identidad-animal">Normativa sanitaria e identificación animal →</Link></p>
         </div>
         <div>
-          <h2>Subcomisiones</h2>
-          <ul className="doc-list">{['Formación Continua', 'Caninos y Felinos', 'Rumiantes', 'Equinos', 'Exóticos y No Convencionales', 'Salud Pública, Zoonosis y Tenencia Responsable', 'Jóvenes Profesionales'].map(d => <li key={d}><span>{d}</span></li>)}</ul>
+          {C && <><div className="sec-head"><h2>Balances</h2></div><p className="small muted">Aprobados en Asamblea Ordinaria.</p><Docs items={C.balances} /></>}
+          <div className="sec-head" style={{ marginTop: C ? 28 : 0 }}><h2>Subcomisiones</h2></div>
+          <ul className="doc-list">{SUBCOM.map(d => <li key={d}><span>{d}</span></li>)}</ul>
         </div>
       </div></section>
-      {!BRAND.demo && <section className="sec"><div className="wrap">
-        <h2>Sede y atención</h2>
-        <div className="card" style={{ maxWidth: 560 }}><p style={{ margin: 0 }}>{BRAND.sede}<br />{BRAND.horario}<br />{BRAND.tel} · {BRAND.mail}</p></div>
+
+      {!BRAND.demo && <section className="sec" style={{ paddingTop: 0 }}><div className="wrap">
+        <div className="sec-head"><h2>Sede y contacto</h2></div>
+        <p style={{ margin: 0 }}>{BRAND.sede}, Mendoza<br />{BRAND.tel} · <a href={`mailto:${BRAND.mail}`}>{BRAND.mail}</a></p>
+        {C && <p className="small muted" style={{ marginTop: 14 }}>Contenido tomado del sitio vigente del Colegio ({C.fuente}).</p>}
       </div></section>}
     </>
   );
 }
 
 export function Noticias() {
-  const { data } = useApi('/public/noticias');
+  const data = useNoticias();
   const [cat, setCat] = useState('');
   const cats = [...new Set((data || []).map(n => n.categoria))];
   return (

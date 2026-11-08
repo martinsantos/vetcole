@@ -42,7 +42,7 @@ export default function Datos() {
         <p className="muted" style={{ marginTop: 8 }}>Lo que firman los matriculados, agregado por departamento y sin datos personales. Municipios, ferias y refugios validan matrículas y vacunas sin pedir listados.</p></div></div>
       <div className="card">
         <div className="row between"><div><Kicker>Panel de los últimos 12 meses</Kicker><h3 style={{ margin: '6px 0 0' }}>{dep || 'Toda la provincia'}</h3></div>
-          <select style={{ width: 220 }} value={dep} onChange={e => setDep(e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(d => <option key={d}>{d}</option>)}</select></div>
+          <select aria-label="Departamento" style={{ width: 220 }} value={dep} onChange={e => setDep(e.target.value)}><option value="">Toda la provincia</option>{DEPTOS.map(d => <option key={d}>{d}</option>)}</select></div>
         {loading || !p ? <Spinner /> : <>
           <div className="grid g4" style={{ marginTop: 14 }}>
             <Kpi label="Libretas digitales" value={p.libretas.toLocaleString('es-AR')} />

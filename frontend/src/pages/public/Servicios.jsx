@@ -30,26 +30,26 @@ export default function Servicios() {
   return (
     <>
       <section className="hero" style={{ padding: '50px 0 56px' }}><div className="wrap">
-        <Kicker style={{ color: '#9fd8c4' }}>Servicios de la plataforma</Kicker>
+        <Kicker>Servicios de la plataforma</Kicker>
         <h1 style={{ maxWidth: 900 }}>Un consultorio digital para cada veterinaria y un servicio de zoonosis para cada municipio.</h1>
         <p className="lead">La misma base que usa el Colegio para el padrón: lo que firma un matriculado aparece en la libreta del animal, en el panel del municipio y en la app de la familia.</p>
         <div className="chips"><a className="chip" href="#consultorio">Consultorio digital</a><a className="chip" href="#zoonosis">Zoonosis municipal</a><a className="chip" href="#conexion">Cómo se conectan</a></div>
       </div></section>
       <section className="sec" id="consultorio"><div className="wrap">
-        <div className="shead"><div><Kicker>01 · Para veterinarias</Kicker><h2>Consultorio digital</h2>
+        <div className="shead"><div><Kicker>Para veterinarias</Kicker><h2>Consultorio digital</h2>
           <p className="muted">Todo lo que ofrece un software de gestión veterinaria (como MyVete), incluido para los matriculados. La diferencia: la historia clínica es la libreta oficial y los turnos salen del directorio del Colegio.</p></div>
           <button className="btn btn-primary" onClick={() => probar('lucia.ferreyra@demo.colvet', '/vet/consultorio')}>Probar el consultorio →</button></div>
         <div className="grid g3">{CONSULTORIO.map(([t, d], i) => <div key={t} className="card"><span className="mono tiny muted">{String(i + 1).padStart(2, '0')}</span><h3 style={{ margin: '6px 0 4px', fontSize: 18 }}>{t}</h3><p className="small muted" style={{ margin: 0 }}>{d}</p></div>)}</div>
         <div className="note" style={{ marginTop: 14 }}>¿Ya usás otro sistema? Se conecta por API: vacunas, turnos y recetas llegan a la libreta oficial sin cargar dos veces.</div>
       </div></section>
       <section className="libband" id="zoonosis"><div className="wrap">
-        <div className="shead"><div><Kicker style={{ color: 'var(--leaf-2)' }}>02 · Para municipios</Kicker><h2>Zoonosis como servicio</h2>
+        <div className="shead"><div><Kicker>Para municipios</Kicker><h2>Zoonosis como servicio</h2>
           <p>Lo que hace una plataforma de zoonosis municipal (como VetCard), con un agregado que sólo el Colegio puede dar: cada vacuna aplicada por un matriculado vigente ya está en la base.</p></div>
           <button className="btn btn-light" onClick={() => probar('zoonosis@godoycruz.demo', '/muni')}>Probar como municipio →</button></div>
         <div className="grid g3">{ZOONOSIS.map(([t, d], i) => <div key={t} className="card" style={{ color: 'var(--ink)' }}><span className="mono tiny muted">{String(i + 1).padStart(2, '0')}</span><h3 style={{ margin: '6px 0 4px', fontSize: 18 }}>{t}</h3><p className="small muted" style={{ margin: 0 }}>{d}</p></div>)}</div>
       </div></section>
       <section className="sec" id="conexion"><div className="wrap">
-        <Kicker>03 · Cómo se conecta todo</Kicker><h2 style={{ marginTop: 6 }}>Un registro, cuatro lugares</h2>
+        <Kicker>Cómo se conecta todo</Kicker><h2 style={{ marginTop: 6 }}>Un registro, cuatro lugares</h2>
         <div className="grid g4" style={{ marginTop: 16 }}>
           <div className="card"><span className="mono tiny muted">Veterinario/a</span><h3 style={{ margin: '6px 0 4px' }}>Vacuna en el consultorio</h3><p className="small muted" style={{ margin: 0 }}>Registra la antirrábica con lote y sticker LUSCyF; queda firmada con su matrícula.</p></div>
           <div className="card"><span className="mono tiny muted">Familia</span><h3 style={{ margin: '6px 0 4px' }}>La ve en su app</h3><p className="small muted" style={{ margin: 0 }}>Libreta actualizada, próxima dosis con recordatorio y credencial en Wallet.</p></div>

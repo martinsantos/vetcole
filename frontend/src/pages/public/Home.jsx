@@ -5,16 +5,24 @@ import { useApi } from '../../lib/api.js';
 import { fdate } from '../../lib/format.js';
 import { VetModal, EstModal, useTurno } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
+import { COLEGIO } from '../../content/colegio.js';
+import { useNoticias, imgColegio } from '../../lib/noticias.js';
 import { DemoLink } from './IdentidadAnimal.jsx';
 import Buscador from './Buscador.jsx';
 
+// Enlace a la nota completa: en el sitio del Colegio si viene de ahí.
+const NotaLink = ({ n, children, className }) => (n.url ? <a className={className} href={n.url} target="_blank" rel="noopener noreferrer">{children}</a> : <span className={className}>{children}</span>);
+
 export function NewsCard({ n }) {
   return (
-    <div className="card news-plain">
-      <span className="small muted">{fdate(n.fecha)}</span>
-      <h3>{n.titulo}</h3>
-      <p className="muted small">{n.resumen}</p>
-    </div>
+    <NotaLink n={n} className="card news-card">
+      {n.img && <img src={n.img} alt="" loading="lazy" />}
+      <div className="nc-body">
+        <span className="small muted">{n.categoria} · {fdate(n.fecha)}</span>
+        <h3>{n.titulo}</h3>
+        <p className="muted small">{n.resumen}</p>
+      </div>
+    </NotaLink>
   );
 }
 
@@ -46,7 +54,8 @@ function GuardiasHoy() {
 }
 
 export default function Home() {
-  const { data: news } = useApi('/public/noticias?take=4');
+  const news = useNoticias(5);
+  const agenda = (COLEGIO?.agenda || AGENDA).map(([d, ti, lugar]) => [typeof d === 'number' ? enDias(d) : new Date(`${d}T12:00:00`), ti, lugar]);
   const [vet, setVet] = useState(null), [est, setEst] = useState(null);
   const t = useTurno();
   return (
@@ -69,16 +78,19 @@ export default function Home() {
         <div>
           <div className="sec-head"><h2>Noticias</h2><Link className="lnk" to="/noticias">Ver todas →</Link></div>
           <div className="news-list">{(news || []).map((n, i) => (
-            <article key={n.id} className={i === 0 ? 'news-main card' : 'news-item'}>
-              <span className="small muted">{n.categoria} · {fdate(n.fecha)}</span>
-              <h3>{n.titulo}</h3>
-              {i === 0 && <p className="muted">{n.resumen}</p>}
-            </article>
+            <NotaLink key={n.id} n={n} className={i === 0 ? 'news-main card' : 'news-item'}>
+              {n.img && <img src={n.img} alt="" loading="lazy" />}
+              <div>
+                <span className="small muted">{n.categoria} · {fdate(n.fecha)}</span>
+                <h3>{n.titulo}</h3>
+                {i === 0 && <p className="muted">{n.resumen}</p>}
+              </div>
+            </NotaLink>
           ))}</div>
         </div>
         <aside>
           <div className="sec-head"><h2>Agenda</h2></div>
-          <ul className="agenda">{AGENDA.map(([d, ti, lugar]) => { const f = enDias(d); return (
+          <ul className="agenda">{agenda.map(([f, ti, lugar]) => { return (
             <li key={ti}><div className="ag-date"><b>{f.getDate()}</b><span>{f.toLocaleDateString('es-AR', { month: 'short' }).replace('.', '')}</span></div><div><b>{ti}</b><span className="small muted">{lugar}</span></div></li>
           ); })}</ul>
         </aside>
@@ -97,9 +109,10 @@ export default function Home() {
       <section className="sec sec-inst"><div className="wrap">
         <div className="sec-head"><h2>El Colegio</h2><Link className="lnk" to="/institucional">Institucional →</Link></div>
         <div className="inst-grid">
-          <figure className="foto-slot" aria-label="Espacio para foto institucional"><div><b>Foto institucional</b><span>Sede, actos o capacitaciones del Colegio</span></div></figure>
+          {COLEGIO ? <figure className="marca-fig"><img src={imgColegio('marca-colegio.png')} alt={`Marca institucional del ${BRAND.nombre}`} /></figure>
+            : <figure className="foto-slot" aria-label="Espacio para foto institucional"><div><b>Foto institucional</b><span>Sede, actos o capacitaciones del Colegio</span></div></figure>}
           <div>
-            <p className="inst-lead">El Colegio matricula a los médicos veterinarios de la provincia, vela por el cumplimiento del Código de Ética y acompaña la formación continua de sus colegiados.</p>
+            <p className="inst-lead">{COLEGIO ? COLEGIO.institucion.sobre : 'El Colegio matricula a los médicos veterinarios de la provincia, vela por el cumplimiento del Código de Ética y acompaña la formación continua de sus colegiados.'}</p>
             <div className="grid g2">
               <Link to="/institucional" className="inst-item"><h3>Autoridades</h3><p className="small">Comisión Directiva, Tribunal de Disciplina y Tribunal Revisor de Cuentas.</p></Link>
               <Link to="/institucional" className="inst-item"><h3>Legislación</h3><p className="small">{BRAND.ley}, estatuto y Código de Ética.</p></Link>

@@ -34,7 +34,7 @@ export default function MapView({ items, selected, onSelect, popup, height = '10
     layer.current.clearLayers(); marks.current = {};
     (items || []).forEach(e => {
       const icon = L.divIcon({ className: '', html: `<div class="mk" style="background:${guardiaColor(e)}"><b>${kind(e)}</b></div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28] });
-      const m = L.marker([e.lat, e.lng], { icon }).addTo(layer.current);
+      const m = L.marker([e.lat, e.lng], { icon, title: e.nombre, alt: e.nombre }).addTo(layer.current);
       if (popup) m.bindPopup(() => popup(e));
       m.on('click', () => onSelect?.(e));
       marks.current[e.codigo] = m;

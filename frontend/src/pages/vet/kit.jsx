@@ -1,4 +1,5 @@
 // Piezas compartidas del portal: QR crudo, credencial profesional, credencial/oblea/cartel del establecimiento, receta.
+import { BRAND } from '../../lib/brand.js';
 import { useEffect, useRef } from 'react';
 import { CLAUDE } from '../../lib/base.js';
 import { toast } from '../../components/ui.jsx';
@@ -79,7 +80,7 @@ export function Poster({ e, id }) {
         <div><span>Director/a técnico/a</span><b>{dtName(e)}{e.dt && <><br />MP {e.dt.mp}</>}</b></div>
         <div><span>Vigente hasta</span><b>{fdate(e.venceHab)}</b></div>
       </div>
-      <div className="pt-foot">¿Ves un establecimiento sin este cartel? Denuncialo en colvetmza.com.ar · Colegio de Médicos Veterinarios de Mendoza</div>
+      <div className="pt-foot">¿Ves un establecimiento sin este cartel? Denuncialo {BRAND.demo ? 'ante el Colegio' : 'en colvetmza.com.ar'} · {BRAND.nombre}</div>
     </div>
   );
 }

@@ -19,6 +19,6 @@ export const BRAND = CLAUDE ? {
   sede: 'Pte. Santiago Derqui 114, Godoy Cruz',
   tel: '0261 424 3250',
   mail: 'info@colvetmza.com.ar',
-  horario: 'Lunes a viernes (horario a confirmar)',
+  horario: null, // el sitio actual no publica el horario de atención
   aviso: 'Demo con datos de ejemplo: profesionales, tutores y municipios son ficticios.',
 };
