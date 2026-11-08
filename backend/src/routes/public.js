@@ -190,6 +190,14 @@ r.post('/denuncias', h(async (req, res) => {
   ok(res, { numero: d.numero }, 201);
 }));
 
+// Solicitud de matrícula online: aparece en el tablero de inscripciones de la administración.
+r.post('/inscripciones', h(async (req, res) => {
+  const { nombre, apellido, dni, email, universidad } = req.body || {};
+  if (!nombre || !apellido || !dni || !email) return fail(res, 400, 'Completá nombre, apellido, DNI y email.');
+  const i = await prisma.inscripcion.create({ data: { nombre: String(nombre), apellido: String(apellido), dni: String(dni), email: String(email), universidad: String(universidad || 'Sin informar') } });
+  ok(res, { id: i.id, numero: `M-2026-${String(140 + i.id).padStart(4, '0')}` }, 201);
+}));
+
 r.post('/asistente', h(async (req, res) => ok(res, await asistente(String(req.body?.pregunta || '')))));
 
 // Datos abiertos (agregados, sin datos personales).

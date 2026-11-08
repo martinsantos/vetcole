@@ -1,0 +1,9 @@
+/* Sitio público: ajustes propios de la versión React */
+.search-xl .sx-ic{position:absolute;left:17px;top:13px;font-size:20px;color:var(--ink-3);z-index:1}
+.search-xl input[type=search]{padding-left:46px}
+.news .img{display:grid;place-items:center}
+.hpanel .hrow{cursor:pointer}
+.mapx-search input{width:210px}
+.libprev{text-decoration:none}
+a.card.vcard{color:inherit}
+@media(max-width:860px){.mapx-search input{width:100%}}
