@@ -1,0 +1,470 @@
+// ColVet Digital — modelo de datos de la demo.
+// SQLite para la demo; cambiar provider a "mysql" para producción (mismo stack que Psicole).
+// Los campos *Json guardan JSON serializado (SQLite no tiene tipo JSON nativo).
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ───────────────────────── Auth ─────────────────────────
+model User {
+  id          Int        @id @default(autoincrement())
+  email       String     @unique
+  password    String
+  nombre      String
+  rol         String // ADMIN | VET | MUNICIPIO | TUTOR | FARMACIA
+  vetId       Int?       @unique
+  vet         Vet?       @relation(fields: [vetId], references: [id])
+  municipioId Int?
+  municipio   Municipio? @relation(fields: [municipioId], references: [id])
+  tutorId     Int?       @unique
+  tutor       Tutor?     @relation(fields: [tutorId], references: [id])
+  createdAt   DateTime   @default(now())
+}
+
+// ───────────────────────── Colegio ─────────────────────────
+model Vet {
+  id                  Int            @id @default(autoincrement())
+  mp                  Int            @unique
+  nombre              String
+  apellido            String
+  femenino            Boolean        @default(true)
+  dni                 String?
+  email               String?
+  telefono            String?
+  departamento        String
+  especialidadesJson  String         @default("[]")
+  especiesJson        String         @default("[]")
+  estado              String         @default("Vigente") // Vigente | En trámite | Suspendida | Baja
+  domicilio           Boolean        @default(false)
+  turnosOnline        Boolean        @default(false)
+  fichaPublica        Boolean        @default(true)
+  bio                 String?
+  prescriptorCannabis String         @default("no") // no | tramite | si
+  alta                Int            @default(2015)
+  user                User?
+  equipos             EquipoVet[]
+  dtDe                Establecimiento[] @relation("DT")
+  cuotas              Cuota[]
+  tramites            Tramite[]
+  eventos             Evento[]
+  turnos              Turno[]
+  recetas             Receta[]
+  casos               CasoEpi[]
+  animalesCabecera    Animal[]
+  acreditacion        Acreditacion?
+  votos               Voto[]
+}
+
+model Establecimiento {
+  id             Int         @id @default(autoincrement())
+  codigo         String      @unique
+  nombre         String
+  tipo           String
+  direccion      String
+  departamento   String
+  lat            Float
+  lng            Float
+  telefono       String
+  guardia        String? // activa | pasiva | null
+  guardiaNota    String?
+  guardiaDias    String? // "5,6" = sólo viernes y sábado
+  habilitacion   String?
+  venceHab       DateTime?
+  dtId           Int?
+  dt             Vet?        @relation("DT", fields: [dtId], references: [id])
+  turnosOnline   Boolean     @default(false)
+  especiesJson   String      @default("[]")
+  real           Boolean     @default(false) // tomado del listado público de guardias
+  equipo         EquipoVet[]
+  servicios      Servicio[]
+  turnos         Turno[]
+  clientes       Cliente[]
+  productos      Producto[]
+  ventas         Venta[]
+  proveedores    Proveedor[]
+  compras        Compra[]
+  movimientos    MovCC[]
+  mensajes       Mensaje[]
+  eventos        Evento[]
+}
+
+model EquipoVet {
+  estId Int
+  vetId Int
+  est   Establecimiento @relation(fields: [estId], references: [id])
+  vet   Vet             @relation(fields: [vetId], references: [id])
+
+  @@id([estId, vetId])
+}
+
+model Cuota {
+  id       Int       @id @default(autoincrement())
+  vetId    Int
+  vet      Vet       @relation(fields: [vetId], references: [id])
+  periodo  String
+  monto    Float
+  vence    DateTime
+  estado   String // Pendiente | Pagada
+  pagadaEn DateTime?
+  medio    String?
+}
+
+model Tramite {
+  id        Int      @id @default(autoincrement())
+  numero    String   @unique
+  vetId     Int?
+  vet       Vet?     @relation(fields: [vetId], references: [id])
+  tipo      String
+  estado    String
+  pasosJson String
+  actual    Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Inscripcion {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  dni         String
+  email       String
+  universidad String
+  etapa       Int      @default(0) // 0 solicitud · 1 documentación · 2 comisión · 3 ministerio · 4 alta
+  faltante    String?
+  createdAt   DateTime @default(now())
+}
+
+model Noticia {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  categoria String
+  resumen   String
+  fecha     DateTime
+}
+
+model Denuncia {
+  id          Int      @id @default(autoincrement())
+  numero      String   @unique
+  tipo        String
+  lugar       String
+  descripcion String
+  origen      String
+  estado      String   @default("Recibida")
+  createdAt   DateTime @default(now())
+}
+
+model CasoEpi {
+  id           Int      @id @default(autoincrement())
+  semana       Int
+  evento       String
+  departamento String
+  casos        Int
+  especie      String
+  diagnostico  String   @default("Sospecha clínica")
+  vetId        Int?
+  vet          Vet?     @relation(fields: [vetId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model AsambleaItem {
+  id     Int    @id @default(autoincrement())
+  orden  Int
+  titulo String
+  si     Int    @default(0)
+  no     Int    @default(0)
+  abst   Int    @default(0)
+  votos  Voto[]
+}
+
+model Acreditacion {
+  id        Int      @id @default(autoincrement())
+  vetId     Int      @unique
+  vet       Vet      @relation(fields: [vetId], references: [id])
+  modalidad String   @default("online")
+  createdAt DateTime @default(now())
+}
+
+// Registra QUE votó, no QUÉ votó (voto secreto).
+model Voto {
+  vetId  Int
+  itemId Int
+  vet    Vet          @relation(fields: [vetId], references: [id])
+  item   AsambleaItem @relation(fields: [itemId], references: [id])
+
+  @@id([vetId, itemId])
+}
+
+// ───────────────────────── Animales y libreta ─────────────────────────
+model Tutor {
+  id           Int       @id @default(autoincrement())
+  dni          String    @unique
+  nombre       String
+  telefono     String?
+  email        String?
+  departamento String?
+  user         User?
+  animales     Animal[]
+  clientes     Cliente[]
+  mensajes     Mensaje[]
+}
+
+model Animal {
+  id             Int        @id @default(autoincrement())
+  libreta        String     @unique
+  nombre         String
+  especie        String // Canino | Felino | Equino
+  raza           String
+  sexo           String
+  nacimiento     DateTime
+  pelaje         String?
+  microchip      String?
+  castrado       Boolean    @default(false)
+  tutorId        Int
+  tutor          Tutor      @relation(fields: [tutorId], references: [id])
+  vetCabeceraId  Int?
+  vetCabecera    Vet?       @relation(fields: [vetCabeceraId], references: [id])
+  municipioId    Int?
+  municipio      Municipio? @relation(fields: [municipioId], references: [id])
+  credencialNro  Int?
+  perdido        Boolean    @default(false)
+  peligroso      Boolean    @default(false)
+  mordedor       Boolean    @default(false)
+  peso           Float?
+  createdAt      DateTime   @default(now())
+  eventos        Evento[]
+  turnos         Turno[]
+  recetas        Receta[]
+  mordeduras     Mordedura[]
+}
+
+// Un registro de la libreta / historia clínica. Lo firma un matriculado (vetId) o zoonosis (municipioId).
+model Evento {
+  id          Int              @id @default(autoincrement())
+  animalId    Int
+  animal      Animal           @relation(fields: [animalId], references: [id])
+  tipo        String // vac | des | cas | chip | con | lab | inc | via | cir
+  fecha       DateTime
+  titulo      String
+  detalle     String?
+  diagnostico String?
+  tratamiento String?
+  peso        Float?
+  temperatura Float?
+  lote        String?
+  sticker     String?
+  proximo     DateTime?
+  publico     Boolean          @default(true)
+  origen      String           @default("consultorio") // consultorio | zoonosis | campania
+  vetId       Int?
+  vet         Vet?             @relation(fields: [vetId], references: [id])
+  estId       Int?
+  est         Establecimiento? @relation(fields: [estId], references: [id])
+  municipioId Int?
+  municipio   Municipio?       @relation(fields: [municipioId], references: [id])
+  campaniaId  Int?
+  campania    Campania?        @relation(fields: [campaniaId], references: [id])
+  createdAt   DateTime         @default(now())
+}
+
+model Receta {
+  id           Int       @id @default(autoincrement())
+  codigo       String    @unique
+  animalId     Int
+  animal       Animal    @relation(fields: [animalId], references: [id])
+  vetId        Int
+  vet          Vet       @relation(fields: [vetId], references: [id])
+  tipo         String
+  itemsJson    String
+  estado       String    @default("Vigente") // Vigente | Dispensada | Vencida
+  fecha        DateTime  @default(now())
+  vence        DateTime
+  dispensadaEn DateTime?
+  farmacia     String?
+}
+
+// ───────────────────────── Consultorio (gestión tipo MyVete) ─────────────────────────
+model Servicio {
+  id          Int             @id @default(autoincrement())
+  estId       Int
+  est         Establecimiento @relation(fields: [estId], references: [id])
+  nombre      String
+  duracionMin Int
+  precio      Float
+  color       String          @default("#2d6b5a")
+  turnos      Turno[]
+  ventaItems  VentaItem[]
+}
+
+model Turno {
+  id          Int             @id @default(autoincrement())
+  estId       Int
+  est         Establecimiento @relation(fields: [estId], references: [id])
+  vetId       Int
+  vet         Vet             @relation(fields: [vetId], references: [id])
+  animalId    Int?
+  animal      Animal?         @relation(fields: [animalId], references: [id])
+  servicioId  Int?
+  servicio    Servicio?       @relation(fields: [servicioId], references: [id])
+  inicio      DateTime
+  duracionMin Int             @default(30)
+  estado      String          @default("confirmado") // pendiente | confirmado | atendido | ausente | cancelado
+  origen      String          @default("manual") // web | app | manual
+  tutorNombre String?
+  tutorTel    String?
+  mascota     String?
+  notas       String?
+  createdAt   DateTime        @default(now())
+}
+
+model Cliente {
+  id     Int             @id @default(autoincrement())
+  estId  Int
+  est    Establecimiento @relation(fields: [estId], references: [id])
+  tutorId Int
+  tutor  Tutor           @relation(fields: [tutorId], references: [id])
+  notas  String?
+  ventas Venta[]
+  movs   MovCC[]
+
+  @@unique([estId, tutorId])
+}
+
+model Producto {
+  id        Int             @id @default(autoincrement())
+  estId     Int
+  est       Establecimiento @relation(fields: [estId], references: [id])
+  nombre    String
+  categoria String // Alimentos | Medicamentos | Vacunas | Antiparasitarios | Accesorios | Higiene
+  sku       String
+  stock     Int
+  stockMin  Int
+  precio    Float
+  costo     Float
+  vence     DateTime?
+  ventaItems VentaItem[]
+}
+
+model Venta {
+  id          Int             @id @default(autoincrement())
+  estId       Int
+  est         Establecimiento @relation(fields: [estId], references: [id])
+  clienteId   Int?
+  cliente     Cliente?        @relation(fields: [clienteId], references: [id])
+  numero      Int
+  comprobante String // Factura B | Factura C | Ticket | Presupuesto
+  fecha       DateTime
+  total       Float
+  medioPago   String // Efectivo | Tarjeta | Transferencia | Mercado Pago | Cuenta corriente
+  cae         String?
+  items       VentaItem[]
+}
+
+model VentaItem {
+  id          Int       @id @default(autoincrement())
+  ventaId     Int
+  venta       Venta     @relation(fields: [ventaId], references: [id])
+  productoId  Int?
+  producto    Producto? @relation(fields: [productoId], references: [id])
+  servicioId  Int?
+  servicio    Servicio? @relation(fields: [servicioId], references: [id])
+  descripcion String
+  cantidad    Float
+  precio      Float
+}
+
+model Proveedor {
+  id       Int             @id @default(autoincrement())
+  estId    Int
+  est      Establecimiento @relation(fields: [estId], references: [id])
+  nombre   String
+  cuit     String
+  telefono String?
+  rubro    String
+  compras  Compra[]
+  movs     MovCC[]
+}
+
+model Compra {
+  id          Int             @id @default(autoincrement())
+  estId       Int
+  est         Establecimiento @relation(fields: [estId], references: [id])
+  proveedorId Int
+  proveedor   Proveedor       @relation(fields: [proveedorId], references: [id])
+  fecha       DateTime
+  comprobante String
+  total       Float
+  itemsJson   String
+}
+
+// Cuenta corriente: debe = lo que el cliente/proveedor nos debe (o le debemos), haber = pagos.
+model MovCC {
+  id          Int             @id @default(autoincrement())
+  estId       Int
+  est         Establecimiento @relation(fields: [estId], references: [id])
+  clienteId   Int?
+  cliente     Cliente?        @relation(fields: [clienteId], references: [id])
+  proveedorId Int?
+  proveedor   Proveedor?      @relation(fields: [proveedorId], references: [id])
+  fecha       DateTime
+  concepto    String
+  debe        Float           @default(0)
+  haber       Float           @default(0)
+}
+
+model Mensaje {
+  id           Int             @id @default(autoincrement())
+  estId        Int
+  est          Establecimiento @relation(fields: [estId], references: [id])
+  tutorId      Int
+  tutor        Tutor           @relation(fields: [tutorId], references: [id])
+  desdeClinica Boolean
+  texto        String
+  fecha        DateTime        @default(now())
+  leido        Boolean         @default(false)
+}
+
+// ───────────────────────── Zoonosis municipal (servicio tipo VetCard) ─────────────────────────
+model Municipio {
+  id               Int         @id @default(autoincrement())
+  slug             String      @unique
+  nombre           String
+  nombreCredencial String // ej. "Identidad Sanitaria Animal"
+  sigla            String
+  color            String      @default("#2d6b5a")
+  users            User[]
+  animales         Animal[]
+  eventos          Evento[]
+  campanias        Campania[]
+  mordeduras       Mordedura[]
+}
+
+model Campania {
+  id          Int       @id @default(autoincrement())
+  municipioId Int
+  municipio   Municipio @relation(fields: [municipioId], references: [id])
+  nombre      String
+  tipo        String // Antirrábica | Castración | Mixta
+  lugar       String
+  fecha       DateTime
+  estado      String    @default("Programada") // Programada | En curso | Cerrada
+  eventos     Evento[]
+}
+
+model Mordedura {
+  id               Int       @id @default(autoincrement())
+  municipioId      Int
+  municipio        Municipio @relation(fields: [municipioId], references: [id])
+  animalId         Int?
+  animal           Animal?   @relation(fields: [animalId], references: [id])
+  fecha            DateTime
+  lugar            String
+  victima          String
+  descripcion      String
+  estado           String    @default("En observación") // En observación | Cerrada | Derivada
+  observacionHasta DateTime?
+}

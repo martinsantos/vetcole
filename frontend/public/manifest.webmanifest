@@ -1,0 +1,1 @@
+{ "name": "ColVet Digital", "short_name": "ColVet", "start_url": "/tutor", "display": "standalone", "background_color": "#f5f2ea", "theme_color": "#211019", "icons": [{ "src": "/logo-colegio.svg", "sizes": "any", "type": "image/svg+xml" }] }

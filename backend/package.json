@@ -1,0 +1,27 @@
+{
+  "name": "colvet-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ColVet Digital — API (Express + Prisma). Mismo stack que Psicole.",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch src/index.js",
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate",
+    "db:seed": "node --env-file-if-exists=.env prisma/seed.js",
+    "db:reset": "prisma db push --force-reset --skip-generate && node --env-file-if-exists=.env prisma/seed.js",
+    "setup": "prisma generate && prisma db push --skip-generate && node --env-file-if-exists=.env prisma/seed.js",
+    "test": "node --test tests/"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "prisma": "6.19.3"
+  }
+}
