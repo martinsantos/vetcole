@@ -51,10 +51,10 @@ export default function Servicios() {
       <section className="sec" id="conexion"><div className="wrap">
         <Kicker>03 · Cómo se conecta todo</Kicker><h2 style={{ marginTop: 6 }}>Un registro, cuatro lugares</h2>
         <div className="grid g4" style={{ marginTop: 16 }}>
-          <div className="card"><span className="mono tiny muted">VETERINARIO/A</span><h3 style={{ margin: '6px 0 4px' }}>Vacuna en el consultorio</h3><p className="small muted" style={{ margin: 0 }}>Registra la antirrábica con lote y sticker LUSCyF; queda firmada con su matrícula.</p></div>
-          <div className="card"><span className="mono tiny muted">FAMILIA</span><h3 style={{ margin: '6px 0 4px' }}>La ve en su app</h3><p className="small muted" style={{ margin: 0 }}>Libreta actualizada, próxima dosis con recordatorio y credencial en Wallet.</p></div>
-          <div className="card"><span className="mono tiny muted">MUNICIPIO</span><h3 style={{ margin: '6px 0 4px' }}>Suma a su cobertura</h3><p className="small muted" style={{ margin: 0 }}>Si el animal tiene credencial municipal, la vacuna cuenta en el panel de zoonosis.</p></div>
-          <div className="card"><span className="mono tiny muted">CUALQUIERA</span><h3 style={{ margin: '6px 0 4px' }}>La verifica con QR</h3><p className="small muted" style={{ margin: 0 }}>Un transporte, una guardería o un control escanea y ve que la firmó un matriculado vigente.</p></div>
+          <div className="card"><span className="mono tiny muted">Veterinario/a</span><h3 style={{ margin: '6px 0 4px' }}>Vacuna en el consultorio</h3><p className="small muted" style={{ margin: 0 }}>Registra la antirrábica con lote y sticker LUSCyF; queda firmada con su matrícula.</p></div>
+          <div className="card"><span className="mono tiny muted">Familia</span><h3 style={{ margin: '6px 0 4px' }}>La ve en su app</h3><p className="small muted" style={{ margin: 0 }}>Libreta actualizada, próxima dosis con recordatorio y credencial en Wallet.</p></div>
+          <div className="card"><span className="mono tiny muted">Municipio</span><h3 style={{ margin: '6px 0 4px' }}>Suma a su cobertura</h3><p className="small muted" style={{ margin: 0 }}>Si el animal tiene credencial municipal, la vacuna cuenta en el panel de zoonosis.</p></div>
+          <div className="card"><span className="mono tiny muted">Cualquiera</span><h3 style={{ margin: '6px 0 4px' }}>La verifica con QR</h3><p className="small muted" style={{ margin: 0 }}>Un transporte, una guardería o un control escanea y ve que la firmó un matriculado vigente.</p></div>
         </div>
         <div className="row" style={{ marginTop: 18 }}>
           <button className="btn btn-primary" onClick={() => probar('sofia.rios@demo.colvet', '/tutor')}>Ver la app de la familia →</button>

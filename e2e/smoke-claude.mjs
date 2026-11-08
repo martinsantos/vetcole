@@ -63,7 +63,7 @@ const asis = await api('POST', '/public/asistente', { pregunta: '¿hay guardia a
 ok(asis.status === 200 && /guardia/i.test(asis.body.data.respuesta), 'asistente responde (respaldo sin Claude)');
 
 // Pantallas de las 5 aplicaciones
-for (const [p, t] of [['/', 'Tablero de guardia'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'SIN COBERTURA'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
+for (const [p, t] of [['/', 'Tablero de guardia'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
 await page.click('.demobar nav a:has-text("Consultorio")'); await page.waitForTimeout(500);
 for (const p of ['/vet', '/vet/credencial', '/vet/establecimiento', '/vet/recetas', '/vet/consultorio', '/vet/consultorio/agenda', '/vet/consultorio/pacientes', `/vet/consultorio/pacientes/${luna.id}`, '/vet/consultorio/ventas', '/vet/consultorio/inventario', '/vet/consultorio/mensajes', '/vet/consultorio/reportes']) await go(p);
 await page.click('.demobar nav a:has-text("Colegio")'); await page.waitForTimeout(500);

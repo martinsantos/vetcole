@@ -24,7 +24,7 @@ export default function Login() {
         {sp.get('otro') && <div className="note">Esa sección es para otro rol. Elegí la cuenta correspondiente.</div>}
       </div>
       <div className="card login-card" style={{ padding: 24 }}>
-        <div className="tiny muted mono" style={{ marginBottom: 10 }}>CUENTAS DE LA DEMO · UN CLIC</div>
+        <div className="tiny muted mono" style={{ marginBottom: 10 }}>Cuentas de la demo · un clic</div>
         {(cuentas || []).map(c => (
           <button key={c.email} className="acct" style={wanted === c.rol ? { borderColor: 'var(--leaf)', background: 'var(--leaf-l)' } : undefined}
             onClick={() => enter(c.email, c.password).catch(err => toast(err.message, 'error'))}>

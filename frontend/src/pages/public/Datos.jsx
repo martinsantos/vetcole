@@ -50,7 +50,7 @@ export default function Datos() {
             <Kpi label="Castraciones" value={p.castraciones.toLocaleString('es-AR')} />
             <Kpi label="Mordeduras (municipios en servicio)" value={p.mordeduras} color="var(--bad)" />
           </div>
-          <div className="tiny muted mono" style={{ marginTop: 18 }}>ANTIRRÁBICAS POR MES · PERROS / GATOS</div>
+          <div className="tiny muted mono" style={{ marginTop: 18 }}>Antirrábicas por mes · perros / gatos</div>
           <VBars data={p.meses} keys={['perros', 'gatos']} />
         </>}
         <p className="tiny muted" style={{ margin: '8px 0 0' }}>Datos de la demo, calculados en vivo sobre las libretas firmadas.</p>

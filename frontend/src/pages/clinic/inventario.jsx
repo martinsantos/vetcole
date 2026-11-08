@@ -142,7 +142,7 @@ export function Proveedores() {
             <div className="row between"><Badge cls="b-grey">{p.rubro}</Badge>{p.saldo > 0 ? <Badge cls="b-warn">Debés {money(p.saldo)}</Badge> : <Badge cls="b-ok">Al día</Badge>}</div>
             <h3 style={{ margin: '8px 0 2px' }}>{p.nombre}</h3>
             <div className="tiny muted mono">CUIT {p.cuit} · {p.telefono}</div>
-            <div className="tiny muted mono" style={{ margin: '12px 0 4px' }}>ÚLTIMAS COMPRAS</div>
+            <div className="tiny muted mono" style={{ margin: '12px 0 4px' }}>Últimas compras</div>
             {!p.compras.length ? <div className="small muted">Sin compras.</div> : p.compras.map(c => <div key={c.id} className="row between small" style={{ padding: '4px 0' }}><span>{fdate(c.fecha)} · {c.comprobante}</span><b>{money(c.total)}</b></div>)}
             <div className="row" style={{ marginTop: 12, gap: 6 }}>
               <button className="btn btn-sm btn-primary" onClick={() => setCompra(p)}>Registrar compra</button>

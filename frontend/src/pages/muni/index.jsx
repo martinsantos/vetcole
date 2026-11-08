@@ -107,7 +107,7 @@ function NuevaCredencial({ open, onClose, onDone }) {
               <Field label="Microchip (opcional)"><input type="text" value={f.microchip} onChange={e => set('microchip', e.target.value.replace(/\D/g, ''))} /></Field>
             </div>
             <div className="row"><Switch checked={f.castrado} onChange={v => set('castrado', v)}>Castrado/a</Switch><Switch checked={f.peligroso} onChange={v => set('peligroso', v)}>Perro potencialmente peligroso</Switch></div>
-            <div className="tiny muted mono" style={{ margin: '10px 0 8px' }}>TUTOR/A</div>
+            <div className="tiny muted mono" style={{ margin: '10px 0 8px' }}>Tutor/a</div>
             <div className="grid g2" style={{ gap: 10 }}>
               <Field label="Nombre y apellido"><input type="text" value={f.tutor.nombre} onChange={e => setT('nombre', e.target.value)} /></Field>
               <Field label="DNI"><input type="text" value={f.tutor.dni} onChange={e => setT('dni', e.target.value.replace(/\D/g, ''))} /></Field>
@@ -383,7 +383,7 @@ export function Config({ onSaved }) {
           <p className="tiny muted" style={{ marginTop: 12 }}>La plataforma es la misma para todos los municipios; la credencial que ven los vecinos lleva el nombre, la sigla y el color de cada uno.</p>
         </div>
         <div>
-          <div className="tiny muted mono" style={{ marginBottom: 8 }}>VISTA PREVIA</div>
+          <div className="tiny muted mono" style={{ marginBottom: 8 }}>Vista previa</div>
           <CredCard animal={muestra} municipio={{ ...data, ...f }} nro={4217} estado={{ codigo: 'al_dia', etiqueta: 'Antirrábica al día' }} />
         </div>
       </div>

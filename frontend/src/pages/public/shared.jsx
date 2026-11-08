@@ -141,7 +141,7 @@ export function MapSection({ home, initialChip = 'all' }) {
   const slotLbl = p => { const d = new Date(p.inicio), tm = new Date(); tm.setDate(tm.getDate() + 1); return `${d.toDateString() === tm.toDateString() ? 'mañana' : d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric' })} ${p.hora}`; };
   const popup = e => {
     const p = next[e.codigo];
-    return `<div class="mono tiny muted">${e.tipo.toUpperCase()} · ${e.departamento.toUpperCase()}</div><h4>${e.nombre}</h4><div class="small muted">${e.direccion}</div><span class="badge ${statusCls(e.status)}" style="margin:6px 0">${e.status.label}</span>
+    return `<div class="mono tiny muted">${e.tipo} · ${e.departamento}</div><h4>${e.nombre}</h4><div class="small muted">${e.direccion}</div><span class="badge ${statusCls(e.status)}" style="margin:6px 0">${e.status.label}</span>
       <div class="row" style="gap:6px;margin-top:6px">${p ? `<button class="slotbtn" data-act="turno" data-c="${e.codigo}"><span>Próximo turno</span><b>${slotLbl(p)}</b></button>` : ''}${e.guardia ? `<a class="btn btn-sm btn-danger" href="tel:${e.telefono}">Llamar</a>` : ''}<button class="btn btn-sm" data-act="ficha" data-c="${e.codigo}">Ficha</button></div>`;
   };
   const onMapClick = ev => {
@@ -190,7 +190,7 @@ export function CertViajeModal({ libreta, evento, onClose }) {
   return (
     <Modal open onClose={onClose} title="">
       <div className="rx">
-        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>CERTIFICADO DE SALUD PARA VIAJAR</div><b className="mono">CV-{libreta.libreta}-{evento.fecha.slice(0, 10).replace(/-/g, '')}</b></div><img src={LOGO} alt="" /></div>
+        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>Certificado de salud para viajar</div><b className="mono">CV-{libreta.libreta}-{evento.fecha.slice(0, 10).replace(/-/g, '')}</b></div><img src={LOGO} alt="" /></div>
         <div className="rx-b">
           <p className="small" style={{ marginTop: 0 }}>Certifico que el animal descripto fue examinado en la fecha indicada y no presenta signos clínicos de enfermedades infectocontagiosas, encontrándose apto para viajar.</p>
           <div className="facts" style={{ padding: 0 }}>

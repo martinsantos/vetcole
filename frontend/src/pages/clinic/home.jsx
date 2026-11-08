@@ -19,7 +19,7 @@ function TurnoEstadoModal({ turno, onClose, onSaved }) {
         <div><span>Estado</span><TurnoBadge estado={turno.estado} /></div>
         {turno.notas && <div style={{ gridColumn: '1/-1' }}><span>Notas</span><b>{turno.notas}</b></div>}
       </div>
-      <div className="tiny muted mono" style={{ marginBottom: 6 }}>CAMBIAR ESTADO</div>
+      <div className="tiny muted mono" style={{ marginBottom: 6 }}>Cambiar estado</div>
       <div className="row" style={{ gap: 6 }}>
         {ESTADOS_TURNO.filter(e => e[0] !== turno.estado).map(([k, l]) => <AsyncBtn key={k} className={`btn btn-sm ${k === 'atendido' ? 'btn-primary' : ''}`} onClick={() => set(k)}>{l}</AsyncBtn>)}
       </div>
@@ -41,7 +41,7 @@ function NuevoTurnoModal({ open, onClose, onSaved, fecha }) {
   };
   return (
     <Modal open={open} onClose={onClose} title="Nuevo turno" subtitle="Se carga en la agenda como turno de mostrador">
-      <div className="tiny muted mono" style={{ marginBottom: 6 }}>PACIENTE</div>
+      <div className="tiny muted mono" style={{ marginBottom: 6 }}>Paciente</div>
       <PacientePicker value={pac} onChange={setPac} />
       <div className="grid g2" style={{ gap: 10 }}>
         <Field label="Servicio"><select value={f.servicioId} onChange={e => setF({ ...f, servicioId: e.target.value })}><option value="">Consulta (30 min)</option>{(servicios || []).map(s => <option key={s.id} value={s.id}>{s.nombre} · {s.duracionMin} min</option>)}</select></Field>
@@ -76,7 +76,7 @@ export function ClinicHome() {
       </div>
       <div className="grid" style={{ gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', marginTop: 16, alignItems: 'start' }}>
         <div className="card">
-          <div className="row between"><h3 style={{ margin: 0 }}>Turnos de hoy</h3><span className="tiny muted mono">CLIC PARA CAMBIAR ESTADO</span></div>
+          <div className="row between"><h3 style={{ margin: 0 }}>Turnos de hoy</h3><span className="tiny muted mono">Clic para cambiar estado</span></div>
           {!data.turnos.length ? <Empty>No hay turnos hoy.</Empty> : data.turnos.map(t => (
             <div key={t.id} className="cl-turno" style={{ cursor: 'pointer' }} onClick={() => setSel(t)}>
               <span className="hh">{ftime(t.inicio)}</span>
@@ -142,7 +142,7 @@ export function Agenda() {
       {error ? <ErrorBox error={error} onRetry={reload} /> : loading && !data ? <Spinner /> : (
         <div className="cal cl-cal" style={{ '--days': 6 }}>
           <div className="ch" />
-          {days.map(d => <div key={d} className={`ch ${d.toDateString() === today ? 'today' : ''}`}>{d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric' }).toUpperCase()}</div>)}
+          {days.map(d => <div key={d} className={`ch ${d.toDateString() === today ? 'today' : ''}`}>{d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric' })}</div>)}
           {HOURS.map(h => [
             <div key={`h${h}`} className="hr">{String(h).padStart(2, '0')}:00</div>,
             ...days.map(d => {

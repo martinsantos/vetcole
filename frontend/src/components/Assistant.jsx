@@ -28,7 +28,7 @@ export default function Assistant() {
             {msgs.map((m, i) => m.me ? <div key={i} className="msg me">{m.text}</div> : (
               <div key={i} className="msg bot">{m.respuesta}
                 {!!m.enlaces?.length && <div className="row" style={{ gap: 6, marginTop: 8 }}>{m.enlaces.map(l => <button key={l.to} className="btn btn-sm" onClick={() => { nav(l.to); setOpen(false); }}>{l.label} →</button>)}</div>}
-                <div className="tiny muted mono" style={{ marginTop: 6 }}>FUENTE: {String(m.fuente).toUpperCase()}</div>
+                <div className="tiny muted mono" style={{ marginTop: 6 }}>Fuente: {String(m.fuente)}</div>
               </div>
             ))}
             {busy && <div className="msg bot typing">···</div>}

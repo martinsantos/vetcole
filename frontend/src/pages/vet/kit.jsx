@@ -103,13 +103,13 @@ export function EstKit({ e, idPrefix = 'kit' }) {
   return (
     <div className="estgrid">
       <div>
-        <div className="tiny muted mono" style={{ marginBottom: 8 }}>CREDENCIAL DEL ESTABLECIMIENTO</div>
+        <div className="tiny muted mono" style={{ marginBottom: 8 }}>Credencial del establecimiento</div>
         <EstCredencial e={e} />
-        <div className="tiny muted mono" style={{ margin: '22px 0 8px' }}>OBLEA PARA LA PUERTA (10 × 10 cm)</div>
+        <div className="tiny muted mono" style={{ margin: '22px 0 8px' }}>Oblea para la puerta (10 × 10 cm)</div>
         <div className="row" style={{ alignItems: 'center', gap: 16 }}><Oblea e={e} /><div className="small muted" style={{ flex: 1, minWidth: 180 }}>Sticker resistente al sol para la puerta o la vidriera. Se entrega impreso al habilitar y se renueva con cada vencimiento.</div></div>
       </div>
       <div>
-        <div className="row between" style={{ marginBottom: 8 }}><span className="tiny muted mono">CARTEL PARA VIDRIERA (A4)</span><button className="btn btn-sm btn-primary" onClick={() => printOnly(pid)}>Imprimir cartel A4</button></div>
+        <div className="row between" style={{ marginBottom: 8 }}><span className="tiny muted mono">Cartel para vidriera (A4)</span><button className="btn btn-sm btn-primary" onClick={() => printOnly(pid)}>Imprimir cartel A4</button></div>
         <Poster e={e} id={pid} />
         <p className="tiny muted" style={{ marginTop: 10 }}>El QR siempre muestra los datos vigentes: si la habilitación vence o se suspende, el QR lo muestra al instante.</p>
       </div>
@@ -122,7 +122,7 @@ export function RecetaDoc({ rx, id }) {
   const p = rx.prescriptor || {};
   return (
     <div className="rx" id={id}>
-      <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>RECETA VETERINARIA ELECTRÓNICA</div><b className="mono">{rx.codigo}</b></div><img src={LOGO} alt="" /></div>
+      <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>Receta veterinaria electrónica</div><b className="mono">{rx.codigo}</b></div><img src={LOGO} alt="" /></div>
       <div className="rx-b">
         <div className="facts" style={{ padding: 0 }}>
           <div><span>Prescriptor/a</span><b>{p.titulo || '—'}</b><div className="tiny" style={{ color: 'var(--ok)' }}>✓ MP {p.mp} {p.vigente === false ? 'NO vigente' : 'vigente'}</div></div>

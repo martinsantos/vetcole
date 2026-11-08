@@ -38,9 +38,9 @@ export default function TurnoModal({ codigo, mp, open, onClose, preset }) {
       ) : (
         <>
           {ag.profesionales.length > 1 && <Field label="Profesional"><select value={pro} onChange={e => { setPro(Number(e.target.value)); setSlot(null); }}>{ag.profesionales.map(p => <option key={p.mp} value={p.mp}>{p.titulo} · {p.especialidad}</option>)}</select></Field>}
-          <div className="tiny muted mono" style={{ marginBottom: 6 }}>DÍA</div>
+          <div className="tiny muted mono" style={{ marginBottom: 6 }}>Día</div>
           <div className="days">{ag.dias.map((d, i) => { const x = new Date(d.fecha); return <div key={i} className={`day ${i === day ? 'on' : ''}`} onClick={() => { setDay(i); setSlot(null); }}>{x.toLocaleDateString('es-AR', { weekday: 'short' })}<b>{x.getDate()}</b>{x.toLocaleDateString('es-AR', { month: 'short' })}</div>; })}</div>
-          <div className="tiny muted mono" style={{ margin: '14px 0 6px' }}>HORARIOS DISPONIBLES</div>
+          <div className="tiny muted mono" style={{ margin: '14px 0 6px' }}>Horarios disponibles</div>
           <div className="slots">{ag.dias[day]?.slots.map(s => <div key={s.inicio} className={`slot ${s.libre ? '' : 'off'} ${slot === s.inicio ? 'on' : ''}`} onClick={() => s.libre && setSlot(s.inicio)}>{s.hora}</div>)}</div>
           <div className="grid g2" style={{ marginTop: 16, gap: 10 }}>
             <Field label="Servicio"><select value={f.servicioId} onChange={e => setF({ ...f, servicioId: e.target.value })}><option value="">Consulta general</option>{ag.servicios.map(s => <option key={s.id} value={s.id}>{s.nombre}</option>)}</select></Field>

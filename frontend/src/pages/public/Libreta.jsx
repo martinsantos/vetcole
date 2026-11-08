@@ -33,9 +33,9 @@ function Lookup() {
         </div>
       </div></section>
       <section className="sec"><div className="wrap"><div className="grid g3">
-        <div className="card"><span className="mono tiny muted">FAMILIAS</span><h3 style={{ margin: '6px 0 4px' }}>Siempre a mano</h3><p className="small muted" style={{ margin: 0 }}>Vacunas y desparasitaciones con recordatorio, aunque cambies de veterinaria o pierdas la libreta de papel.</p></div>
-        <div className="card"><span className="mono tiny muted">VETERINARIOS/AS</span><h3 style={{ margin: '6px 0 4px' }}>Emisión gratuita</h3><p className="small muted" style={{ margin: 0 }}>Cada matriculado/a la emite desde su consultorio digital o desde su propio software. Quien vacuna sin matrícula no puede emitirla.</p></div>
-        <div className="card"><span className="mono tiny muted">MUNICIPIOS</span><h3 style={{ margin: '6px 0 4px' }}>Datos confiables</h3><p className="small muted" style={{ margin: 0 }}>Cobertura antirrábica, castraciones y mordeduras por zona, con la credencial municipal del animal.</p></div>
+        <div className="card"><span className="mono tiny muted">Familias</span><h3 style={{ margin: '6px 0 4px' }}>Siempre a mano</h3><p className="small muted" style={{ margin: 0 }}>Vacunas y desparasitaciones con recordatorio, aunque cambies de veterinaria o pierdas la libreta de papel.</p></div>
+        <div className="card"><span className="mono tiny muted">Veterinarios/as</span><h3 style={{ margin: '6px 0 4px' }}>Emisión gratuita</h3><p className="small muted" style={{ margin: 0 }}>Cada matriculado/a la emite desde su consultorio digital o desde su propio software. Quien vacuna sin matrícula no puede emitirla.</p></div>
+        <div className="card"><span className="mono tiny muted">Municipios</span><h3 style={{ margin: '6px 0 4px' }}>Datos confiables</h3><p className="small muted" style={{ margin: 0 }}>Cobertura antirrábica, castraciones y mordeduras por zona, con la credencial municipal del animal.</p></div>
       </div></div></section>
     </>
   );

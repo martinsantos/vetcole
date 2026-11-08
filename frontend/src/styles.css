@@ -597,3 +597,34 @@ button:disabled{cursor:not-allowed}
 .map-offline{background-color:#eef0ea!important;background-image:linear-gradient(rgba(45,107,90,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(45,107,90,.07) 1px,transparent 1px);background-size:28px 28px}
 .dep-label{font:600 11px var(--mono);color:#6b6459;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;transform:translate(-50%,-50%);pointer-events:none}
 .zona-label{font-size:12.5px;font-weight:700;color:#4f6b62}
+
+/* ===== UI simple: una sola letra, sin mayúsculas forzadas ni etiquetas técnicas ===== */
+:root{--mono:var(--sans)}
+*{text-transform:none!important;letter-spacing:normal!important}
+h1,h2,h3,.acred-name,.pt-name,.stats b,.kpi b,.cred .nm{letter-spacing:-.02em!important}
+pre.json,code{font-family:ui-monospace,Menlo,monospace}
+.mono{font-variant-numeric:tabular-nums}
+.kicker{font-size:13px;font-weight:600;color:var(--ink-3);gap:0}
+.kicker:before{display:none}
+.badge{font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px}
+.chip{font-size:13px;border-radius:999px;padding:5px 12px}
+.btn{border-radius:6px}
+.tbl th{font-size:12.5px;font-weight:600;color:var(--ink-3)}
+.infobar{font-size:12.5px}
+.demobar nav a,.seg button{font-size:13px}
+.tabs a{font-size:14px}
+.hph,.hfoot{font-size:13px}
+.hph span:first-child{font-weight:600}
+.side-sec{font-size:12.5px;font-weight:600}
+.board{font-family:var(--sans)}
+.bhead .lbl{font-size:13px;color:var(--leaf-2)}
+.bsum{font-size:13px}
+.bcols{font-size:12px}
+.bst{font-size:13px;font-weight:600}
+.bbtn{font-size:12.5px;border-radius:6px}
+.bclock{font-variant-numeric:tabular-nums}
+.mi-s,.facts span,.rsrc,.tl .dt,.cal .hr,.cal .ch,.rot .rh{font-size:12.5px}
+.slotbtn span{font-size:11px}
+.rx-tipo,.estcred .ectag,.dep-label{font-size:12.5px}
+.evk{font-size:10.5px;border-radius:6px}
+.av{font-weight:700}

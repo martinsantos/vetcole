@@ -14,7 +14,7 @@ export default function TutorApp() {
   return (
     <div className="tutor-bg">
       <div className="phone-frame">
-        <div className="tapp-top"><b>ColVet · Mis mascotas</b><span className="tiny mono" style={{ opacity: 0.7 }}>APP TUTOR/A</span></div>
+        <div className="tapp-top"><b>ColVet · Mis mascotas</b><span className="tiny mono" style={{ opacity: 0.7 }}>App tutor/a</span></div>
         <Routes>
           <Route index element={<T.Mascotas />} />
           <Route path="mascotas/:id" element={<T.Mascota />} />

@@ -228,7 +228,7 @@ export function Establecimiento() {
           <Kpi label="Equipo" value={e.equipo.length} sub="profesionales vinculados" />
         </div>
         {e.habilitacion ? <EstKit e={e} idPrefix="est" /> : <div className="note">Este establecimiento todavía no tiene la habilitación cargada.</div>}
-        <div className="tiny muted mono" style={{ margin: '22px 0 8px' }}>EQUIPO · CREDENCIALES VINCULADAS</div>
+        <div className="tiny muted mono" style={{ margin: '22px 0 8px' }}>Equipo · credenciales vinculadas</div>
         <div className="grid g2">{e.equipo.map(v => (
           <div key={v.mp} className="card flat row" style={{ padding: '10px 12px', flexWrap: 'nowrap' }}>
             <Av style={{ width: 36, height: 36, fontSize: 12 }}>{v.titulo.split(' ').slice(1, 3).map(w => w[0]).join('')}</Av>

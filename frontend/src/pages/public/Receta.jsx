@@ -8,7 +8,7 @@ import { fdate } from '../../lib/format.js';
 export function RecetaDoc({ rx }) {
   return (
     <div className="rx">
-      <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>RECETA VETERINARIA ELECTRÓNICA</div><b className="mono">{rx.codigo}</b></div><img src={LOGO} alt="" /></div>
+      <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>Receta veterinaria electrónica</div><b className="mono">{rx.codigo}</b></div><img src={LOGO} alt="" /></div>
       <div className="rx-b">
         <div className="facts" style={{ padding: 0 }}>
           <div><span>Prescriptor/a</span><b>{rx.prescriptor.titulo}</b><div className="tiny" style={{ color: rx.prescriptor.vigente ? 'var(--ok)' : 'var(--bad)' }}>{rx.prescriptor.vigente ? '✓' : '✕'} MP {rx.prescriptor.mp} {rx.prescriptor.vigente ? 'vigente' : 'no vigente'}</div></div>

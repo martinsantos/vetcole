@@ -24,7 +24,7 @@ const visit = async (path, expectText) => {
 };
 
 // 1) Sitio público
-for (const [p, t] of [['/', 'Tablero de guardia'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'SIN COBERTURA'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
+for (const [p, t] of [['/', 'Tablero de guardia'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
 // 2) Tutora reserva un turno online → aparece en la agenda del consultorio
 const tVet = (await tokenOf('lucia.ferreyra@demo.colvet')).token;

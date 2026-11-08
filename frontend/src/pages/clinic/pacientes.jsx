@@ -147,7 +147,7 @@ function CertModal({ paciente, ev, onClose }) {
   return (
     <Modal open onClose={onClose}>
       <div className="rx">
-        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>CERTIFICADO DE SALUD PARA VIAJAR</div><b className="mono">CV-{paciente.libreta}-{isoDate(ev.fecha).replace(/-/g, '')}</b></div><img src={LOGO} alt="" /></div>
+        <div className="rx-h"><div><div className="mono tiny" style={{ opacity: 0.8 }}>Certificado de salud para viajar</div><b className="mono">CV-{paciente.libreta}-{isoDate(ev.fecha).replace(/-/g, '')}</b></div><img src={LOGO} alt="" /></div>
         <div className="rx-b">
           <p className="small" style={{ marginTop: 0 }}>Certifico que el animal fue examinado y no presenta signos clínicos de enfermedades infectocontagiosas, encontrándose apto para viajar.</p>
           <div className="facts" style={{ padding: 0 }}>
@@ -212,7 +212,7 @@ export function Paciente() {
         </div>
         <div>
           <div className="card" style={{ marginBottom: 14 }}>
-            <div className="tiny muted mono" style={{ marginBottom: 10 }}>REGISTRAR · SE FIRMA CON TU MATRÍCULA</div>
+            <div className="tiny muted mono" style={{ marginBottom: 10 }}>Registrar · se firma con tu matrícula</div>
             <div className="regbar">{Object.entries(EVT).filter(([k]) => !(p.especie === 'Equino' && k === 'cas')).map(([k, v]) => <button key={k} className="btn btn-sm" onClick={() => setReg(k)}><span className="evk sm" style={{ background: v[2] }}>{v[0]}</span>{v[1]}</button>)}</div>
           </div>
           <div className="card">

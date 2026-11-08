@@ -48,7 +48,7 @@ export function Mensajes() {
           <div className="card">
             {!sel ? <Empty>Elegí una conversación.</Empty> : (
               <>
-                <div className="row between" style={{ marginBottom: 10 }}><h3 style={{ margin: 0 }}>{nombreSel}</h3><span className="tiny muted mono">APP DEL TUTOR · WHATSAPP</span></div>
+                <div className="row between" style={{ marginBottom: 10 }}><h3 style={{ margin: 0 }}>{nombreSel}</h3><span className="tiny muted mono">App del tutor · WhatsApp</span></div>
                 <div className="chat-thread" ref={box}>
                   {!msgs ? <Spinner /> : !msgs.length ? <Empty>Todavía no hay mensajes. Escribí el primero.</Empty> : msgs.map(m => (
                     <div key={m.id} className={`msg ${m.desdeClinica ? 'me' : 'bot'}`}>{m.texto}<div className="tiny" style={{ opacity: 0.6, marginTop: 4 }}>{fdt(m.fecha)}</div></div>
