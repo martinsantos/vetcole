@@ -26,6 +26,11 @@ const visit = async (path, expectText) => {
 // 1) Sitio público
 for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
+// Buscador de la portada: profesionales y establecimientos en la misma búsqueda
+await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
+await page.fill('.bsearch input', 'godoy cruz'); await page.waitForTimeout(300);
+{ const t = await page.textContent('.bres'); ok(t.includes('Profesionales') && t.includes('AsisVet 24 hs.'), 'buscador de la portada: profesionales y establecimientos'); }
+
 // 2) Tutora reserva un turno online → aparece en la agenda del consultorio
 const tVet = (await tokenOf('lucia.ferreyra@demo.colvet')).token;
 const ag = await api('/public/agenda/e1');

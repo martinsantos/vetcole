@@ -1,13 +1,12 @@
-// Portada institucional del Colegio: matriculados, noticias y agenda, comunidad e institucional.
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { url } from '../../lib/base.js';
-import { Link, useNavigate } from 'react-router-dom';
-import { api, useApi } from '../../lib/api.js';
-import { norm, fdate } from '../../lib/format.js';
-import { VetModal, EstModal, useTurno, useCached } from './shared.jsx';
+// Portada institucional del Colegio: buscador general, matriculados, noticias y agenda, comunidad e institucional.
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useApi } from '../../lib/api.js';
+import { fdate } from '../../lib/format.js';
+import { VetModal, EstModal, useTurno } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
-import { TRAMITES } from './Info.jsx';
 import { DemoLink } from './IdentidadAnimal.jsx';
+import Buscador from './Buscador.jsx';
 
 export function NewsCard({ n }) {
   return (
@@ -15,37 +14,6 @@ export function NewsCard({ n }) {
       <span className="small muted">{fdate(n.fecha)}</span>
       <h3>{n.titulo}</h3>
       <p className="muted small">{n.resumen}</p>
-    </div>
-  );
-}
-
-function Search({ onVet, onEst }) {
-  const vets = useCached('/public/vets'), ests = useCached('/public/establecimientos');
-  const [q, setQ] = useState(''), [open, setOpen] = useState(false);
-  const box = useRef(null), nav = useNavigate();
-  useEffect(() => { const k = e => { if (box.current && !box.current.contains(e.target)) setOpen(false); }; document.addEventListener('mousedown', k); return () => document.removeEventListener('mousedown', k); }, []);
-  const n = norm(q.trim());
-  const res = useMemo(() => n.length < 2 ? null : {
-    v: (vets || []).filter(v => norm(`${v.nombre} ${v.mp} ${v.departamento} ${v.especialidades.join(' ')} ${v.especies.join(' ')}`).includes(n)).slice(0, 5),
-    e: (ests || []).filter(e => norm(`${e.nombre} ${e.departamento} ${e.tipo} ${e.direccion} ${e.especies.join(' ')}`).includes(n)).slice(0, 5),
-    t: TRAMITES.filter(t => norm(`${t.t} ${t.d}`).includes(n)).slice(0, 3),
-  }, [n, vets, ests]);
-  const empty = res && !res.v.length && !res.e.length && !res.t.length;
-  return (
-    <div className="search-xl" ref={box}>
-      <span className="sx-ic">⌕</span>
-      <input type="search" value={q} onChange={e => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} autoComplete="off" placeholder="Probá: «exóticos», «Tunuyán», «equinos», «habilitación» o un N° de matrícula" />
-      {open && res && (
-        <div className="sresults">
-          {!!res.v.length && <div className="grp">Profesionales</div>}
-          {res.v.map(v => <a key={v.mp} href="#" onClick={e => { e.preventDefault(); setOpen(false); onVet(v); }}><div className="av" style={{ width: 34, height: 34, fontSize: 12 }}>{v.nombre.split(' ').map(w => w[0]).slice(0, 2).join('')}</div><div><b>{v.titulo}</b><div className="tiny muted">MP {v.mp} · {v.especialidades[0]} · {v.departamento}</div></div></a>)}
-          {!!res.e.length && <div className="grp">Establecimientos</div>}
-          {res.e.map(x => <a key={x.codigo} href="#" onClick={e => { e.preventDefault(); setOpen(false); onEst(x); }}><div className="av" style={{ width: 34, height: 34 }}>⌂</div><div><b>{x.nombre}</b><div className="tiny muted">{x.tipo} · {x.departamento}{x.guardia ? ` · guardia ${x.guardia}` : ''}</div></div></a>)}
-          {!!res.t.length && <div className="grp">Trámites</div>}
-          {res.t.map(t => <a key={t.k} href={url('/tramites')} onClick={e => { e.preventDefault(); nav('/tramites'); }}><div className="av" style={{ width: 34, height: 34 }}>⇄</div><div><b>{t.t}</b></div></a>)}
-          {empty && <div className="empty">Sin resultados para «{q}»</div>}
-        </div>
-      )}
     </div>
   );
 }
@@ -83,19 +51,10 @@ export default function Home() {
   const t = useTurno();
   return (
     <>
-      <section className="ihero"><div className="wrap ihero-grid">
-        <div>
-          <p className="ihero-org">{BRAND.nombre}</p>
-          <h1>Ejercicio profesional responsable, al servicio de la salud animal y de la comunidad.</h1>
-          <p className="lead">El Colegio matricula a los médicos veterinarios de la provincia, vela por el cumplimiento del Código de Ética y acompaña la formación continua de sus colegiados.</p>
-          <div className="row" style={{ gap: 10 }}>
-            <Link className="btn btn-primary btn-lg" to="/ingresar">Soy matriculado/a</Link>
-            <Link className="btn btn-lg" to="/directorio">Busco un veterinario/a</Link>
-          </div>
-        </div>
-        <figure className="foto-slot" aria-label="Espacio para foto institucional">
-          <div><b>Foto institucional</b><span>Sede, actos o capacitaciones del Colegio</span></div>
-        </figure>
+      <section className="ihero ihero-busca"><div className="wrap">
+        <p className="ihero-org">{BRAND.nombre}</p>
+        <h1>Al servicio de la salud animal y de la comunidad</h1>
+        <Buscador onVet={setVet} onEst={setEst} onTurno={v => { if (!t.forVet(v)) setVet(v); }} />
       </div></section>
 
       <section className="sec"><div className="wrap">
@@ -127,8 +86,7 @@ export default function Home() {
 
       <section className="sec"><div className="wrap">
         <div className="sec-head"><h2>Para la comunidad</h2></div>
-        <Search onVet={setVet} onEst={setEst} />
-        <div className="grid g4" style={{ marginTop: 16 }}>
+        <div className="grid g4">
           <Link to="/directorio" className="card com-card"><h3>Buscar un veterinario/a</h3><p className="small muted">Por especialidad, especie y departamento. Sólo matrículas vigentes.</p><span className="lnk">Ir al directorio →</span></Link>
           <GuardiasHoy />
           <Link to="/verificar" className="card com-card"><h3>Verificar una matrícula</h3><p className="small muted">Comprobá que quien atiende a tu animal esté matriculado/a.</p><span className="lnk">Verificar →</span></Link>
@@ -138,11 +96,17 @@ export default function Home() {
 
       <section className="sec sec-inst"><div className="wrap">
         <div className="sec-head"><h2>El Colegio</h2><Link className="lnk" to="/institucional">Institucional →</Link></div>
-        <div className="grid g4">
-          <Link to="/institucional" className="inst-item"><h3>Autoridades</h3><p className="small">Comisión Directiva, Tribunal de Disciplina y Tribunal Revisor de Cuentas.</p></Link>
-          <Link to="/institucional" className="inst-item"><h3>Legislación</h3><p className="small">{BRAND.ley}, estatuto y Código de Ética.</p></Link>
-          <Link to="/identidad-animal" className="inst-item"><h3>Normativa sanitaria</h3><p className="small">Libreta sanitaria, identificación animal y protocolos.</p></Link>
-          <Link to="/institucional" className="inst-item"><h3>Subcomisiones</h3><p className="small">Formación continua, pequeños animales, rumiantes, equinos, salud pública.</p></Link>
+        <div className="inst-grid">
+          <figure className="foto-slot" aria-label="Espacio para foto institucional"><div><b>Foto institucional</b><span>Sede, actos o capacitaciones del Colegio</span></div></figure>
+          <div>
+            <p className="inst-lead">El Colegio matricula a los médicos veterinarios de la provincia, vela por el cumplimiento del Código de Ética y acompaña la formación continua de sus colegiados.</p>
+            <div className="grid g2">
+              <Link to="/institucional" className="inst-item"><h3>Autoridades</h3><p className="small">Comisión Directiva, Tribunal de Disciplina y Tribunal Revisor de Cuentas.</p></Link>
+              <Link to="/institucional" className="inst-item"><h3>Legislación</h3><p className="small">{BRAND.ley}, estatuto y Código de Ética.</p></Link>
+              <Link to="/identidad-animal" className="inst-item"><h3>Normativa sanitaria</h3><p className="small">Libreta sanitaria, identificación animal y protocolos.</p></Link>
+              <Link to="/institucional" className="inst-item"><h3>Subcomisiones</h3><p className="small">Formación continua, pequeños animales, rumiantes, equinos, salud pública.</p></Link>
+            </div>
+          </div>
         </div>
       </div></section>
 
