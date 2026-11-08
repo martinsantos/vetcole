@@ -5,6 +5,7 @@ import { useApi } from '../../lib/api.js';
 import { fdate } from '../../lib/format.js';
 import { VetModal, EstModal, useTurno } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
+import heroFoto from '../../assets/hero-veterinaria.jpg';
 import { COLEGIO } from '../../content/colegio.js';
 import { useNoticias, imgColegio } from '../../lib/noticias.js';
 import { DemoLink } from './IdentidadAnimal.jsx';
@@ -60,11 +61,16 @@ export default function Home() {
   const t = useTurno();
   return (
     <>
-      <section className="ihero ihero-busca"><div className="wrap">
-        <p className="ihero-org">{BRAND.nombre}</p>
-        <h1>Al servicio de la salud animal y de la comunidad</h1>
-        <Buscador onVet={setVet} onEst={setEst} onTurno={v => { if (!t.forVet(v)) setVet(v); }} />
-      </div></section>
+      <section className="ihero-foto">
+        <img className="ihf-img" src={heroFoto} alt="" />
+        <div className="wrap ihf-in">
+          <p className="ihero-org">{BRAND.nombre}</p>
+          <h1>Al servicio de la salud animal y de la comunidad</h1>
+          <p className="ihf-lead">Profesionales matriculados que cuidan a los animales y a sus familias, con ética, formación continua y compromiso con la salud pública.</p>
+          <Buscador onVet={setVet} onEst={setEst} onTurno={v => { if (!t.forVet(v)) setVet(v); }} />
+        </div>
+        <span className="ihf-credit">Foto: Unsplash</span>
+      </section>
 
       <section className="sec"><div className="wrap">
         <div className="sec-head"><h2>Matriculados</h2><Link className="lnk" to="/tramites">Todos los trámites →</Link></div>
