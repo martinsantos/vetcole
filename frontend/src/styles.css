@@ -628,3 +628,82 @@ pre.json,code{font-family:ui-monospace,Menlo,monospace}
 .rx-tipo,.estcred .ectag,.dep-label{font-size:12.5px}
 .evk{font-size:10.5px;border-radius:6px}
 .av{font-weight:700}
+
+/* ===== Sitio institucional del Colegio ===== */
+.site-inst{--serif-i:"Source Serif 4",Georgia,"Times New Roman",serif;background:#faf8f6}
+.site-inst h1,.site-inst h2,.site-inst h3{font-family:var(--serif-i);font-weight:600;letter-spacing:-.01em!important;color:#1e1a1c}
+.site-inst h1{font-size:clamp(32px,4.2vw,50px);line-height:1.1}
+.site-inst h2{font-size:clamp(24px,2.6vw,30px);margin:0}
+.site-inst h3{font-size:19px;margin:0 0 6px}
+.site-inst .btn-primary{background:var(--plum);border-color:var(--plum);color:#fff}
+.site-inst .btn-primary:hover{background:var(--plum-d);border-color:var(--plum-d)}
+.btn-lg{padding:12px 20px;font-size:15px}
+.site-inst .infobar{background:var(--plum-d);color:#f1e3ee;font-size:13px}
+.site-inst .infobar .wrap{gap:22px;min-height:36px}
+.site-inst .infobar a{color:#fff}
+.ib-right{margin-left:auto;display:flex;gap:18px}
+.site-inst .top{background:#fff;border-bottom:1px solid #ece4e9}
+.site-inst .top .wrap{min-height:88px}
+.site-inst .top .logo img{height:54px}
+.site-inst .top nav.main a{font-size:15px;font-weight:500;color:#3a3236;margin:0 9px;padding:30px 0 28px;border-bottom:3px solid transparent}
+.site-inst .top nav.main a.on,.site-inst .top nav.main a:hover{color:var(--plum);border-color:var(--plum)}
+@media(max-width:980px){.site-inst .top nav.main a{padding:10px 0;border-bottom:0}}
+.ihero{background:#fff;border-bottom:1px solid #ece4e9;padding:56px 0}
+.ihero-sm{padding:44px 0 36px}
+.ihero-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center}
+@media(max-width:900px){.ihero-grid{grid-template-columns:1fr}}
+.ihero-org{color:var(--plum);font-weight:600;font-size:15px;margin:0 0 12px;border-left:3px solid var(--plum);padding-left:10px}
+.ihero .lead{font-size:18px;color:#4a4246;max-width:620px;margin:16px 0 24px}
+.foto-slot{margin:0;aspect-ratio:4/3;border-radius:10px;background:linear-gradient(135deg,#f3e7ef,#e6d3df);border:1px dashed #c9a9bf;display:grid;place-items:center;text-align:center;color:var(--plum-d)}
+.foto-slot b{display:block;font-family:"Source Serif 4",Georgia,serif;font-size:20px;font-weight:600}
+.foto-slot span{font-size:14px;opacity:.8}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #e6dde2}
+.sec-alt{background:#f3eef1}
+.site-inst .lnk{color:var(--plum);font-weight:600;font-size:14px}
+.site-inst .lnk:hover{color:var(--plum-d);text-decoration:underline}
+.accesos{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.acceso{display:flex;flex-direction:column;gap:4px;color:var(--ink);border-top:3px solid var(--plum);padding:16px}
+.acceso:hover{border-color:var(--plum);box-shadow:0 4px 16px rgba(80,20,70,.08)}
+.acceso b{font-size:16px}
+@media(max-width:1000px){.accesos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.accesos{grid-template-columns:1fr}}
+.news-grid{display:grid;grid-template-columns:2fr 1fr;gap:40px}
+@media(max-width:900px){.news-grid{grid-template-columns:1fr}}
+.news-list{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.news-main{grid-column:1/-1;padding:22px;margin-bottom:12px}
+.news-main h3{font-size:24px;margin:6px 0 8px}
+.news-main p{margin:0}
+.news-item{padding:14px 0;border-top:1px solid #e3d9df}
+.news-item h3{font-size:17px;margin:4px 0 0}
+@media(max-width:620px){.news-list{grid-template-columns:1fr}}
+.agenda{list-style:none;margin:0;padding:0}
+.agenda li{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #e3d9df}
+.agenda li>div:last-child{display:flex;flex-direction:column;gap:2px}
+.ag-date{width:56px;flex:none;text-align:center;background:#fff;border:1px solid #e3d9df;border-radius:8px;padding:6px 0}
+.ag-date b{display:block;font-family:"Source Serif 4",Georgia,serif;font-size:24px;color:var(--plum);line-height:1}
+.ag-date span{font-size:12px;color:var(--ink-3)}
+.com-card{display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.com-card:hover{border-color:var(--plum)}
+.com-card p{margin:0 0 8px;flex:1}
+.site-inst .search-xl{margin-top:0;max-width:none}
+.site-inst .search-xl input{border:1px solid #d9ccd4;border-radius:8px;background:#fff;box-shadow:none}
+.site-inst .search-xl input:focus{border-color:var(--plum)}
+.sec-inst{background:#fff;border-top:1px solid #ece4e9}
+.sec-inst h3{color:var(--plum-d)}
+.inst-item{display:block;color:inherit;padding:4px 0}
+.sec-inst .inst-item p{color:var(--ink-2);margin:0}
+.inst-item:hover h3{text-decoration:underline}
+.autoridad{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:20px}
+.aut-foto{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#f3e7ef,#e6d3df);border:1px dashed #c9a9bf;margin-bottom:8px}
+.doc-list{list-style:none;padding:0;margin:12px 0 14px;border-top:1px solid #e3d9df}
+.doc-list li{display:flex;justify-content:space-between;gap:10px;padding:12px 2px;border-bottom:1px solid #e3d9df}
+.site-inst footer.site{background:#2a1426;color:#d8c3d3;margin-top:0;padding:44px 0 22px}
+.site-inst footer.site .cols{grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
+.site-inst footer.site .cols a{display:block;margin:0 0 8px;color:#f0dceb}
+.site-inst footer.site h4{font-family:"Source Serif 4",Georgia,serif;font-size:17px;font-weight:600}
+.foot-logo{background:#fff;border-radius:8px;padding:8px 12px;display:inline-block;margin-bottom:12px}
+.foot-logo img{height:40px;display:block}
+.foot-name{color:#fff;font-family:"Source Serif 4",Georgia,serif;font-size:17px;margin:0 0 4px}
+.site-inst footer.site p{margin:0 0 10px;font-size:14px}
+.foot-legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:14px;font-size:12.5px}
+@media(max-width:800px){.site-inst footer.site .cols{grid-template-columns:1fr 1fr}}

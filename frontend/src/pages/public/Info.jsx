@@ -1,4 +1,5 @@
 // Páginas informativas y de trámites del sitio público.
+import { BRAND } from '../../lib/brand.js';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
@@ -96,16 +97,37 @@ export function Inscripcion() {
 }
 
 export function Institucional() {
+  const cargos = ['Presidencia', 'Vicepresidencia', 'Secretaría', 'Tesorería'];
   return (
-    <section className="sec" style={{ paddingTop: 30 }}><div className="wrap">
-      <Kicker>Institucional</Kicker><h1 style={{ fontSize: 36, marginTop: 6 }}>Colegio de Médicos Veterinarios de Mendoza</h1>
-      <div className="grid g2" style={{ marginTop: 16 }}>
-        <div className="card"><h3>Sobre el Colegio</h3><p className="small">El Colegio de Médicos Veterinarios de Mendoza regula la actividad veterinaria en la provincia. Lo crea y regula la Ley de Colegiatura Obligatoria 7825. Matricula a quienes ejercen, aplica y hace cumplir el Código de Ética, brega por buenas condiciones de trabajo, contribuye al cuidado de la salud de la comunidad y promueve la formación continua.</p></div>
-        <div className="card"><h3>Gobierno</h3><div className="grid g2" style={{ gap: 10 }}>{['Asamblea', 'Comisión Directiva', 'Tribunal de Disciplina', 'Tribunal Revisor'].map(x => <div key={x} className="card flat" style={{ padding: 12 }}><b className="small">{x}</b><div className="tiny muted">Integrantes, actas y resoluciones cargadas desde la administración</div></div>)}</div></div>
-        <div className="card"><h3>Legislación vigente</h3><ul className="small" style={{ paddingLeft: 18, margin: 0 }}><li>Ley provincial N° 7825 de Colegiatura Obligatoria</li><li>Decreto reglamentario 1958/11</li><li>Código de Ética</li><li>Reglamento de especialidades</li><li>Normativa de habilitación de establecimientos</li></ul></div>
-        <div className="card"><h3>Subcomisiones</h3><div className="row" style={{ gap: 6 }}>{['Formación Continua', 'Caninos y Felinos', 'Rumiantes', 'Equinos', 'Exóticos y No Convencionales', 'Salud Pública, Zoonosis y Tenencia Responsable', 'Jóvenes'].map(s => <span key={s} className="chip">{s}</span>)}</div></div>
-      </div>
-    </div></section>
+    <>
+      <section className="ihero ihero-sm"><div className="wrap">
+        <p className="ihero-org">Institucional</p>
+        <h1>{BRAND.nombre}</h1>
+        <p className="lead">Creado por la ley de colegiatura obligatoria, el Colegio matricula a quienes ejercen la medicina veterinaria en la provincia, aplica el Código de Ética, defiende las condiciones de trabajo de sus colegiados y contribuye a la salud de la comunidad.</p>
+      </div></section>
+      <section className="sec"><div className="wrap">
+        <div className="sec-head"><h2>Comisión Directiva</h2></div>
+        <div className="grid g4">{cargos.map(c => <div key={c} className="card autoridad"><div className="aut-foto" aria-hidden="true" /><b>{c}</b><span className="small muted">Nombre a cargar desde la administración</span></div>)}</div>
+        <div className="grid g3" style={{ marginTop: 16 }}>
+          {[['Asamblea', 'Órgano máximo del Colegio. Aprueba balances, cuotas y reglamentos.'], ['Tribunal de Disciplina', 'Juzga las faltas al Código de Ética y al ejercicio profesional.'], ['Tribunal Revisor de Cuentas', 'Controla la administración y los estados contables.']].map(([t, d]) => <div key={t} className="inst-item"><h3>{t}</h3><p className="small">{d}</p></div>)}
+        </div>
+      </div></section>
+      <section className="sec sec-alt"><div className="wrap grid g2" style={{ alignItems: 'start' }}>
+        <div>
+          <h2>Legislación</h2>
+          <ul className="doc-list">{[BRAND.ley, 'Estatuto del Colegio', 'Código de Ética', 'Reglamento de especialidades', 'Normativa de habilitación de establecimientos'].map(d => <li key={d}><span>{d}</span><span className="small muted">PDF</span></li>)}</ul>
+          <p className="small"><Link className="lnk" to="/identidad-animal">Normativa sanitaria e identificación animal →</Link></p>
+        </div>
+        <div>
+          <h2>Subcomisiones</h2>
+          <ul className="doc-list">{['Formación Continua', 'Caninos y Felinos', 'Rumiantes', 'Equinos', 'Exóticos y No Convencionales', 'Salud Pública, Zoonosis y Tenencia Responsable', 'Jóvenes Profesionales'].map(d => <li key={d}><span>{d}</span></li>)}</ul>
+        </div>
+      </div></section>
+      {!BRAND.demo && <section className="sec"><div className="wrap">
+        <h2>Sede y atención</h2>
+        <div className="card" style={{ maxWidth: 560 }}><p style={{ margin: 0 }}>{BRAND.sede}<br />{BRAND.horario}<br />{BRAND.tel} · {BRAND.mail}</p></div>
+      </div></section>}
+    </>
   );
 }
 

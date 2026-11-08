@@ -21,7 +21,7 @@ await page.route(/^https?:\/\/(?!localhost)/, r => (/fonts\.(googleapis|gstatic)
 await page.goto(URL0);
 await page.waitForFunction(() => window.__colvetDemo && window.__colvetNav, null, { timeout: 15000 });
 const t0 = Date.now();
-await page.waitForFunction(() => document.body.innerText.includes('Tablero de guardia'), null, { timeout: 20000 });
+await page.waitForFunction(() => document.body.innerText.includes('Guardias de hoy'), null, { timeout: 20000 });
 console.log(`   primera carga con seed: ${Date.now() - t0} ms`);
 const api = (method, p, body, token) => page.evaluate(([method, p, body, token]) => {
   const [path, qs] = p.split('?');
@@ -63,7 +63,7 @@ const asis = await api('POST', '/public/asistente', { pregunta: '¿hay guardia a
 ok(asis.status === 200 && /guardia/i.test(asis.body.data.respuesta), 'asistente responde (respaldo sin Claude)');
 
 // Pantallas de las 5 aplicaciones
-for (const [p, t] of [['/', 'Tablero de guardia'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
 await page.click('.demobar nav a:has-text("Consultorio")'); await page.waitForTimeout(500);
 for (const p of ['/vet', '/vet/credencial', '/vet/establecimiento', '/vet/recetas', '/vet/consultorio', '/vet/consultorio/agenda', '/vet/consultorio/pacientes', `/vet/consultorio/pacientes/${luna.id}`, '/vet/consultorio/ventas', '/vet/consultorio/inventario', '/vet/consultorio/mensajes', '/vet/consultorio/reportes']) await go(p);
 await page.click('.demobar nav a:has-text("Colegio")'); await page.waitForTimeout(500);
@@ -82,7 +82,7 @@ ok(!(await api('GET', '/public/libretas/MZA-000231')).body.data.eventos.some(e =
 // Celular
 const m = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await m.route(/^https?:\/\/(?!localhost)/, r => (/fonts\.(googleapis|gstatic)/.test(r.request().url()) ? r.continue() : r.abort()));
-await m.goto(URL0); await m.waitForFunction(() => document.body.innerText.includes('Tablero de guardia'), null, { timeout: 20000 });
+await m.goto(URL0); await m.waitForFunction(() => document.body.innerText.includes('Guardias de hoy'), null, { timeout: 20000 });
 ok(!(await m.evaluate(() => document.documentElement.scrollWidth > 392)), 'celular 390 px sin scroll horizontal');
 if (process.env.SHOTS) { await page.evaluate(() => window.__colvetNav('/')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-home.png' }); await page.evaluate(() => window.__colvetNav('/mapa')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-mapa.png' }); }
 

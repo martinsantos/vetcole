@@ -1,14 +1,13 @@
-// Home del sitio público: búsqueda, perfiles, guardias y turnos, cómo se conectan los servicios, normativa, mapa y novedades.
+// Portada institucional del Colegio: matriculados, noticias y agenda, comunidad e institucional.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { url } from '../../lib/base.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
-import Board from '../../components/Board.jsx';
 import { norm, fdate } from '../../lib/format.js';
-import { MapSection, UrgenciaModal, VetModal, EstModal, useTurno, useCached } from './shared.jsx';
+import { VetModal, EstModal, useTurno, useCached } from './shared.jsx';
+import { BRAND } from '../../lib/brand.js';
 import { TRAMITES } from './Info.jsx';
-import { Conexiones, NormaCard } from './IdentidadAnimal.jsx';
-import { NORMAS } from './normativa.js';
+import { DemoLink } from './IdentidadAnimal.jsx';
 
 export function NewsCard({ n }) {
   return (
@@ -51,98 +50,102 @@ function Search({ onVet, onEst }) {
   );
 }
 
-function HeroTurnos({ onPick }) {
-  const { data } = useApi('/public/proximos-turnos');
-  const lbl = p => { const d = new Date(p.inicio), tm = new Date(); tm.setDate(tm.getDate() + 1); return d.toDateString() === tm.toDateString() ? 'mañana' : d.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric' }); };
+const MATRICULADOS = [
+  ['Pagar la cuota', 'Estado de cuenta y pago en línea.', '/vet/cuotas'],
+  ['Credencial digital', 'Con QR para verificar la matrícula.', '/vet/credencial'],
+  ['Trámites', 'Habilitaciones, certificados y especialidades.', '/vet/tramites'],
+  ['Recetas electrónicas', 'Con QR para farmacias.', '/vet/recetas'],
+  ['Mi consultorio', 'Agenda, pacientes, ventas y stock.', '/vet/consultorio'],
+];
+
+// Agenda de ejemplo, con fechas relativas a hoy.
+const AGENDA = [
+  [5, 'Curso de ecografía abdominal en pequeños animales', 'Sede del Colegio · cupos limitados'],
+  [19, 'Masterclass: distress respiratorio felino', 'Modalidad virtual'],
+  [34, 'Asamblea General Ordinaria', 'Sede del Colegio · modalidad mixta'],
+];
+const enDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
+
+function GuardiasHoy() {
+  const { data } = useApi('/public/guardias');
   return (
-    <aside className="hpanel">
-      <div className="hph"><span><i className="live" />Próximos turnos libres</span></div>
-      {(data || []).slice(0, 5).map(p => (
-        <a key={p.codigo} href="#" className="hrow" onClick={e => { e.preventDefault(); onPick(p); }}>
-          <span className="mono num tnum">{p.hora}</span>
-          <span style={{ flex: 1, minWidth: 0 }}><b>{p.establecimiento}</b><span className="tiny muted" style={{ display: 'block' }}>{lbl(p)} · {p.departamento} · {p.especialidad}</span></span>
-          <span className="arr">→</span>
-        </a>
-      ))}
-      {!data && <div className="hrow tiny muted">Cargando agenda…</div>}
-      <Link to="/directorio?turnos=1" className="hfoot"><span>Ver más turnos</span><span>→</span></Link>
-    </aside>
+    <Link to="/guardias" className="card com-card">
+      <h3>Guardias de hoy</h3>
+      <p className="small muted">{data ? `${data.activas} clínicas con guardia activa y ${data.pasivas} a llamado.` : 'Clínicas que atienden urgencias ahora.'}</p>
+      <span className="lnk">Ver el tablero de guardia →</span>
+    </Link>
   );
 }
 
-const QA = [
-  ['/directorio', 'Buscar veterinario/a', 'Por especialidad, especie y zona.'],
-  ['/verificar', 'Verificar matrícula', 'Por número o escaneando el QR.'],
-  ['/identidad-animal', 'Identidad animal', 'Chip, libreta, credencial y normativa.'],
-  ['/receta', 'Verificar receta', 'Para farmacias.'],
-  ['/datos', 'Datos abiertos', 'Zoonosis por departamento.'],
-  ['/tramites', 'Trámites y denuncias', 'Matrícula, habilitaciones, certificados.'],
-];
-
-const PERFILES = [
-  ['Tengo una mascota', '/libreta'],
-  ['Tengo caballos o animales de campo', '/libreta/EQ-000017'],
-  ['Soy veterinario/a', '/servicios'],
-  ['Trabajo en un municipio', '/servicios'],
-];
-
 export default function Home() {
-  const { data: news } = useApi('/public/noticias?take=3');
-  const [urg, setUrg] = useState(false), [vet, setVet] = useState(null), [est, setEst] = useState(null);
+  const { data: news } = useApi('/public/noticias?take=4');
+  const [vet, setVet] = useState(null), [est, setEst] = useState(null);
   const t = useTurno();
   return (
     <>
-      <section className="hero"><div className="wrap hero-grid">
+      <section className="ihero"><div className="wrap ihero-grid">
         <div>
-          <h1>Veterinarios matriculados, guardias y turnos en Mendoza.</h1>
-          <p className="lead">Y la libreta de tu animal en el celular.</p>
-          <Search onVet={setVet} onEst={setEst} />
-          <div className="chips">
-            <button className="chip chip-urg" onClick={() => setUrg(true)}>Urgencia: guardia más cercana</button>
-            <Link className="chip" to="/directorio?turnos=1">Pedir turno</Link>
-            <Link className="chip" to="/libreta">Ver una libreta</Link>
+          <p className="ihero-org">{BRAND.nombre}</p>
+          <h1>Ejercicio profesional responsable, al servicio de la salud animal y de la comunidad.</h1>
+          <p className="lead">El Colegio matricula a los médicos veterinarios de la provincia, vela por el cumplimiento del Código de Ética y acompaña la formación continua de sus colegiados.</p>
+          <div className="row" style={{ gap: 10 }}>
+            <Link className="btn btn-primary btn-lg" to="/ingresar">Soy matriculado/a</Link>
+            <Link className="btn btn-lg" to="/directorio">Busco un veterinario/a</Link>
           </div>
         </div>
-        <HeroTurnos onPick={p => t.open(p.codigo, p.mp, p.inicio)} />
+        <figure className="foto-slot" aria-label="Espacio para foto institucional">
+          <div><b>Foto institucional</b><span>Sede, actos o capacitaciones del Colegio</span></div>
+        </figure>
       </div></section>
 
       <section className="sec"><div className="wrap">
-        <h2>¿Qué estás buscando?</h2>
-        <div className="perfiles">{PERFILES.map(([ti, to]) => <Link key={ti} to={to} className="card perfil"><b>{ti}</b><span className="arr">→</span></Link>)}</div>
-      </div></section>
-
-      <section className="sec" style={{ paddingTop: 0 }}><div className="wrap">
-        <div className="row between" style={{ marginBottom: 14 }}><h2 style={{ margin: 0 }}>Tablero de guardia</h2><Link className="btn btn-sm" to="/guardias">Ver todo</Link></div>
-        <Board limit={6} />
-      </div></section>
-
-      <section className="sec band-soft"><div className="wrap">
-        <div className="row between" style={{ marginBottom: 14 }}><h2 style={{ margin: 0 }}>Una credencial por animal</h2><Link className="btn btn-sm" to="/identidad-animal">Cómo funciona</Link></div>
-        <Conexiones />
-      </div></section>
-
-      <section className="sec"><div className="wrap">
-        <div className="row between" style={{ marginBottom: 14 }}><h2 style={{ margin: 0 }}>Normativa</h2><Link className="btn btn-sm" to="/identidad-animal">Ver todas</Link></div>
-        <div className="grid g4 normas">{NORMAS.filter(n => ['rupac', 'luscyf', 'lsed', 'mordedura'].includes(n.k)).map(n => <NormaCard key={n.k} n={n} compact />)}</div>
-      </div></section>
-
-      <section className="sec" style={{ paddingTop: 0 }}><div className="wrap">
-        <div className="row between" style={{ marginBottom: 14 }}><h2 style={{ margin: 0 }}>Mapa</h2><Link className="btn btn-sm" to="/mapa">Abrir mapa</Link></div>
-        <MapSection home />
-      </div></section>
-
-      <section className="sec" style={{ paddingTop: 0 }}><div className="wrap">
-        <h2>Servicios</h2>
-        <div className="grid g3">{QA.map(([to, ti, d]) => (
-          <Link key={to} className="card qa" to={to}><div className="qt"><b>{ti}</b><span className="muted small">{d}</span></div><span className="arr">→</span></Link>
+        <div className="sec-head"><h2>Matriculados</h2><Link className="lnk" to="/tramites">Todos los trámites →</Link></div>
+        <div className="accesos">{MATRICULADOS.map(([ti, d, to]) => (
+          <DemoLink key={ti} to={to} rol="vet" className="card acceso"><b>{ti}</b><span className="small muted">{d}</span></DemoLink>
         ))}</div>
+        <p className="small muted" style={{ marginTop: 12 }}>¿Todavía no estás matriculado/a? <Link className="lnk" to="/inscripcion">Iniciá la matriculación</Link></p>
       </div></section>
 
-      <section className="sec" style={{ paddingTop: 0 }}><div className="wrap">
-        <div className="row between" style={{ marginBottom: 14 }}><h2 style={{ margin: 0 }}>Novedades</h2><Link to="/noticias" className="btn btn-sm">Ver todas</Link></div>
-        <div className="grid g3">{(news || []).map(n => <NewsCard key={n.id} n={n} />)}</div>
+      <section className="sec sec-alt"><div className="wrap news-grid">
+        <div>
+          <div className="sec-head"><h2>Noticias</h2><Link className="lnk" to="/noticias">Ver todas →</Link></div>
+          <div className="news-list">{(news || []).map((n, i) => (
+            <article key={n.id} className={i === 0 ? 'news-main card' : 'news-item'}>
+              <span className="small muted">{n.categoria} · {fdate(n.fecha)}</span>
+              <h3>{n.titulo}</h3>
+              {i === 0 && <p className="muted">{n.resumen}</p>}
+            </article>
+          ))}</div>
+        </div>
+        <aside>
+          <div className="sec-head"><h2>Agenda</h2></div>
+          <ul className="agenda">{AGENDA.map(([d, ti, lugar]) => { const f = enDias(d); return (
+            <li key={ti}><div className="ag-date"><b>{f.getDate()}</b><span>{f.toLocaleDateString('es-AR', { month: 'short' }).replace('.', '')}</span></div><div><b>{ti}</b><span className="small muted">{lugar}</span></div></li>
+          ); })}</ul>
+        </aside>
       </div></section>
-      <UrgenciaModal open={urg} onClose={() => setUrg(false)} />
+
+      <section className="sec"><div className="wrap">
+        <div className="sec-head"><h2>Para la comunidad</h2></div>
+        <Search onVet={setVet} onEst={setEst} />
+        <div className="grid g4" style={{ marginTop: 16 }}>
+          <Link to="/directorio" className="card com-card"><h3>Buscar un veterinario/a</h3><p className="small muted">Por especialidad, especie y departamento. Sólo matrículas vigentes.</p><span className="lnk">Ir al directorio →</span></Link>
+          <GuardiasHoy />
+          <Link to="/verificar" className="card com-card"><h3>Verificar una matrícula</h3><p className="small muted">Comprobá que quien atiende a tu animal esté matriculado/a.</p><span className="lnk">Verificar →</span></Link>
+          <Link to="/libreta" className="card com-card"><h3>Libreta sanitaria</h3><p className="small muted">Las vacunas de tu animal, firmadas por su veterinario/a.</p><span className="lnk">Consultar →</span></Link>
+        </div>
+      </div></section>
+
+      <section className="sec sec-inst"><div className="wrap">
+        <div className="sec-head"><h2>El Colegio</h2><Link className="lnk" to="/institucional">Institucional →</Link></div>
+        <div className="grid g4">
+          <Link to="/institucional" className="inst-item"><h3>Autoridades</h3><p className="small">Comisión Directiva, Tribunal de Disciplina y Tribunal Revisor de Cuentas.</p></Link>
+          <Link to="/institucional" className="inst-item"><h3>Legislación</h3><p className="small">{BRAND.ley}, estatuto y Código de Ética.</p></Link>
+          <Link to="/identidad-animal" className="inst-item"><h3>Normativa sanitaria</h3><p className="small">Libreta sanitaria, identificación animal y protocolos.</p></Link>
+          <Link to="/institucional" className="inst-item"><h3>Subcomisiones</h3><p className="small">Formación continua, pequeños animales, rumiantes, equinos, salud pública.</p></Link>
+        </div>
+      </div></section>
+
       <VetModal vet={vet} onClose={() => setVet(null)} onTurno={(c, mp) => { setVet(null); t.open(c, mp); }} />
       <EstModal est={est} onClose={() => setEst(null)} onTurno={c => { setEst(null); t.open(c); }} />
       {t.modal}
