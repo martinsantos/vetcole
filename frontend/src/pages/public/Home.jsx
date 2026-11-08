@@ -8,7 +8,6 @@ import Board from '../../components/Board.jsx';
 import { norm, fdate } from '../../lib/format.js';
 import { MapSection, UrgenciaModal, VetModal, EstModal, useTurno, useCached } from './shared.jsx';
 import { TRAMITES } from './Info.jsx';
-import * as A from '../../components/Animals.jsx';
 import { Conexiones, NormaCard } from './IdentidadAnimal.jsx';
 import { NORMAS } from './normativa.js';
 
@@ -81,10 +80,10 @@ const QA = [
 ];
 
 const PERFILES = [
-  ['Tengo una mascota', 'Turnos, guardias y la libreta de tu animal en el celular.', '/libreta', 'Perro'],
-  ['Tengo caballos o animales de campo', 'Libreta equina digital, visitas a campo y certificados.', '/libreta/EQ-000017', 'Caballo'],
-  ['Soy veterinario/a', 'Matrícula, credencial y la gestión completa de tu consultorio.', '/servicios', 'Vet'],
-  ['Trabajo en un municipio', 'Zoonosis: credencial municipal, campañas y mordeduras.', '/servicios', 'Municipio'],
+  ['Tengo una mascota', 'Turnos, guardias y la libreta de tu animal en el celular.', '/libreta'],
+  ['Tengo caballos o animales de campo', 'Libreta equina digital, visitas a campo y certificados.', '/libreta/EQ-000017'],
+  ['Soy veterinario/a', 'Matrícula, credencial y la gestión completa de tu consultorio.', '/servicios'],
+  ['Trabajo en un municipio', 'Zoonosis: credencial municipal, campañas y mordeduras.', '/servicios'],
 ];
 
 export default function Home() {
@@ -92,12 +91,11 @@ export default function Home() {
   const { data: news } = useApi('/public/noticias?take=3');
   const [urg, setUrg] = useState(false), [vet, setVet] = useState(null), [est, setEst] = useState(null);
   const t = useTurno();
-  const Ilus = { Perro: A.Perro, Caballo: A.Caballo, Vet: A.Vet, Municipio: A.Municipio };
   return (
     <>
-      <section className="hero hero-anim"><div className="wrap hero-grid">
+      <section className="hero"><div className="wrap hero-grid">
         <div>
-          <Kicker>Salud animal · Mendoza</Kicker>
+          <Kicker style={{ color: '#9fd8c4' }}>Salud animal · Mendoza</Kicker>
           <h1>Cada animal, cuidado por un/a veterinario/a matriculado/a.</h1>
           <p className="lead">Encontrá quién atiende cerca y quién está de guardia ahora. Sacá un turno y llevá la libreta de tu animal en el celular, con cada vacuna firmada por un profesional del Colegio.</p>
           <Search onVet={setVet} onEst={setEst} />
@@ -108,22 +106,19 @@ export default function Home() {
             <Link className="chip" to="/verificar">✓ Verificar matrícula</Link>
           </div>
         </div>
-        <A.HeroMosaic />
+        <HeroTurnos onPick={p => t.open(p.codigo, p.mp, p.inicio)} />
       </div></section>
 
       <section className="sec perfiles-sec"><div className="wrap">
         <div className="shead"><div><Kicker>Por dónde empezar</Kicker><h2>¿Qué estás buscando?</h2></div></div>
-        <div className="perfiles">{PERFILES.map(([ti, d, to, il]) => { const I = Ilus[il]; return (
-          <Link key={ti} to={to} className="card perfil"><I size={76} /><div><b>{ti}</b><span className="small muted">{d}</span></div><span className="arr">→</span></Link>
-        ); })}</div>
+        <div className="perfiles">{PERFILES.map(([ti, d, to], i) => (
+          <Link key={ti} to={to} className="card perfil"><span className="mono tiny muted">{String(i + 1).padStart(2, '0')}</span><div><b>{ti}</b><span className="small muted">{d}</span></div><span className="arr">→</span></Link>
+        ))}</div>
       </div></section>
 
       <section className="sec" style={{ paddingTop: 12 }}><div className="wrap">
         <div className="shead"><div><Kicker>Ahora</Kicker><h2>Tablero de guardia</h2><p className="muted">Quién atiende urgencias en este momento, por zona. Cada clínica lo actualiza desde su portal.</p></div><Link className="btn" to="/guardias">Ver tablero completo →</Link></div>
-        <div className="now-grid">
-          <Board limit={4} />
-          <HeroTurnos onPick={p => t.open(p.codigo, p.mp, p.inicio)} />
-        </div>
+        <Board limit={6} />
       </div></section>
 
       <section className="sec band-soft"><div className="wrap">

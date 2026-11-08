@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { Badge, Kicker, QR, verifyUrl, toast } from '../../components/ui.jsx';
 import { loginAs } from '../../layouts/DemoBar.jsx';
-import { Perro, Gato, Caballo, Vet, Municipio } from '../../components/Animals.jsx';
 import { NORMAS, ESTADO, CICLO, VISIBILIDAD } from './normativa.js';
 import { fdate, edad, chipFmt, estadoCls } from '../../lib/format.js';
 
@@ -38,7 +37,7 @@ export function CredencialMuestra() {
     <Link to={`/libreta/${p.libreta}`} className="acred">
       <div className="acred-top"><span className="mono tiny">CREDENCIAL DEL ANIMAL</span><Badge cls={estadoCls(p.estado.codigo)}>{p.estado.etiqueta}</Badge></div>
       <div className="acred-body">
-        <Perro size={86} bg="#fff" />
+        <div className="petav">{p.nombre[0]}</div>
         <div style={{ minWidth: 0 }}>
           <b className="acred-name">{p.nombre}</b>
           <div className="small muted">{p.especie} · {p.raza} · {edad(p.nacimiento)}</div>
@@ -56,8 +55,8 @@ export function CredencialMuestra() {
 
 // Esquema: quién registra → qué queda → quién lo usa.
 const ORIGEN = [
-  { I: Vet, t: 'Veterinario/a matriculado/a', d: 'Coloca el chip, vacuna, castra y receta desde su consultorio.', to: '/vet/consultorio/pacientes', rol: 'vet', l: 'Consultorio digital' },
-  { I: Municipio, t: 'Zoonosis del municipio', d: 'Campañas de antirrábica y castración en barrios, incluso sin conexión.', to: '/muni/campanias', rol: 'muni', l: 'Panel de zoonosis' },
+  { t: 'Veterinario/a matriculado/a', d: 'Coloca el chip, vacuna, castra y receta desde su consultorio.', to: '/vet/consultorio/pacientes', rol: 'vet', l: 'Consultorio digital' },
+  { t: 'Zoonosis del municipio', d: 'Campañas de antirrábica y castración en barrios, incluso sin conexión.', to: '/muni/campanias', rol: 'muni', l: 'Panel de zoonosis' },
 ];
 const DESTINO = [
   ['Familia', 'Lleva la credencial en el celular, recibe recordatorios y saca turnos.', '/tutor', 'tutor', 'App del tutor/a'],
@@ -75,7 +74,6 @@ export function Conexiones() {
         <div className="flow-h mono tiny">QUIÉN REGISTRA</div>
         {ORIGEN.map(o => (
           <div key={o.t} className="card flow-node">
-            <o.I size={56} />
             <div><b>{o.t}</b><p className="small muted">{o.d}</p><DemoLink to={o.to} rol={o.rol}>{o.l} →</DemoLink></div>
           </div>
         ))}
@@ -109,14 +107,13 @@ export function Conexiones() {
 export default function IdentidadAnimal() {
   return (
     <>
-      <section className="sec idhero"><div className="wrap idhero-grid">
+      <section className="sec idhero"><div className="wrap">
         <div>
           <Kicker>Identidad animal</Kicker>
           <h1>Un número, una libreta y un QR para cada animal.</h1>
           <p className="lead">El chip identifica al animal y la libreta digital guarda sus cuidados. La firma de un/a veterinario/a matriculado/a es lo que vuelve confiables esos datos para la familia, el municipio y, si se aprueba la ley, el registro provincial.</p>
           <div className="row"><a className="btn btn-primary" href="#normativa" onClick={e => { e.preventDefault(); document.getElementById('normativa')?.scrollIntoView({ behavior: 'smooth' }); }}>Ver normativa y protocolos</a><Link className="btn" to="/libreta">Consultar una libreta</Link></div>
         </div>
-        <div className="idhero-art"><Perro size={170} /><Gato size={130} /><Caballo size={130} /></div>
       </div></section>
 
       <section className="sec" style={{ paddingTop: 8 }}><div className="wrap">
