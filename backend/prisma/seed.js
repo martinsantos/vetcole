@@ -82,6 +82,7 @@ const RAZAS_P = ['Mestizo', 'Caniche', 'Labrador', 'Golden Retriever', 'Bulldog 
 const RAZAS_G = ['Europeo de pelo corto', 'Siamés', 'Persa', 'Mestizo'];
 
 async function main() {
+  seed = 7; // datos idénticos en cada recarga
   // limpiar (orden por dependencias)
   for (const m of ['voto', 'acreditacion', 'asambleaItem', 'ventaItem', 'venta', 'movCC', 'compra', 'proveedor', 'producto', 'mensaje', 'turno', 'servicio', 'receta', 'evento', 'mordedura', 'campania', 'cliente', 'user', 'animal', 'tutor', 'equipoVet', 'establecimiento', 'cuota', 'tramite', 'casoEpi', 'vet', 'municipio', 'inscripcion', 'noticia', 'denuncia'])
     await prisma[m].deleteMany();
@@ -315,4 +316,6 @@ async function main() {
   console.log('Seed OK →', counts.join(' · '));
 }
 
-main().catch(e => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());
+// En Node se ejecuta como script. En el navegador (versión de la demo para Claude) se importa y se llama a main().
+export { main };
+if (typeof window === 'undefined') main().catch(e => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

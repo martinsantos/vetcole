@@ -592,3 +592,8 @@ button:disabled{cursor:not-allowed}
 .wallet{border-radius:16px;color:#fff;padding:18px;position:relative;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.25)}
 .wallet:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:18px 18px}
 .wallet>*{position:relative}
+
+/* Mapa sin mosaicos (versión dentro de Claude) */
+.map-offline{background-color:#eef0ea!important;background-image:linear-gradient(rgba(45,107,90,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(45,107,90,.07) 1px,transparent 1px);background-size:28px 28px}
+.dep-label{font:600 11px var(--mono);color:#6b6459;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;transform:translate(-50%,-50%);pointer-events:none}
+.zona-label{font-size:12.5px;font-weight:700;color:#4f6b62}

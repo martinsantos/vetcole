@@ -1,5 +1,6 @@
 // Layout del sitio público del Colegio: encabezado, navegación, pie y asistente flotante.
 import { useState } from 'react';
+import { CLAUDE } from '../lib/base.js';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { LOGO } from '../components/ui.jsx';
 import { useAuth, homeFor } from '../lib/store.js';
@@ -13,11 +14,12 @@ export default function SiteLayout() {
   return (
     <>
       <div className="infobar"><div className="wrap">
-        <span>Pte. Santiago Derqui 114, Godoy Cruz</span><span>☎ 0261 4243250</span><span>info@colvetmza.com.ar</span>
-        <span style={{ marginLeft: 'auto' }}>Ley provincial N° 7825 · Decreto 1958/11</span>
+        {CLAUDE ? <span>Demo de producto de Última Milla para colegios veterinarios · profesionales, tutores y datos ficticios</span>
+          : <><span>Pte. Santiago Derqui 114, Godoy Cruz</span><span>☎ 0261 4243250</span><span>info@colvetmza.com.ar</span></>}
+        {!CLAUDE && <span style={{ marginLeft: 'auto' }}>Ley provincial N° 7825 · Decreto 1958/11</span>}
       </div></div>
       <header className="top"><div className="wrap">
-        <Link className="logo" to="/"><img src={LOGO} alt="Colegio de Veterinarios de Mendoza" /></Link>
+        <Link className="logo" to="/"><img src={LOGO} alt={CLAUDE ? 'ColVet Digital (demo)' : 'Colegio de Veterinarios de Mendoza'} /></Link>
         <nav className={`main ${open ? 'open' : ''}`} onClick={() => setOpen(false)}>
           {NAV.map(([to, l]) => <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => (isActive ? 'on' : '')}>{l}</NavLink>)}
         </nav>
@@ -30,7 +32,7 @@ export default function SiteLayout() {
         <div className="cols">
           <div>
             <div style={{ background: '#fff', borderRadius: 10, padding: '8px 12px', display: 'inline-block', marginBottom: 12 }}><img src={LOGO} style={{ height: 34, display: 'block' }} alt="" /></div>
-            <p>El Colegio de Médicos Veterinarios de Mendoza regula la actividad veterinaria en la provincia: matricula a quienes ejercen, aplica el Código de Ética y contribuye a la salud de la comunidad.</p>
+            <p>{CLAUDE ? 'ColVet Digital es una propuesta de Última Milla para colegios veterinarios: padrón, consultorio, zoonosis municipal y app para familias sobre una misma base. Esta demo usa datos ficticios y no es un sitio oficial.' : 'El Colegio de Médicos Veterinarios de Mendoza regula la actividad veterinaria en la provincia: matricula a quienes ejercen, aplica el Código de Ética y contribuye a la salud de la comunidad.'}</p>
           </div>
           <div><h4>Comunidad</h4><Link to="/directorio">Buscar veterinario/a</Link><br /><Link to="/guardias">Tablero de guardia</Link><br /><Link to="/libreta">Libreta sanitaria</Link><br /><Link to="/verificar">Verificar matrícula</Link><br /><Link to="/receta">Verificar receta</Link><br /><Link to="/viajar">Viajar con mascotas</Link></div>
           <div><h4>Profesionales</h4><Link to="/ingresar">Ingresar</Link><br /><Link to="/inscripcion">Matricularme</Link><br /><Link to="/tramites">Trámites</Link><br /><Link to="/datos">Datos abiertos</Link></div>

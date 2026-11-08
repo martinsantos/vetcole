@@ -1,5 +1,7 @@
 // Piezas compartidas del Consultorio: estados de turno, selector de paciente, impresión de comprobantes.
 import { useEffect, useState } from 'react';
+import { CLAUDE } from '../../lib/base.js';
+import { toast } from '../../components/ui.jsx';
 import { api } from '../../lib/api.js';
 import { Badge } from '../../components/ui.jsx';
 
@@ -43,6 +45,7 @@ export function PacientePicker({ value, onChange }) {
 
 // Imprime sólo el bloque .cl-printable
 export function printBlock() {
+  if (CLAUDE) return toast('Dentro de Claude no se puede imprimir. El comprobante se imprime desde la versión publicada en el servidor.', 'error');
   document.body.classList.add('cl-print');
   setTimeout(() => {
     try { window.print(); } catch { /* sandbox */ }

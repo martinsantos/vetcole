@@ -1,7 +1,7 @@
 // Datos abiertos: panel de zoonosis por departamento y explorador de la API pública con datos en vivo.
 import { useState } from 'react';
 import { api, useApi } from '../../lib/api.js';
-import { Kicker, Kpi, VBars, Spinner, toast } from '../../components/ui.jsx';
+import { Kicker, Kpi, VBars, Spinner, toast, saveFile } from '../../components/ui.jsx';
 import { DEPTOS } from '../../lib/format.js';
 
 const ENDPOINTS = [
@@ -16,7 +16,7 @@ const ENDPOINTS = [
 ];
 
 const csv = rows => rows.map(r => r.map(x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
-const download = (name, text) => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text], { type: 'text/csv' })); a.download = name; a.click(); };
+const download = (name, text) => saveFile(name, text);
 
 export default function Datos() {
   const [dep, setDep] = useState('');

@@ -1,6 +1,6 @@
 // Barra superior de la demo: cambia de aplicación/rol en un clic (inicia sesión con la cuenta demo correspondiente).
 import { useLocation, useNavigate } from 'react-router-dom';
-import { url } from '../lib/base.js';
+import { url, CLAUDE } from '../lib/base.js';
 import { api } from '../lib/api.js';
 import { useAuth, homeFor } from '../lib/store.js';
 import { toast } from '../components/ui.jsx';
@@ -23,6 +23,7 @@ export async function loginAs(email, navigate, to) {
 export default function DemoBar() {
   const nav = useNavigate(), { pathname } = useLocation();
   const user = useAuth(s => s.user);
+  if (CLAUDE) window.__colvetNav = nav; // pruebas automáticas: navegar en el router en memoria
   const cur = pathname.startsWith('/vet/consultorio') ? 'clinic' : pathname.startsWith('/vet') ? 'vet' : pathname.startsWith('/admin') ? 'admin' : pathname.startsWith('/muni') ? 'muni' : pathname.startsWith('/tutor') ? 'tutor' : 'pub';
   const go = async ([, , to, email]) => {
     if (!email || user?.email === email) return nav(to);
@@ -32,8 +33,10 @@ export default function DemoBar() {
     <div className="demobar">
       <div className="wrap">
         <span className="tag">DEMO</span>
-        <span className="desc"><b>ColVet Digital</b> · Colegio + consultorio + zoonosis municipal</span>
-        <nav>{APPS.map(a => <a key={a[0]} href={url(a[2])} className={cur === a[0] ? 'on' : ''} onClick={e => { e.preventDefault(); go(a); }}>{a[1]}</a>)}</nav>
+        <span className="desc"><b>ColVet Digital</b> · {CLAUDE ? 'propuesta de Última Milla · datos ficticios' : 'Colegio + consultorio + zoonosis municipal'}</span>
+        <nav>{APPS.map(a => <a key={a[0]} href={url(a[2])} className={cur === a[0] ? 'on' : ''} onClick={e => { e.preventDefault(); go(a); }}>{a[1]}</a>)}
+          {CLAUDE && <a href="#" title="Vuelve los datos de la demo al estado inicial" onClick={async e => { e.preventDefault(); const { resetDemo } = await import('../demo/server.js'); await resetDemo(); useAuth.getState().logout(); nav('/'); toast('Datos de la demo reiniciados'); }}>↺ Reiniciar datos</a>}
+        </nav>
       </div>
     </div>
   );

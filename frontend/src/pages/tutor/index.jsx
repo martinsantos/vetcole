@@ -63,7 +63,7 @@ export function Mascota() {
       <div className={`card lostcard ${a.perdido ? 'on' : ''}`}>
         <Switch checked={a.perdido} onChange={setPerdido}><b>{a.perdido ? 'Reportado/a como perdido/a' : 'Reportar como perdido/a'}</b></Switch>
         <div className="tiny muted">Cuando está activo, el QR de la credencial y de la chapita muestra «Me perdí» y quien lo encuentre puede avisarte sin ver tu número.</div>
-        {a.perdido && <a className="btn btn-sm" style={{ marginTop: 8 }} href={url(`/libreta/${a.libreta}`)} target="_blank" rel="noreferrer">Ver lo que ve quien escanea</a>}
+        {a.perdido && <Link className="btn btn-sm" style={{ marginTop: 8 }} to={`/libreta/${a.libreta}`}>Ver lo que ve quien escanea</Link>}
       </div>
 
       <div className="row" style={{ margin: '14px 0', gap: 8 }}>
@@ -88,7 +88,7 @@ export function Mascota() {
               <div className="row between"><b className="mono small">{r.codigo}</b><Badge cls={r.estado === 'Vigente' ? 'b-ok' : 'b-grey'}>{r.estado}</Badge></div>
               {r.items.map((it, i) => <div key={i} className="small" style={{ marginTop: 4 }}>℞ <b>{it.medicamento}</b>{it.posologia ? ` · ${it.posologia}` : ''}</div>)}
               <div className="tiny muted" style={{ marginTop: 4 }}>{r.prescriptor} · {fdate(r.fecha)} · {r.tipo}</div>
-              <a className="small" href={url(`/receta/${r.codigo}`)} target="_blank" rel="noreferrer">Mostrar en la farmacia →</a>
+              <Link className="small" to={`/receta/${r.codigo}`}>Mostrar en la farmacia →</Link>
             </div>
           ))}
         </>

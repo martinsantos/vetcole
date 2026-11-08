@@ -1,11 +1,14 @@
 // Kit de UI compartido. Usa las clases del sistema de diseño (styles.css): card, btn, badge, chip, seg, tbl, kpi...
 import { useEffect, useRef, useState } from 'react';
-import { url } from '../lib/base.js';
+import logoColegio from '../assets/logo-colegio.svg';
+import logoNeutro from '../assets/logo-colvet-digital.svg';
+import { url, PUBLIC_ORIGIN, CLAUDE } from '../lib/base.js';
 import { create } from 'zustand';
 import qrcode from 'qrcode-generator';
 import { EVT, fdate } from '../lib/format.js';
 
-export const LOGO = url('/logo-colegio.svg');
+// Importado: en la versión para Claude queda embebido. Allí se usa una marca neutra (la página no representa al Colegio).
+export const LOGO = CLAUDE ? logoNeutro : logoColegio;
 export const cx = (...a) => a.filter(Boolean).join(' ');
 
 // ── Toasts
@@ -94,7 +97,7 @@ export function QR({ text, size = 96, style }) {
   }, [text]);
   return <div className="qrbox" style={{ width: size + 14, height: size + 14, ...style }}><div ref={ref} style={{ width: size, height: size }} /></div>;
 }
-export const verifyUrl = path => `${window.location.origin}${url(path)}`;
+export const verifyUrl = path => (PUBLIC_ORIGIN ? `${PUBLIC_ORIGIN}${path}` : `${window.location.origin}${url(path)}`);
 
 // ── Gráficos simples
 export function VBars({ data, keys, colors = ['var(--leaf)', 'var(--leaf-2)'], label = 'mes', height = 150 }) {
@@ -138,4 +141,19 @@ export function Timeline({ eventos, onCert }) {
       ); })}
     </ul>
   );
+}
+
+// Descarga de archivos generados (CSV). Dentro de Claude usa la capacidad `downloads` del visor,
+// que le pide confirmación al usuario; en el servidor, un enlace de descarga común.
+export async function saveFile(filename, text, type = 'text/csv') {
+  if (CLAUDE) {
+    const dl = window.claude?.use ? await window.claude.use('downloads').catch(() => null) : null;
+    if (!dl) return toast('Las descargas no están disponibles en esta vista.', 'error');
+    try { await dl.save({ filename, data: '﻿' + text }); toast('Archivo descargado'); }
+    catch (e) { if (e?.code !== 'declined') toast('No se pudo descargar el archivo.', 'error'); }
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + text], { type }));
+  a.download = filename; a.click();
 }

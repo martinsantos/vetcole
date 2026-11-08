@@ -179,7 +179,7 @@ export function Animal() {
     <>
       <Link to="/muni/credenciales" className="small">← Credenciales</Link>
       <PageHead kicker={`Credencial N.º ${String(a.credencialNro || '—').padStart(6, '0')} · Libreta ${a.libreta}`} title={a.nombre}>
-        <a className="btn" href={url(`/libreta/${a.libreta}`)} target="_blank" rel="noreferrer">Ver libreta pública</a>
+        <Link className="btn" to={`/libreta/${a.libreta}`}>Ver libreta pública</Link>
         <button className="btn btn-primary" onClick={() => setAten(true)}>+ Registrar atención</button>
       </PageHead>
       <div className="muni-grid">

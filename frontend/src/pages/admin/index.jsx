@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { money, fdate, fdt, norm, DEPTOS, ESPECIALIDADES } from '../../lib/format.js';
-import { Badge, Kpi, PageHead, Spinner, ErrorBox, Empty, Modal, Field, Seg, AsyncBtn, HBars, toast } from '../../components/ui.jsx';
+import { Badge, Kpi, PageHead, Spinner, ErrorBox, Empty, Modal, Field, Seg, AsyncBtn, HBars, toast, saveFile } from '../../components/ui.jsx';
 import Board from '../../components/Board.jsx';
 import MapView from '../../components/MapView.jsx';
 import { EstKit } from '../vet/kit.jsx';
@@ -55,7 +55,7 @@ export function Matriculados() {
   const exportCSV = () => {
     const rows = [['matricula', 'apellido', 'nombre', 'departamento', 'especialidad', 'estado', 'cuotas_adeudadas'], ...(q.data || []).map(v => [v.mp, v.apellido, v.nombre, v.departamento, v.especialidades[0] || '', v.estado, v.deuda])];
     const csv = rows.map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' })); a.download = 'padron-colvet.csv'; a.click();
+    saveFile('padron-colvet.csv', csv);
   };
   const set = k => e => setForm({ ...form, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   return (

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api, useApi } from '../lib/api.js';
 import { useAuth, homeFor } from '../lib/store.js';
-import { Field, AsyncBtn, Kicker } from '../components/ui.jsx';
+import { Field, AsyncBtn, Kicker, toast } from '../components/ui.jsx';
 
 export default function Login() {
   const [sp] = useSearchParams(), nav = useNavigate();
@@ -27,7 +27,7 @@ export default function Login() {
         <div className="tiny muted mono" style={{ marginBottom: 10 }}>CUENTAS DE LA DEMO · UN CLIC</div>
         {(cuentas || []).map(c => (
           <button key={c.email} className="acct" style={wanted === c.rol ? { borderColor: 'var(--leaf)', background: 'var(--leaf-l)' } : undefined}
-            onClick={() => enter(c.email, c.password).catch(err => alert(err.message))}>
+            onClick={() => enter(c.email, c.password).catch(err => toast(err.message, 'error'))}>
             <span className="badge">{c.rol}</span><span><b className="small">{c.label}</b><div className="tiny muted">{c.detalle}</div></span>
           </button>
         ))}

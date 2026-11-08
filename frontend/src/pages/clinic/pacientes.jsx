@@ -180,7 +180,7 @@ export function Paciente() {
       <PageHead kicker={`Libreta ${p.libreta}`} title={p.nombre}>
         <Link className="btn" to="/vet/recetas">Emitir receta</Link>
         <Link className="btn" to="/vet/consultorio/agenda">Dar turno</Link>
-        <a className="btn" href={url(`/libreta/${p.libreta}`)} target="_blank" rel="noreferrer">Ver como el tutor/a</a>
+        <Link className="btn" to={`/libreta/${p.libreta}`}>Ver como el tutor/a</Link>
       </PageHead>
       <div className="libdet">
         <div>

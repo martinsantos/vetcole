@@ -1,10 +1,12 @@
 // Cliente HTTP (mismo patrón que Psicole: axios + JWT en interceptor).
 import axios from 'axios';
-import { BASE } from './base.js';
+import { BASE, CLAUDE } from './base.js';
 import { useAuth } from './store.js';
 import { useCallback, useEffect, useState } from 'react';
 
 export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || `${BASE}/api/v1` });
+// Versión para Claude: la API la atiende el servidor dentro del navegador (src/demo). En el build normal este bloque no existe.
+if (CLAUDE) api.defaults.adapter = cfg => import('../demo/adapter.js').then(m => m.localAdapter(cfg));
 
 api.interceptors.request.use(cfg => {
   const { token, clinicId } = useAuth.getState();

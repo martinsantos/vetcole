@@ -1,5 +1,7 @@
 // Piezas compartidas del portal: QR crudo, credencial profesional, credencial/oblea/cartel del establecimiento, receta.
 import { useEffect, useRef } from 'react';
+import { CLAUDE } from '../../lib/base.js';
+import { toast } from '../../components/ui.jsx';
 import qrcode from 'qrcode-generator';
 import { LOGO, verifyUrl } from '../../components/ui.jsx';
 import { fdate } from '../../lib/format.js';
@@ -84,6 +86,7 @@ export function Poster({ e, id }) {
 
 // Imprime sólo el elemento indicado (A4). Ver vet.css → body.print-only.
 export function printOnly(elId) {
+  if (CLAUDE) return toast('Dentro de Claude no se puede imprimir. El cartel se imprime desde la versión publicada en el servidor.', 'error');
   const el = document.getElementById(elId);
   if (!el) return;
   el.classList.add('print-target');

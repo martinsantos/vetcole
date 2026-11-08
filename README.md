@@ -59,6 +59,19 @@ frontend/src/
 docs/prototipo-html.html prototipo navegable original
 ```
 
+## Versión dentro de Claude (sin servidor)
+
+`npm run build:claude --prefix frontend` arma `frontend/dist-claude/colvet-digital.html`, una página que se publica como Artifact de Claude. No necesita servidor:
+
+- las **mismas rutas del backend** corren en el navegador sobre un Prisma en memoria (`frontend/src/demo/prisma-memory.js`), que lee el mismo `schema.prisma`;
+- se cargan los datos con el **mismo seed**;
+- cada visitante tiene su copia de los datos en su navegador, con un botón para reiniciarla;
+- el asistente usa **Claude** (capacidad `sample` del visor) con el contenido oficial y los datos en vivo, y si no está disponible responde con las reglas del backend;
+- usa una marca neutra («ColVet Digital · demo»), porque una página publicada en Claude no puede presentarse como el sitio oficial del Colegio;
+- dentro del visor no se puede imprimir y el mapa se ve sin calles.
+
+`node e2e/smoke-claude.mjs` la prueba completa (52 verificaciones).
+
 ## Probarla sin instalar nada
 
 [![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/martinsantos/vetcole?quickstart=1)
