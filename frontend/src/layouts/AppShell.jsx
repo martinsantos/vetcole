@@ -11,7 +11,7 @@ export default function AppShell({ items, dark, who, whoSub, accent, header }) {
     <div className="shell">
       <aside className={`side ${dark ? 'dark' : ''}`} style={accent ? { '--shell-accent': accent } : undefined}>
         <div className="who">
-          <Av style={accent ? { background: accent, color: '#fff' } : dark ? { background: '#fff', color: 'var(--plum-dd)' } : undefined}>{ini(who)}</Av>
+          <Av style={accent ? { background: accent, color: '#fff' } : dark ? { background: '#fff', color: 'var(--plum-dd)' } : undefined}>{ini(String(who).replace(/^(Dra?\.|Zoonosis)\s+/, ''))}</Av>
           <div><b className="small" style={dark ? { color: '#fff' } : undefined}>{who}</b><div className="tiny" style={{ opacity: 0.7 }}>{whoSub}</div></div>
         </div>
         {header}

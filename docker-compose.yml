@@ -1,0 +1,7 @@
+services:
+  colvet:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      JWT_SECRET: "cambiar-en-produccion"

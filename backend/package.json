@@ -12,7 +12,7 @@
     "db:seed": "node --env-file-if-exists=.env prisma/seed.js",
     "db:reset": "prisma db push --force-reset --skip-generate && node --env-file-if-exists=.env prisma/seed.js",
     "setup": "prisma generate && prisma db push --skip-generate && node --env-file-if-exists=.env prisma/seed.js",
-    "test": "node --test tests/"
+    "test": "DATABASE_URL=file:./test.db prisma db push --skip-generate >/dev/null && DATABASE_URL=file:./test.db node prisma/seed.js && DATABASE_URL=file:./test.db node --test tests/*.test.js"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
