@@ -1,16 +1,13 @@
-// Home del sitio público: búsqueda, perfiles, guardias y turnos, cómo se conectan los servicios, normativa, mapa y novedades.
+// Home del sitio público: búsqueda universal, próximos turnos, urgencia, mapa, tablero, libreta, servicios y novedades.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { url } from '../../lib/base.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { Badge, Kicker } from '../../components/ui.jsx';
 import Board from '../../components/Board.jsx';
-import { norm, fdate } from '../../lib/format.js';
+import { norm, fdate, edad, chipFmt, estadoCls, EVT } from '../../lib/format.js';
 import { MapSection, UrgenciaModal, VetModal, EstModal, useTurno, useCached } from './shared.jsx';
 import { TRAMITES } from './Info.jsx';
-import * as A from '../../components/Animals.jsx';
-import { Conexiones, NormaCard } from './IdentidadAnimal.jsx';
-import { NORMAS } from './normativa.js';
 
 export function NewsCard({ n }) {
   return (
@@ -71,20 +68,40 @@ function HeroTurnos({ onPick }) {
   );
 }
 
+function LibretaBand() {
+  const nav = useNavigate();
+  const { data: p } = useApi('/public/libretas/MZA-000231');
+  const [q, setQ] = useState('');
+  return (
+    <section className="libband"><div className="wrap libgrid">
+      <div>
+        <Kicker style={{ color: 'var(--leaf-2)' }}>03 · Libreta sanitaria digital</Kicker>
+        <h2 style={{ marginTop: 10 }}>La libreta de tu mascota, firmada por su veterinario/a matriculado/a.</h2>
+        <p>Vacunas, desparasitaciones, castración y microchip en el celular. Cada registro lo firma un profesional del padrón del Colegio y se verifica con QR. Convive con la LUSCyF en papel.</p>
+        <form className="libform" onSubmit={e => { e.preventDefault(); if (q.trim()) nav(`/libreta/${encodeURIComponent(q.trim())}`); }}>
+          <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="N° de libreta o microchip (ej.: MZA-000231)" /><button className="btn btn-light">Consultar</button>
+        </form>
+        <div className="row" style={{ marginTop: 14 }}><Link className="btn btn-light btn-sm" to="/libreta">Cómo funciona</Link><Link className="btn btn-light btn-sm" to="/servicios">Soy veterinario/a: emitir libretas</Link></div>
+      </div>
+      {p && (
+        <Link to={`/libreta/${p.libreta}`} className="libprev">
+          <div className="row between"><span className="mono tiny muted">LIBRETA {p.libreta}</span><Badge cls={estadoCls(p.estado.codigo)}>{p.estado.etiqueta}</Badge></div>
+          <div className="row" style={{ margin: '14px 0', gap: 12, flexWrap: 'nowrap' }}><div className="petav">{p.nombre[0]}</div><div><b style={{ fontSize: 22, fontFamily: 'var(--serif)' }}>{p.nombre}</b><div className="small muted">{p.raza} · {edad(p.nacimiento)}{p.microchip ? ` · chip ${chipFmt(p.microchip).slice(0, 7)}…` : ''}</div></div></div>
+          {p.eventos.filter(e => ['vac', 'des', 'cas'].includes(e.tipo)).slice(0, 4).map(e => <div key={e.id} className="lprow"><span className="evk sm" style={{ background: EVT[e.tipo][2] }}>{EVT[e.tipo][0]}</span><span style={{ flex: 1 }}>{e.titulo}</span><span className="mono tiny">{fdate(e.fecha)}</span></div>)}
+          {p.vetCabecera && <div className="tiny muted" style={{ marginTop: 10 }}>✓ Veterinaria de cabecera: {p.vetCabecera.titulo} · MP {p.vetCabecera.mp}</div>}
+        </Link>
+      )}
+    </div></section>
+  );
+}
+
 const QA = [
   ['/directorio', '☺', 'Encontrá un veterinario/a', 'Por especialidad, especie y departamento. Sólo matrículas vigentes.'],
   ['/verificar', '✓', '¿Está matriculado/a?', 'Escaneá el QR de la credencial o del establecimiento, o buscá por matrícula.'],
-  ['/identidad-animal', '◉', 'Identidad animal', 'Chip, libreta y credencial: cómo funcionan y qué dice la normativa.'],
+  ['/servicios', '⊞', 'Consultorio digital y zoonosis', 'Gestión para veterinarias y servicio de zoonosis para municipios.'],
   ['/receta', '℞', 'Farmacias: verificar receta', 'Escaneá el QR de una receta veterinaria y registrá la dispensa.'],
   ['/datos', '▥', 'Datos abiertos', 'Panel de zoonosis por departamento y API pública.'],
   ['/tramites', '⇄', 'Trámites y denuncias', 'Matriculación, habilitaciones, certificados y denuncias de ejercicio ilegal.'],
-];
-
-const PERFILES = [
-  ['Tengo una mascota', 'Turnos, guardias y la libreta de tu animal en el celular.', '/libreta', 'Perro'],
-  ['Tengo caballos o animales de campo', 'Libreta equina digital, visitas a campo y certificados.', '/libreta/EQ-000017', 'Caballo'],
-  ['Soy veterinario/a', 'Matrícula, credencial y la gestión completa de tu consultorio.', '/servicios', 'Vet'],
-  ['Trabajo en un municipio', 'Zoonosis: credencial municipal, campañas y mordeduras.', '/servicios', 'Municipio'],
 ];
 
 export default function Home() {
@@ -92,57 +109,41 @@ export default function Home() {
   const { data: news } = useApi('/public/noticias?take=3');
   const [urg, setUrg] = useState(false), [vet, setVet] = useState(null), [est, setEst] = useState(null);
   const t = useTurno();
-  const Ilus = { Perro: A.Perro, Caballo: A.Caballo, Vet: A.Vet, Municipio: A.Municipio };
   return (
     <>
-      <section className="hero hero-anim"><div className="wrap hero-grid">
+      <section className="hero"><div className="wrap hero-grid">
         <div>
-          <Kicker>Salud animal · Mendoza</Kicker>
-          <h1>Cada animal, cuidado por un/a veterinario/a matriculado/a.</h1>
-          <p className="lead">Encontrá quién atiende cerca y quién está de guardia ahora. Sacá un turno y llevá la libreta de tu animal en el celular, con cada vacuna firmada por un profesional del Colegio.</p>
+          <Kicker style={{ color: '#9fd8c4' }}>Colegio de Veterinarios · Mendoza</Kicker>
+          <h1>Veterinarios matriculados, guardias y turnos en toda Mendoza.</h1>
+          <p className="lead">Buscá un profesional, mirá quién está de guardia ahora, sacá un turno o consultá la libreta sanitaria de tu mascota.</p>
           <Search onVet={setVet} onEst={setEst} />
           <div className="chips">
-            <button className="chip chip-urg" onClick={() => setUrg(true)}>! Urgencia: guardia más cercana</button>
-            <Link className="chip" to="/directorio?turnos=1">▦ Pedir turno</Link>
-            <Link className="chip" to="/libreta">✚ Ver una libreta</Link>
+            <Link className="chip" to="/guardias">◷ Tablero de guardia</Link>
+            <Link className="chip" to="/directorio?turnos=1">▦ Pedir turno online</Link>
+            <Link className="chip" to="/libreta">✚ Libreta sanitaria digital</Link>
             <Link className="chip" to="/verificar">✓ Verificar matrícula</Link>
           </div>
         </div>
-        <A.HeroMosaic />
+        <HeroTurnos onPick={p => t.open(p.codigo, p.mp, p.inicio)} />
       </div></section>
-
-      <section className="sec perfiles-sec"><div className="wrap">
-        <div className="shead"><div><Kicker>Por dónde empezar</Kicker><h2>¿Qué estás buscando?</h2></div></div>
-        <div className="perfiles">{PERFILES.map(([ti, d, to, il]) => { const I = Ilus[il]; return (
-          <Link key={ti} to={to} className="card perfil"><I size={76} /><div><b>{ti}</b><span className="small muted">{d}</span></div><span className="arr">→</span></Link>
-        ); })}</div>
-      </div></section>
-
-      <section className="sec" style={{ paddingTop: 12 }}><div className="wrap">
-        <div className="shead"><div><Kicker>Ahora</Kicker><h2>Tablero de guardia</h2><p className="muted">Quién atiende urgencias en este momento, por zona. Cada clínica lo actualiza desde su portal.</p></div><Link className="btn" to="/guardias">Ver tablero completo →</Link></div>
-        <div className="now-grid">
-          <Board limit={4} />
-          <HeroTurnos onPick={p => t.open(p.codigo, p.mp, p.inicio)} />
+      <div className="wrap">
+        <div className="urgent">
+          <div className="pulse">!</div>
+          <div style={{ flex: 1, minWidth: 220 }}><b>¿Es una urgencia?</b><div className="muted small">Te mostramos las guardias abiertas más cercanas a tu ubicación, con llamada directa.</div></div>
+          <button className="btn btn-danger" onClick={() => setUrg(true)}>Ver guardia más cercana</button>
         </div>
-      </div></section>
-
-      <section className="sec band-soft"><div className="wrap">
-        <div className="shead"><div><Kicker>Cómo se conecta todo</Kicker><h2>Lo que firma tu veterinario/a llega a todos los que lo necesitan</h2><p className="muted">El consultorio y la zoonosis municipal registran. La libreta del animal guarda. La familia, el municipio y las farmacias consultan, cada uno con sus permisos.</p></div><Link className="btn" to="/identidad-animal">Identidad animal →</Link></div>
-        <Conexiones />
-      </div></section>
-
-      <section className="sec"><div className="wrap">
-        <div className="shead"><div><Kicker>Credencial del animal · normativa</Kicker><h2>Lo que exigen hoy las normas y lo que se está discutiendo</h2><p className="muted">La plataforma ya cumple con lo vigente, y el chip, la firma y las mordeduras quedan registrados para el registro provincial si se aprueba.</p></div><Link className="btn" to="/identidad-animal">Ver todo →</Link></div>
-        <div className="grid g4 normas">{NORMAS.filter(n => ['rupac', 'luscyf', 'lsed', 'mordedura'].includes(n.k)).map(n => <NormaCard key={n.k} n={n} compact />)}</div>
-      </div></section>
-
-      <section className="sec" style={{ paddingTop: 12 }}><div className="wrap">
-        <div className="shead"><div><Kicker>Mapa</Kicker><h2>Establecimientos y turnos cerca tuyo</h2><p className="muted">Clínicas, consultorios, agroveterinarias y guardias habilitadas. Donde dice «Próximo turno», lo reservás en un clic.</p></div><Link className="btn" to="/mapa">Abrir mapa completo →</Link></div>
+      </div>
+      <section className="sec" style={{ paddingBottom: 24 }}><div className="wrap">
+        <div className="shead"><div><Kicker>01 · Mapa</Kicker><h2>Establecimientos y turnos cerca tuyo</h2><p className="muted">Clínicas, consultorios, agroveterinarias y guardias habilitadas. Donde dice «Próximo turno», lo reservás en un clic.</p></div><Link className="btn" to="/mapa">Abrir mapa completo →</Link></div>
         <MapSection home />
       </div></section>
-
-      <section className="sec" style={{ paddingTop: 12 }}><div className="wrap">
-        <div className="shead"><div><Kicker>Servicios</Kicker><h2>Todo lo demás, a un clic</h2></div></div>
+      <section className="sec" style={{ paddingTop: 24 }}><div className="wrap">
+        <div className="shead"><div><Kicker>02 · Guardias</Kicker><h2>Tablero de guardia</h2><p className="muted">Quién está atendiendo urgencias ahora, por zona. Lo actualiza cada clínica desde su portal.</p></div><Link className="btn" to="/guardias">Ver tablero completo →</Link></div>
+        <Board limit={6} />
+      </div></section>
+      <LibretaBand />
+      <section className="sec"><div className="wrap">
+        <div className="shead"><div><Kicker>04 · Servicios</Kicker><h2>Todo lo demás, a un clic</h2></div></div>
         <div className="grid g3">{QA.map(([to, ic, ti, d], i) => (
           <Link key={to} className="card qa" to={to}><span className="idx">{String(i + 1).padStart(2, '0')}</span><div className="ic">{ic}</div><div className="qt"><b>{ti}</b><span className="muted small">{d}</span></div><span className="arr">→</span></Link>
         ))}</div>

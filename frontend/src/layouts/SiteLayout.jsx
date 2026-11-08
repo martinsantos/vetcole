@@ -6,7 +6,7 @@ import { LOGO } from '../components/ui.jsx';
 import { useAuth, homeFor } from '../lib/store.js';
 import Assistant from '../components/Assistant.jsx';
 
-const NAV = [['/', 'Inicio'], ['/directorio', 'Directorio'], ['/guardias', 'Guardias'], ['/mapa', 'Mapa'], ['/identidad-animal', 'Identidad animal'], ['/libreta', 'Libreta'], ['/tramites', 'Trámites'], ['/institucional', 'Institucional']];
+const NAV = [['/', 'Inicio'], ['/directorio', 'Directorio'], ['/mapa', 'Mapa'], ['/guardias', 'Guardias'], ['/libreta', 'Libreta digital'], ['/tramites', 'Trámites'], ['/institucional', 'Institucional']];
 
 export default function SiteLayout() {
   const [open, setOpen] = useState(false);

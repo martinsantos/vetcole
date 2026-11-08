@@ -8,7 +8,7 @@ Plataforma del **Colegio de Médicos Veterinarios de Mendoza**: una sola base de
 
 | Aplicación | Ruta | Para quién | Qué resuelve |
 |---|---|---|---|
-| Sitio público | `/` | Comunidad | Directorio, mapa, **tablero de guardia en vivo**, turnos online, libreta sanitaria, **identidad animal** (chip, credencial, normativa y protocolos en discusión), verificación de matrícula, de establecimiento y de recetas, asistente, datos abiertos |
+| Sitio público | `/` | Comunidad | Directorio, mapa, **tablero de guardia en vivo**, turnos online, libreta sanitaria, verificación de matrícula, de establecimiento y de recetas, asistente, datos abiertos |
 | Portal del veterinario | `/vet` | Matriculados | Credencial con QR, cuotas, trámites, recetas con QR, credencial, oblea y cartel del establecimiento, declaración de guardia, notificación de casos, asamblea online, ficha pública |
 | **Consultorio** (equivalente a MyVete) | `/vet/consultorio` | Veterinarias | Agenda y turnos por servicio, pacientes con historia clínica (= libreta oficial), clientes, ventas y facturación, caja, inventario y pet shop, proveedores y compras, cuentas corrientes, mensajería y recordatorios a tutores, reportes |
 | Administración | `/admin` | Colegio | Tablero, padrón (ABM), inscripciones (Ley 7825), establecimientos, guardias, cobranzas, denuncias, salud pública, asamblea, comunicaciones, alta de municipios |
@@ -70,7 +70,7 @@ docs/prototipo-html.html prototipo navegable original
 - usa una marca neutra («ColVet Digital · demo»), porque una página publicada en Claude no puede presentarse como el sitio oficial del Colegio;
 - dentro del visor no se puede imprimir y el mapa se ve sin calles.
 
-`node e2e/smoke-claude.mjs` la prueba completa (53 verificaciones).
+`node e2e/smoke-claude.mjs` la prueba completa (52 verificaciones).
 
 ## Probarla sin instalar nada
 
@@ -102,7 +102,7 @@ docker compose up --build   # http://localhost:4000 (la base se recrea en cada a
 Otros comandos:
 
 - `npm test`: 10 tests de integración de la API sobre una base propia.
-- `npm run e2e`: con la demo corriendo en :4000, recorre las pantallas de las 5 aplicaciones y los flujos que las cruzan (74 verificaciones, Playwright). Después vuelve a cargar los datos.
+- `npm run e2e`: con la demo corriendo en :4000, recorre las pantallas de las 5 aplicaciones y los flujos que las cruzan (73 verificaciones, Playwright). Después vuelve a cargar los datos.
 - `npm run reseed`: vuelve los datos al estado inicial.
 
 ## Publicarla online
