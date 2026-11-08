@@ -8,6 +8,7 @@ import Libreta from '../pages/public/Libreta.jsx';
 import Receta from '../pages/public/Receta.jsx';
 import Datos from '../pages/public/Datos.jsx';
 import Servicios from '../pages/public/Servicios.jsx';
+import IdentidadAnimal from '../pages/public/IdentidadAnimal.jsx';
 import { VerificarVet, VerificarEst } from '../pages/public/Verificar.jsx';
 import { Tramites, Inscripcion, Institucional, Noticias, Viajar, Mapa, Guardias, NotFound } from '../pages/public/Info.jsx';
 
@@ -34,6 +35,7 @@ export default function PublicApp() {
         <Route path="viajar" element={<Viajar />} />
         <Route path="datos" element={<Datos />} />
         <Route path="servicios" element={<Servicios />} />
+        <Route path="identidad-animal" element={<IdentidadAnimal />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
