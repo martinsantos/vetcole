@@ -16,7 +16,7 @@ r.get('/contexto', h(async (req, res) => ok(res, { actual: { id: req.clinic.id, 
 r.get('/tablero', h(async (req, res) => {
   const estId = req.clinic.id, hoy = startOfDay(), man = addDays(hoy, 1);
   const [turnos, ventasHoy, productos, recordatorios, mensajes] = await Promise.all([
-    prisma.turno.findMany({ where: { estId, inicio: { gte: hoy, lt: man } }, include: { animal: true, servicio: true, vet: true }, orderBy: { inicio: 'asc' } }),
+    prisma.turno.findMany({ where: { estId, inicio: { gte: hoy, lt: man } }, include: { animal: { include: { tutor: true } }, servicio: true, vet: true }, orderBy: { inicio: 'asc' } }),
     prisma.venta.findMany({ where: { estId, fecha: { gte: hoy, lt: man } } }),
     prisma.producto.findMany({ where: { estId } }),
     prisma.evento.count({ where: { estId, proximo: { gte: hoy, lt: addDays(hoy, 15) } } }),
@@ -236,7 +236,7 @@ r.post('/ventas', h(async (req, res) => {
 }));
 r.get('/caja', h(async (req, res) => {
   const d = req.query.fecha ? startOfDay(new Date(req.query.fecha + 'T12:00:00')) : startOfDay();
-  const ventas = await prisma.venta.findMany({ where: { estId: req.clinic.id, fecha: { gte: d, lt: addDays(d, 1) } }, include: { items: true }, orderBy: { fecha: 'asc' } });
+  const ventas = await prisma.venta.findMany({ where: { estId: req.clinic.id, fecha: { gte: d, lt: addDays(d, 1) } }, include: { items: true, cliente: { include: { tutor: true } } }, orderBy: { fecha: 'asc' } });
   const cobros = await prisma.movCC.findMany({ where: { estId: req.clinic.id, clienteId: { not: null }, haber: { gt: 0 }, fecha: { gte: d, lt: addDays(d, 1) } } });
   const porMedio = {};
   for (const v of ventas) porMedio[v.medioPago] = money((porMedio[v.medioPago] || 0) + v.total);
