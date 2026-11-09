@@ -24,7 +24,26 @@ r.get('/tablero', h(async (req, res) => {
     const cs = cuotas.filter(c => c.periodo === p);
     return { periodo: p, cobrado: cs.filter(c => c.estado === 'Pagada').length / cs.length };
   });
-  ok(res, { padronPublicado: 877, enDemo: vets.length, porEstado, cuotasPendientes: pendientes, tramitesAbiertos: tramites, inscripciones: inscr, establecimientosHabilitados: ests, denunciasAbiertas: denuncias, porZona, cobranza: periodos });
+  // Lo que necesita atención hoy, con su acción.
+  const hoy = new Date();
+  const [inscListas, inspAtrasadas, vencidas, habPorVencer, noAcred, denNuevas] = await Promise.all([
+    prisma.inscripcion.count({ where: { etapa: { gte: 2, lt: 4 } } }),
+    prisma.inspeccion.count({ where: { estado: 'Programada', programada: { lt: hoy } } }),
+    prisma.cuota.findMany({ where: { estado: 'Pendiente', vence: { lt: hoy } }, select: { monto: true, vetId: true } }),
+    prisma.establecimiento.count({ where: { venceHab: { gte: hoy, lt: addDays(hoy, 90) } } }),
+    prisma.establecimiento.count({ where: { acreditacion: 'No acreditado' } }),
+    prisma.denuncia.count({ where: { estado: { in: ['Nueva', 'Recibida'] } } }),
+  ]);
+  const atencion = [
+    inspAtrasadas && { clave: 'insp', n: inspAtrasadas, t: `inspecci${inspAtrasadas > 1 ? 'ones atrasadas' : 'ón atrasada'}`, d: 'Tenían fecha y todavía no se hicieron.', to: '/inspeccion', b: 'Ver agenda', nivel: 'alto' },
+    noAcred && { clave: 'noacred', n: noAcred, t: `establecimiento${noAcred > 1 ? 's' : ''} no acreditado${noAcred > 1 ? 's' : ''}`, d: 'Con incumplimientos críticos; esperan reinspección.', to: '/inspeccion/establecimientos', b: 'Ver acreditación', nivel: 'alto' },
+    denuncias && { clave: 'den', n: denuncias, t: `denuncia${denuncias > 1 ? 's' : ''} abierta${denuncias > 1 ? 's' : ''}`, d: denNuevas ? `${denNuevas} sin asignar.` : 'En investigación.', to: '/admin/denuncias', b: 'Abrir bandeja', nivel: 'alto' },
+    vencidas.length && { clave: 'cuotas', n: new Set(vencidas.map(c => c.vetId)).size, t: 'matriculados con cuotas vencidas', d: `${vencidas.length} cuotas · $ ${vencidas.reduce((t, c) => t + c.monto, 0).toLocaleString('es-AR')}`, to: '/admin/cobranzas', b: 'Enviar recordatorios', nivel: 'medio' },
+    inscr && { clave: 'insc', n: inscr, t: `inscripci${inscr > 1 ? 'ones' : 'ón'} en curso`, d: inscListas ? `${inscListas} con documentación para revisar.` : 'Esperan documentación.', to: '/admin/inscripciones', b: 'Revisar', nivel: 'medio' },
+    tramites && { clave: 'tram', n: tramites, t: `trámite${tramites > 1 ? 's' : ''} sin resolver`, d: 'Habilitaciones, especialidades y certificados.', to: '/admin/matriculados', b: 'Ver padrón', nivel: 'bajo' },
+    habPorVencer && { clave: 'hab', n: habPorVencer, t: `habilitaci${habPorVencer > 1 ? 'ones vencen' : 'ón vence'} en 90 días`, d: 'Conviene programar la renovación.', to: '/inspeccion/establecimientos', b: 'Programar', nivel: 'bajo' },
+  ].filter(Boolean);
+  ok(res, { atencion, padronPublicado: 877, enDemo: vets.length, porEstado, cuotasPendientes: pendientes, tramitesAbiertos: tramites, inscripciones: inscr, establecimientosHabilitados: ests, denunciasAbiertas: denuncias, porZona, cobranza: periodos });
 }));
 
 // ABM de matriculados

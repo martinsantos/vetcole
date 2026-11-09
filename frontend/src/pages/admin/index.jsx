@@ -20,16 +20,22 @@ export function Tablero() {
     const cnt = e => d.porEstado.find(x => x.estado === e)?._count || 0;
     return (
       <>
-        <PageHead kicker="Administración" title="Tablero"><span className="small muted">Actualizado {fdt(new Date())}</span></PageHead>
-        <div className="grid g4">
-          <Kpi label="Padrón publicado" value={d.padronPublicado} sub={`${d.enDemo} cargados en la demo`} />
-          <Kpi label="Vigentes en la demo" value={cnt('Vigente')} sub={`${cnt('Suspendida')} suspendidos · ${cnt('En trámite')} en trámite`} />
-          <Kpi label="Cuotas pendientes" value={d.cuotasPendientes} color="var(--warn)" sub={<Link to="/admin/cobranzas">Ver cobranzas</Link>} />
-          <Kpi label="Trámites abiertos" value={d.tramitesAbiertos} sub={`${d.inscripciones} inscripciones en curso`} />
+        <PageHead kicker={new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })} title="Qué necesita atención hoy"><span className="small muted">Actualizado {fdt(new Date())}</span></PageHead>
+        <div className="atencion">
+          {d.atencion.map(a => (
+            <Link key={a.clave} to={a.to} className={`card at at-${a.nivel}`}>
+              <b className="at-n">{a.n}</b>
+              <div className="at-t"><b>{a.t}</b><span className="small muted">{a.d}</span></div>
+              <span className="btn btn-sm">{a.b} →</span>
+            </Link>
+          ))}
+          {!d.atencion.length && <div className="card"><b>Todo al día.</b> <span className="muted">No hay pendientes.</span></div>}
         </div>
-        <div className="grid g3" style={{ marginTop: 16 }}>
+        <h3 className="tab-h">El Colegio en números</h3>
+        <div className="grid g4">
+          <Kpi label="Padrón publicado" value={d.padronPublicado} sub={`${cnt('Vigente')} vigentes en la demo · ${cnt('Suspendida')} suspendidos`} />
           <Kpi label="Establecimientos habilitados" value={d.establecimientosHabilitados} sub={<Link to="/admin/establecimientos">Carteles y credenciales</Link>} />
-          <Kpi label="Denuncias abiertas" value={d.denunciasAbiertas} color={d.denunciasAbiertas ? 'var(--bad)' : undefined} sub={<Link to="/admin/denuncias">Ver bandeja</Link>} />
+          <Kpi label="Cuotas pendientes" value={d.cuotasPendientes} sub={<Link to="/admin/dinero">Ver recaudación</Link>} />
           <Kpi label="Guardias" value="En vivo" sub={<Link to="/admin/guardias">Ver tablero</Link>} />
         </div>
         <div className="grid g2" style={{ marginTop: 16 }}>

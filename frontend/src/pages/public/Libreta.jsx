@@ -1,4 +1,7 @@
 // Libreta sanitaria digital pública: consulta por N° de libreta o microchip, vista para quien escanea el QR.
+import { BRAND } from '../../lib/brand.js';
+import { CLAUDE } from '../../lib/base.js';
+import { LOGO, saveFile } from '../../components/ui.jsx';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
@@ -59,43 +62,86 @@ function LibretaView({ q }) {
     const v = await cached(`/public/vets/${p.vetCabecera.mp}`);
     if (!t.forVet(v)) toast('Su veterinaria no tiene turnos online. Llamala desde el directorio.', 'error');
   };
+  const pub = p.eventos;
+  const grupos = [['Vacunas', ['vac']], ['Desparasitaciones', ['des']], ['Identificación y cirugías', ['chip', 'cas']], ['Análisis y certificados', ['lab', 'via']]].map(([t, tipos]) => [t, pub.filter(e => tipos.includes(e.tipo))]).filter(([, l]) => l.length);
+  const bajarJson = async () => {
+    const doc = await api.get(`/public/libretas/${p.libreta}/estandar`);
+    const txt = JSON.stringify(doc, null, 2), nombre = `${p.libreta.toLowerCase()}.lsaa.json`;
+    if (CLAUDE) return saveFile(nombre, txt, 'application/json');
+    const el = document.createElement('a'); el.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); el.download = nombre; el.click();
+  };
   return (
-    <section className="sec" style={{ paddingTop: 26 }}><div className="wrap">
+    <section className="sec ldoc-bg" style={{ paddingTop: 22 }}><div className="wrap" style={{ maxWidth: 980 }}>
       <Link to="/libreta" className="small">← Consultar otra libreta</Link>
-      <div className="shead" style={{ marginTop: 8 }}><div><Kicker>Libreta sanitaria digital</Kicker><h1 style={{ fontSize: 44, margin: '6px 0 0' }}>{p.nombre}</h1></div></div>
       {p.perdido && (
-        <div className="lostban"><div><b>¡Me perdí!</b> Si encontraste a {p.nombre}, avisale a su familia. Su número no se muestra: el mensaje llega por el Colegio.</div>
+        <div className="lostban" style={{ marginTop: 10 }}><div><b>¡Me perdí!</b> Si encontraste a {p.nombre}, avisale a su familia. Su número no se muestra: el mensaje llega por el Colegio.</div>
           <AsyncBtn className="btn btn-light" onClick={async () => { await api.post(`/public/libretas/${p.libreta}/aviso`, {}); toast(`Mensaje enviado a la familia de ${p.nombre}. ¡Gracias por avisar!`); }}>Avisar a su familia</AsyncBtn></div>
       )}
-      <div className="lst" style={{ marginBottom: 16 }}>
-        <Badge cls={estadoCls(p.estado.codigo)}>{p.estado.etiqueta}{p.estado.vence ? ` · ${fdate(p.estado.vence)}` : ''}</Badge>
-        <Badge cls="b-ok">✓ Registros firmados por profesionales matriculados</Badge>
-        {p.castrado && <Badge cls="b-grey">Castrado/a</Badge>}
-        {p.municipio && <Badge style={{ background: p.municipio.color, color: '#fff' }}>{p.municipio.sigla} · {p.municipio.credencial} N° {p.municipio.nro}</Badge>}
-      </div>
-      <div className="libdet">
-        <div className="petcard">
-          <div className="pethead"><div className="petav">{p.nombre[0]}</div><div style={{ flex: 1, minWidth: 0 }}><div className="mono tiny muted">{p.especie.slice(0, 3).toUpperCase()} · {p.libreta}</div><h3 style={{ margin: '2px 0 0', fontSize: 22 }}>{p.nombre}</h3><div className="small muted">{p.raza} · {p.sexo} · {edad(p.nacimiento)}</div></div><QR text={verifyUrl(`/libreta/${p.libreta}`)} size={72} /></div>
-          <div className="facts">
-            <div><span>Especie</span><b>{p.especie}</b></div><div><span>Nacimiento</span><b>{fdate(p.nacimiento)}</b></div>
-            <div><span>Pelaje</span><b>{p.pelaje || '—'}</b></div><div><span>Castrado/a</span><b>{p.castrado ? 'Sí' : 'No'}</b></div>
-            <div style={{ gridColumn: '1/-1' }}><span>Microchip ISO 11784/85</span><b className="mono">{p.microchip ? chipFmt(p.microchip) : 'Sin microchip'}</b></div>
-            <div style={{ gridColumn: '1/-1' }}><span>Tutor/a</span><b>{p.tutorInicial} (datos protegidos)</b></div>
-            {p.vetCabecera && <div style={{ gridColumn: '1/-1' }}><span>Veterinario/a de cabecera</span><b>{p.vetCabecera.titulo} · <Link to={`/verificar/${p.vetCabecera.mp}`}>MP {p.vetCabecera.mp}</Link></b></div>}
-          </div>
+      <article className="ldoc">
+        <header className="ldoc-head">
+          <img src={LOGO} alt="" />
+          <div><b>Libreta sanitaria animal</b><span>{BRAND.nombre}</span></div>
+          <div className="ldoc-num"><span>Libreta N.º</span><b>{p.libreta}</b></div>
+        </header>
+
+        <div className={`ldoc-estado ${p.estado.codigo}`}>
+          <div><b>{p.estado.codigo === 'al_dia' ? '✓ ' : ''}{p.estado.etiqueta}</b>{p.estado.vence && <span>Próximo refuerzo: {fdate(p.estado.vence)}</span>}</div>
+          <span className="ldoc-firma-ok">Todos los registros están firmados por profesionales con matrícula verificada</span>
         </div>
-        <div>
-          <div className="card"><h3>Vacunas, microchip y controles</h3><Timeline eventos={p.eventos} onCert={e => setCert(e)} />
-            <p className="tiny muted" style={{ margin: '10px 0 0' }}>Las consultas e incidentes sólo los ven la familia (desde su app) y los profesionales.</p></div>
-          <div className="row" style={{ marginTop: 14 }}>
-            {p.vetCabecera?.turnosOnline && <AsyncBtn className="btn btn-primary" onClick={pedirTurno}>Pedir turno con {p.vetCabecera.titulo}</AsyncBtn>}
-            <button className="btn wbtn" onClick={() => toast('Libreta agregada a Google Wallet (demo)')}>Google Wallet</button>
-            <button className="btn wbtn" onClick={() => toast('Libreta agregada a Apple Wallet (demo)')}>Apple Wallet</button>
-            <Link className="btn" to="/viajar">Voy a viajar</Link>
+
+        <div className="ldoc-id">
+          <div className="ldoc-id-main">
+            <h1>{p.nombre}</h1>
+            <dl>
+              <div><dt>Especie</dt><dd>{p.especie}</dd></div>
+              <div><dt>Raza</dt><dd>{p.raza}</dd></div>
+              <div><dt>Sexo</dt><dd>{p.sexo}{p.castrado ? ' · castrado/a' : ''}</dd></div>
+              <div><dt>Nacimiento</dt><dd>{fdate(p.nacimiento)} ({edad(p.nacimiento)})</dd></div>
+              <div><dt>Pelaje</dt><dd>{p.pelaje || '—'}</dd></div>
+              <div><dt>Microchip ISO 11784/11785</dt><dd className="ldoc-chip">{p.microchip ? chipFmt(p.microchip) : 'Sin microchip'}</dd></div>
+              <div><dt>Tutor/a</dt><dd>{p.tutorInicial} · datos protegidos</dd></div>
+              {p.vetCabecera && <div><dt>Veterinario/a de cabecera</dt><dd><Link to={`/profesional/${p.vetCabecera.mp}`}>{p.vetCabecera.titulo}</Link> · MP {p.vetCabecera.mp}</dd></div>}
+              {p.municipio && <div><dt>Credencial municipal</dt><dd>{p.municipio.nombre} · {p.municipio.sigla} N.º {p.municipio.nro}</dd></div>}
+            </dl>
           </div>
-          <div className="tiny muted" style={{ marginTop: 10 }}>Tipos de registro: {Object.values(EVT).map(e => e[1]).join(' · ')}.</div>
+          <div className="ldoc-qr"><QR text={verifyUrl(`/libreta/${p.libreta}`)} size={120} /><span>Escaneá para verificar esta libreta</span></div>
         </div>
+
+        {grupos.map(([titulo, lista]) => (
+          <section key={titulo} className="ldoc-sec">
+            <h2>{titulo}</h2>
+            <table className="ldoc-tbl"><thead><tr><th>Fecha</th><th>Registro</th><th>Firma</th><th>Próximo</th></tr></thead><tbody>
+              {lista.map(e => (
+                <tr key={e.id}>
+                  <td>{fdate(e.fecha)}</td>
+                  <td><b>{e.titulo}</b>{e.detalle && <span>{e.detalle}</span>}{e.tipo === 'via' && <button className="btn btn-sm" style={{ marginTop: 6 }} onClick={() => setCert(e)}>Ver certificado</button>}</td>
+                  <td>{e.firma?.mp ? <span className="sello"><b>{e.firma.titulo}</b><span>Matrícula {e.firma.mp} · verificada</span></span> : e.firma?.zoonosis ? <span className="sello muni"><b>Zoonosis {e.firma.zoonosis}</b><span>Servicio municipal</span></span> : '—'}</td>
+                  <td>{e.proximo ? fdate(e.proximo) : '—'}</td>
+                </tr>
+              ))}
+            </tbody></table>
+          </section>
+        ))}
+
+        <footer className="ldoc-foot">
+          <div>
+            <b>Datos abiertos</b>
+            <p>Esta libreta sigue el estándar abierto <Link to="/estandar-libreta">Libreta Sanitaria Animal Abierta (LSAA 0.1)</Link>: cualquier consultorio, municipio o registro puede leerla sin volver a cargar los datos. Acá se muestra el nivel público: no incluye datos del tutor/a, consultas ni mordeduras.</p>
+          </div>
+          <div className="row" style={{ gap: 8 }}>
+            <AsyncBtn className="btn" onClick={bajarJson}>Descargar en formato abierto (JSON)</AsyncBtn>
+            <Link className="btn" to="/estandar-libreta">Ver el estándar</Link>
+          </div>
+        </footer>
+      </article>
+
+      <div className="row" style={{ marginTop: 16, gap: 8 }}>
+        {p.vetCabecera?.turnosOnline && <AsyncBtn className="btn btn-primary" onClick={pedirTurno}>Pedir turno con {p.vetCabecera.titulo}</AsyncBtn>}
+        <button className="btn wbtn" onClick={() => toast('Libreta agregada a Google Wallet (demo)')}>Google Wallet</button>
+        <button className="btn wbtn" onClick={() => toast('Libreta agregada a Apple Wallet (demo)')}>Apple Wallet</button>
+        <Link className="btn" to="/viajar">Voy a viajar</Link>
       </div>
+      <p className="tiny muted" style={{ marginTop: 10 }}>Consultada el {new Date().toLocaleString('es-AR')}. Las consultas e incidentes sólo los ven la familia (desde su app) y los profesionales.</p>
       <CertViajeModal libreta={p} evento={cert} onClose={() => setCert(null)} />
       {t.modal}
     </div></section>

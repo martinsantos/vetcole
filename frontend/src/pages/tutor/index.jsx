@@ -14,30 +14,45 @@ import './tutor.css';
 
 const codigoDe = mp => (mp === 1301 ? 'e12' : 'e1');
 
+const dias = f => Math.round((new Date(f) - Date.now()) / 864e5);
+const enCuanto = n => (n < 0 ? `venció hace ${-n} días` : n === 0 ? 'hoy' : n === 1 ? 'mañana' : n < 31 ? `en ${n} días` : `en ${Math.round(n / 30)} meses`);
+
 export function Mascotas() {
   const { data, loading, error, reload } = useApi('/tutor/mascotas');
+  const { data: turnos, reload: reloadT } = useApi('/tutor/turnos');
   const user = useAuth(s => s.user);
+  const [turno, setTurno] = useState(null), [sel, setSel] = useState(0);
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   if (loading || !data) return <Spinner />;
+  const prox = (turnos || []).filter(t => t.estado !== 'cancelado' && new Date(t.inicio) > new Date()).sort((x, y) => new Date(x.inicio) - new Date(y.inicio))[0];
+  const m = data[Math.min(sel, data.length - 1)];
+  const venc = m?.proximos[0];
   return (
-    <div className="tpad">
-      <div className="tiny muted">Hola, {user?.tutor?.nombre?.split(' ')[0] || user?.nombre}</div>
-      <h2 className="ttitle">Mis mascotas</h2>
+    <div className="tpad thome">
+      <div className="small muted">Hola, {user?.tutor?.nombre?.split(' ')[0] || user?.nombre}</div>
       {!data.length && <Empty>Todavía no tenés mascotas con libreta. Pedile a tu veterinario/a que la emita.</Empty>}
-      {data.map(m => (
-        <Link key={m.id} to={`/tutor/mascotas/${m.id}`} className="card petcardlite">
-          <div className="petav">{m.nombre[0]}</div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="row between" style={{ flexWrap: 'nowrap' }}><b>{m.nombre}</b>{m.perdido && <Badge cls="b-bad">Perdido/a</Badge>}</div>
-            <div className="tiny muted">{m.especie} · {m.raza} · {edad(m.nacimiento)}</div>
-            <div style={{ marginTop: 6 }}><Badge cls={estadoCls(m.estado.codigo)}>{m.estado.etiqueta}</Badge></div>
-            {m.proximos.length > 0 && <div className="tiny" style={{ marginTop: 6 }}>Próximo: <b>{m.proximos[0].titulo}</b> · {fdate(m.proximos[0].proximo)}</div>}
-            {m.municipio && <div className="tiny muted mono" style={{ marginTop: 4 }}>{m.municipio.sigla} N.º {String(m.municipio.nro || '').padStart(6, '0')}</div>}
-          </div>
-          <span className="muted">›</span>
-        </Link>
-      ))}
-      <div className="note small" style={{ marginTop: 12 }}>La libreta la firma tu veterinario/a matriculado/a. Si cambiás de veterinaria, la libreta sigue con tu mascota.</div>
+      {data.length > 1 && <div className="tsel" role="tablist">{data.map((x, i) => <button key={x.id} type="button" role="tab" aria-selected={i === sel} className={i === sel ? 'on' : ''} onClick={() => setSel(i)}><span>{x.nombre[0]}</span>{x.nombre}</button>)}</div>}
+      {m && <>
+        <div className={`thero ${m.estado.codigo}`}>
+          <div className="thero-av" aria-hidden="true">{m.nombre[0]}</div>
+          <h2>{m.nombre}</h2>
+          <div className="small">{m.especie} · {m.raza} · {edad(m.nacimiento)}</div>
+          <div className="thero-estado">{m.estado.codigo === 'al_dia' ? '✓ ' : ''}{m.estado.etiqueta}</div>
+          {m.perdido && <Badge cls="b-bad">Reportado/a como perdido/a</Badge>}
+        </div>
+        <div className="tacc">
+          <button type="button" className="tacc-b prim" onClick={() => setTurno(m)}><b>Pedir turno</b><span>{m.vetCabecera ? `con ${m.vetCabecera.titulo}` : 'con su veterinaria'}</span></button>
+          <Link className="tacc-b" to={`/tutor/mascotas/${m.id}`}><b>Credencial</b><span>QR y libreta completa</span></Link>
+        </div>
+        {venc && <Link to={`/tutor/mascotas/${m.id}`} className={`card tprox ${dias(venc.proximo) < 30 ? 'pronto' : ''}`}>
+          <div><span className="small muted">Próximo vencimiento</span><b>{venc.titulo}</b><span className="small">{fdate(venc.proximo)} · {enCuanto(dias(venc.proximo))}</span></div>
+          <span className="tprox-n">{Math.max(0, dias(venc.proximo))}<small>días</small></span>
+        </Link>}
+        {m.proximos.slice(1).map(x => <div key={x.titulo + x.proximo} className="tprox-mini"><span>{x.titulo}</span><span className="muted">{fdate(x.proximo)}</span></div>)}
+      </>}
+      {prox && <Link to="/tutor/turnos" className="card tturno"><div className="tdate"><b>{new Date(prox.inicio).getDate()}</b><span>{new Date(prox.inicio).toLocaleDateString('es-AR', { month: 'short' }).replace('.', '')}</span></div><div><span className="small muted">Tu próximo turno</span><b>{new Date(prox.inicio).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })} · {prox.establecimiento.nombre}</b><span className="small muted">{prox.profesional}</span></div></Link>}
+      <p className="tiny muted" style={{ marginTop: 14 }}>La libreta la firma tu veterinario/a matriculado/a. Si cambiás de veterinaria, la libreta sigue con tu mascota.</p>
+      {turno && <TurnoModal open codigo={codigoDe(turno.vetCabecera?.mp)} mp={turno.vetCabecera?.mp} onClose={() => { setTurno(null); reloadT(); }} />}
     </div>
   );
 }
