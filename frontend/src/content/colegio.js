@@ -246,10 +246,6 @@ export const COLEGIO = {
    "url": "http://www.colvetmza.com.ar/wp-content/uploads/2021/12/Balance-General-2012-2013.pdf"
   }
  ],
- "asamblea": {
-  "texto": "La Asamblea Anual Ordinaria renueva parcialmente las autoridades (Directorio, Tribunal de Disciplina y Comisión Revisora de Cuentas) y considera la Memoria y los estados contables. La última se realizó el viernes 19 de diciembre de 2025 en la sede del Colegio.",
-  "padron": "https://www.colvetmza.com.ar/wp-content/uploads/2025/12/Padron-definitivo-19-12-2025.docx.pdf"
- },
  "noticias": [
   {
    "fecha": "2026-11-06",
@@ -343,11 +339,6 @@ export const COLEGIO = {
    "2026-11-30",
    "Cierre de la preventa La Colonia 2026/27",
    "Convenio de beneficios para matriculados"
-  ],
-  [
-   "2026-12-01",
-   "Asamblea Anual Ordinaria",
-   "Sede del Colegio · fecha a confirmar (diciembre)"
   ]
  ]
 };

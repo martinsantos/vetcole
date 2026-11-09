@@ -40,7 +40,6 @@ const MATRICULADOS = [
 const AGENDA = [
   [5, 'Curso de ecografía abdominal en pequeños animales', 'Sede del Colegio · cupos limitados'],
   [19, 'Masterclass: distress respiratorio felino', 'Modalidad virtual'],
-  [34, 'Asamblea General Ordinaria', 'Sede del Colegio · modalidad mixta'],
 ];
 const enDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
 

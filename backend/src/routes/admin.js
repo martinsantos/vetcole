@@ -1,7 +1,7 @@
-// Administración del Colegio: tablero, padrón (ABM), inscripciones, establecimientos, guardias, cobranzas, denuncias, salud pública, asamblea, noticias.
+// Administración del Colegio: tablero, padrón (ABM), inscripciones, establecimientos, guardias, cobranzas, denuncias, salud pública, noticias.
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import { prisma, ok, fail, h, parse, publicEst, zonaOf, ZONAS, addDays } from '../lib/core.js';
+import { prisma, ok, fail, h, parse, publicEst, zonaOf, ZONAS, addDays, vetName } from '../lib/core.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 
 const r = Router();
@@ -35,6 +35,39 @@ r.get('/vets', h(async (req, res) => {
   const n = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   ok(res, list.filter(v => !q || n(`${v.nombre} ${v.apellido} ${v.mp} ${v.departamento}`).includes(n(q))).map(vetOut));
 }));
+const cnt = x => (typeof x._count === 'number' ? x._count : x._count?._all ?? 0);
+// Ficha completa de un matriculado: todo lo que el Colegio sabe de él/ella en un solo lugar.
+r.get('/vets/:mp/ficha', h(async (req, res) => {
+  const v = await prisma.vet.findUnique({ where: { mp: Number(req.params.mp) }, include: { cuotas: { orderBy: { vence: 'desc' } }, user: true } });
+  if (!v) return fail(res, 404, 'No existe esa matrícula.');
+  const desde = addDays(new Date(), -30);
+  const [tramites, ests, recetas, nRecetas, eventos, porTipo, turnos30, proxTurnos, casos, pacientes] = await Promise.all([
+    prisma.tramite.findMany({ where: { vetId: v.id }, orderBy: { createdAt: 'desc' } }),
+    prisma.establecimiento.findMany({ where: { OR: [{ dtId: v.id }, { equipo: { some: { vetId: v.id } } }] }, include: { dt: true, equipo: { include: { vet: true } } } }),
+    prisma.receta.findMany({ where: { vetId: v.id }, include: { animal: { select: { nombre: true, libreta: true } } }, orderBy: { fecha: 'desc' }, take: 8 }),
+    prisma.receta.count({ where: { vetId: v.id } }),
+    prisma.evento.findMany({ where: { vetId: v.id }, include: { animal: { select: { nombre: true, libreta: true, especie: true } } }, orderBy: { fecha: 'desc' }, take: 10 }),
+    prisma.evento.groupBy({ by: ['tipo'], where: { vetId: v.id }, _count: true }),
+    prisma.turno.count({ where: { vetId: v.id, inicio: { gte: desde, lt: new Date() }, NOT: { estado: 'cancelado' } } }),
+    prisma.turno.count({ where: { vetId: v.id, inicio: { gte: new Date() }, NOT: { estado: 'cancelado' } } }),
+    prisma.casoEpi.findMany({ where: { vetId: v.id }, orderBy: { createdAt: 'desc' } }),
+    prisma.animal.count({ where: { vetCabeceraId: v.id } }),
+  ]);
+  const pendientes = v.cuotas.filter(c => c.estado === 'Pendiente');
+  ok(res, {
+    vet: { ...vetOut(v), titulo: vetName(v), usuario: v.user ? { email: v.user.email, rol: v.user.rol } : null, user: undefined, cuotas: undefined },
+    deuda: { cuotas: pendientes.length, monto: pendientes.reduce((s, c) => s + c.monto, 0) },
+    cuotas: v.cuotas,
+    tramites: tramites.map(t => ({ ...t, pasos: parse(t.pasosJson) })),
+    establecimientos: ests.map(e => ({ ...publicEst(e), rol: e.dtId === v.id ? 'Director/a técnico/a' : 'Equipo' })),
+    recetas: { total: nRecetas, ultimas: recetas },
+    registros: { total: porTipo.reduce((s, x) => s + cnt(x), 0), porTipo: Object.fromEntries(porTipo.map(x => [x.tipo, cnt(x)])), ultimos: eventos },
+    turnos: { ultimos30: turnos30, proximos: proxTurnos },
+    casos,
+    pacientesCabecera: pacientes,
+  });
+}));
+
 r.post('/vets', h(async (req, res) => {
   const b = req.body || {};
   if (!b.mp || !b.nombre || !b.apellido || !b.departamento) return fail(res, 400, 'Matrícula, nombre, apellido y departamento son obligatorios.');
@@ -80,11 +113,6 @@ r.get('/denuncias', h(async (req, res) => ok(res, await prisma.denuncia.findMany
 r.patch('/denuncias/:id', h(async (req, res) => ok(res, await prisma.denuncia.update({ where: { id: Number(req.params.id) }, data: { estado: String(req.body?.estado || 'En investigación') } }))));
 
 r.get('/casos', h(async (req, res) => ok(res, await prisma.casoEpi.findMany({ include: { vet: { select: { mp: true, nombre: true, apellido: true } } }, orderBy: { createdAt: 'desc' } }))));
-
-r.get('/asamblea', h(async (req, res) => {
-  const [items, acred] = await Promise.all([prisma.asambleaItem.findMany({ orderBy: { orden: 'asc' } }), prisma.acreditacion.count()]);
-  ok(res, { padron: 754, presentes: acred + 317, items });
-}));
 
 r.post('/noticias', h(async (req, res) => {
   const { titulo, categoria, resumen } = req.body || {};

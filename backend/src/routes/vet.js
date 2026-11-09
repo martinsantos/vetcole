@@ -1,4 +1,4 @@
-// Portal del matriculado (lado Colegio): credencial, cuotas, trámites, recetas, establecimiento, guardia, casos, asamblea.
+// Portal del matriculado (lado Colegio): credencial, cuotas, trámites, recetas, establecimiento, guardia y casos.
 import { Router } from 'express';
 import { prisma, ok, fail, h, parse, publicEst, vetName, addDays, startOfDay } from '../lib/core.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
@@ -11,11 +11,10 @@ const estInclude = { dt: true, equipo: { include: { vet: true } } };
 
 r.get('/resumen', h(async (req, res) => {
   const v = await vetFull(req.user.vetId);
-  const [cuotas, tramites, ests, acred, casos] = await Promise.all([
+  const [cuotas, tramites, ests, casos] = await Promise.all([
     prisma.cuota.findMany({ where: { vetId: v.id }, orderBy: { vence: 'desc' } }),
     prisma.tramite.findMany({ where: { vetId: v.id }, orderBy: { createdAt: 'desc' } }),
     prisma.establecimiento.findMany({ where: { OR: [{ dtId: v.id }, { equipo: { some: { vetId: v.id } } }] }, include: estInclude }),
-    prisma.acreditacion.findUnique({ where: { vetId: v.id } }),
     prisma.casoEpi.findMany({ orderBy: { createdAt: 'desc' }, take: 4 }),
   ]);
   const hoy = startOfDay(), man = addDays(hoy, 1);
@@ -23,7 +22,7 @@ r.get('/resumen', h(async (req, res) => {
   ok(res, {
     vet: { ...v, especialidades: parse(v.especialidadesJson), especies: parse(v.especiesJson), titulo: vetName(v) },
     cuotaPendiente: cuotas.find(c => c.estado === 'Pendiente') || null,
-    tramites, turnosHoy, acreditado: !!acred,
+    tramites, turnosHoy,
     establecimientos: ests.map(e => ({ ...publicEst(e), esDT: e.dtId === v.id })),
     alertas: casos,
   });
@@ -98,34 +97,5 @@ r.post('/casos', h(async (req, res) => {
   ok(res, await prisma.casoEpi.create({ data: { evento, departamento, casos: Number(casos) || 1, especie: especie || 'Perros', diagnostico: diagnostico || 'Sospecha clínica', semana, vetId: req.user.vetId } }), 201);
 }));
 r.get('/casos', h(async (req, res) => ok(res, await prisma.casoEpi.findMany({ orderBy: { createdAt: 'desc' }, take: 20 }))));
-
-// Asamblea
-r.get('/asamblea', h(async (req, res) => {
-  const [items, acred, votos, padron, presentes] = await Promise.all([
-    prisma.asambleaItem.findMany({ orderBy: { orden: 'asc' } }),
-    prisma.acreditacion.findUnique({ where: { vetId: req.user.vetId } }),
-    prisma.voto.findMany({ where: { vetId: req.user.vetId } }),
-    prisma.cuota.groupBy({ by: ['vetId'], where: { estado: 'Pendiente', vence: { lt: new Date() } } }),
-    prisma.acreditacion.count(),
-  ]);
-  const v = await prisma.vet.findUnique({ where: { id: req.user.vetId }, include: { cuotas: true } });
-  const habilitado = v.estado === 'Vigente' && !v.cuotas.some(c => c.estado === 'Pendiente' && c.vence < addDays(new Date(), -30));
-  ok(res, { habilitado, acreditado: !!acred, presentes: presentes + 317, padron: 754, items: items.map(i => ({ id: i.id, orden: i.orden, titulo: i.titulo, votado: votos.some(x => x.itemId === i.id) })) });
-}));
-r.post('/asamblea/acreditar', h(async (req, res) => {
-  await prisma.acreditacion.upsert({ where: { vetId: req.user.vetId }, update: {}, create: { vetId: req.user.vetId } });
-  ok(res, { acreditado: true });
-}));
-r.post('/asamblea/votar', h(async (req, res) => {
-  const { itemId, opcion } = req.body || {};
-  if (!['si', 'no', 'abst'].includes(opcion)) return fail(res, 400, 'Opción inválida.');
-  if (!(await prisma.acreditacion.findUnique({ where: { vetId: req.user.vetId } }))) return fail(res, 403, 'Acreditate antes de votar.');
-  if (await prisma.voto.findUnique({ where: { vetId_itemId: { vetId: req.user.vetId, itemId: Number(itemId) } } })) return fail(res, 409, 'Ya votaste este punto.');
-  await prisma.$transaction([
-    prisma.voto.create({ data: { vetId: req.user.vetId, itemId: Number(itemId) } }),
-    prisma.asambleaItem.update({ where: { id: Number(itemId) }, data: { [opcion]: { increment: 1 } } }),
-  ]);
-  ok(res, { votado: true });
-}));
 
 export default r;

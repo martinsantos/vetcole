@@ -13,7 +13,7 @@ import { main as seed } from '../../../backend/prisma/seed.js';
 import { asistenteClaude } from './asistente.js';
 
 const MOUNTS = [['/public', publicRoutes], ['/auth', authRoutes], ['/vet', vetRoutes], ['/clinic', clinicRoutes], ['/admin', adminRoutes], ['/muni', muniRoutes], ['/tutor', tutorRoutes]];
-const KEY = 'colvet-demo-datos-v2'; // subir la versión cuando cambian el modelo o los datos de ejemplo
+const KEY = 'colvet-demo-datos-v3'; // subir la versión cuando cambian el modelo o los datos de ejemplo
 const store = {
   get() { try { return localStorage.getItem(KEY); } catch { return null; } },
   set(v) { try { localStorage.setItem(KEY, v); return true; } catch { return false; } },

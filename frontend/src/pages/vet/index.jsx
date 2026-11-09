@@ -1,5 +1,5 @@
 // Portal del matriculado (lado Colegio): resumen + guardia, credencial, cuotas, trámites, recetas,
-// establecimiento (credencial/oblea/cartel), notificación de casos, asamblea y ficha pública.
+// establecimiento (credencial/oblea/cartel), notificación de casos y ficha pública.
 import { FotoVet } from '../public/Profesional.jsx';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -43,7 +43,6 @@ export function VetHome() {
     const todos = [
       c && { t: `Pagar cuota ${c.periodo} (${money(c.monto)})`, to: '/vet/cuotas', b: 'Pagar' },
       ...d.tramites.filter(t => t.estado !== 'Resuelto').map(t => ({ t: `${t.tipo} · ${t.estado}`, to: '/vet/tramites', b: 'Ver trámite' })),
-      !d.acreditado && { t: 'Asamblea ordinaria: acreditate para votar online', to: '/vet/asamblea', b: 'Acreditarme' },
       { t: `Tenés ${d.turnosHoy} turnos hoy en el consultorio`, to: '/vet/consultorio/agenda', b: 'Ver agenda' },
     ].filter(Boolean);
     return (
@@ -53,7 +52,7 @@ export function VetHome() {
           <Kpi label="Matrícula" value={v.estado} color={v.estado === 'Vigente' ? 'var(--ok)' : 'var(--bad)'} sub={`MP ${v.mp} · desde ${v.alta}`} />
           <Kpi label="Cuota" value={c ? money(c.monto) : 'Al día'} sub={c ? `Vence ${fdate(c.vence)}` : 'Sin deuda'} color={c ? 'var(--warn)' : undefined} />
           <Kpi label="Turnos hoy" value={d.turnosHoy} sub="en tu consultorio" />
-          <Kpi label="Asamblea" value={d.acreditado ? 'Acreditada' : 'Pendiente'} sub="sáb. 12/12 · mixta" color={d.acreditado ? 'var(--ok)' : undefined} />
+          <Kpi label="Establecimientos" value={d.establecimientos.length} sub={d.establecimientos.some(e => e.esDT) ? 'incluye uno como DT' : 'donde atendés'} />
         </div>
         {d.establecimientos.filter(e => e.esDT).map(e => <GuardiaCard key={e.codigo} e={e} />)}
         <div className="grid g2" style={{ marginTop: 16 }}>
@@ -271,40 +270,6 @@ export function Casos() {
       </div>
     </>
   );
-}
-
-// ───────────────── Asamblea
-export function Asamblea() {
-  const q = useApi('/vet/asamblea');
-  const acreditar = async () => { await api.post('/vet/asamblea/acreditar'); toast('Acreditación confirmada con tu matrícula'); q.reload(); };
-  const votar = async (itemId, opcion) => { await api.post('/vet/asamblea/votar', { itemId, opcion }); toast('Voto registrado (secreto)'); q.reload(); };
-  return <Load q={q}>{a => {
-    const need = Math.floor(a.padron / 2) + 1;
-    return (
-      <>
-        <PageHead kicker="Asamblea ordinaria · sáb. 12 de diciembre, 10 h · mixta (sede + online)" title="Asamblea">
-          <Badge cls={a.habilitado ? 'b-ok' : 'b-bad'}>{a.habilitado ? 'Habilitado/a para votar · cuota al día' : 'No habilitado/a: regularizá tu cuota'}</Badge>
-        </PageHead>
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="row between"><div><b>Quórum</b><div className="small muted">{a.presentes} acreditados de {a.padron} habilitados · se necesitan {need}</div></div>
-            {a.acreditado ? <Badge cls="b-ok">✓ Acreditado/a online</Badge> : <AsyncBtn className="btn btn-primary" disabled={!a.habilitado} onClick={acreditar}>Acreditarme (presente online)</AsyncBtn>}</div>
-          <div className="qbar"><i style={{ width: `${Math.min(100, (a.presentes / a.padron) * 100)}%` }} /><span style={{ left: '50%' }} /></div>
-        </div>
-        <h3>Orden del día</h3>
-        {a.items.map(it => (
-          <div className="card" style={{ marginBottom: 10 }} key={it.id}>
-            <div className="row between">
-              <div><span className="mono tiny muted">PUNTO {it.orden}</span><div><b>{it.titulo}</b></div><a className="small" href="#doc" onClick={e => { e.preventDefault(); toast('Documento abierto (demo)'); }}>Ver documentación</a></div>
-              {it.votado ? <Badge cls="b-ok">Votaste · voto secreto registrado</Badge>
-                : a.acreditado ? <div className="row" style={{ gap: 6 }}>{[['si', 'Sí'], ['no', 'No'], ['abst', 'Abstención']].map(([k, l]) => <AsyncBtn key={k} className="btn btn-sm" onClick={() => votar(it.id, k)}>{l}</AsyncBtn>)}</div>
-                : <span className="small muted">Acreditate para votar</span>}
-            </div>
-          </div>
-        ))}
-        <p className="tiny muted">El padrón se arma solo con quienes tienen la cuota al día. El sistema registra que votaste, no qué votaste.</p>
-      </>
-    );
-  }}</Load>;
 }
 
 // ───────────────── Ficha pública

@@ -5,6 +5,7 @@ import { useApi } from '../lib/api.js';
 import AppShell from '../layouts/AppShell.jsx';
 import { useAuth } from '../lib/store.js';
 import * as A from '../pages/admin/index.jsx';
+import FichaMatriculado from '../pages/admin/FichaMatriculado.jsx';
 
 const items = [
   { section: 'Colegio' },
@@ -12,7 +13,6 @@ const items = [
   { to: '/admin/matriculados', label: 'Matriculados (ABM)', icon: '☻' },
   { to: '/admin/inscripciones', label: 'Inscripciones', icon: '⇥' },
   { to: '/admin/cobranzas', label: 'Cobranzas', icon: '$' },
-  { to: '/admin/asamblea', label: 'Asamblea', icon: '☷' },
   { to: '/admin/comunicaciones', label: 'Comunicaciones', icon: '✉' },
   { section: 'Control y salud pública' },
   { to: '/admin/establecimientos', label: 'Establecimientos', icon: '⌂' },
@@ -42,9 +42,9 @@ export default function AdminApp() {
         <Route path="tablero" element={<A.Tablero />} />
         <Route path="municipios/:id/abrir" element={<AbrirMunicipio />} />
         <Route path="matriculados" element={<A.Matriculados />} />
+        <Route path="matriculados/:mp" element={<FichaMatriculado />} />
         <Route path="inscripciones" element={<A.Inscripciones />} />
         <Route path="cobranzas" element={<A.Cobranzas />} />
-        <Route path="asamblea" element={<A.AsambleaAdmin />} />
         <Route path="comunicaciones" element={<A.Comunicaciones />} />
         <Route path="establecimientos" element={<A.Establecimientos />} />
         <Route path="guardias" element={<A.Guardias />} />

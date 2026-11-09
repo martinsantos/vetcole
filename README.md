@@ -9,9 +9,9 @@ Plataforma del **Colegio de Médicos Veterinarios de Mendoza**: una sola base de
 | Aplicación | Ruta | Para quién | Qué resuelve |
 |---|---|---|---|
 | Sitio público | `/` | Comunidad | Directorio, mapa, **tablero de guardia en vivo**, turnos online, libreta sanitaria, **identidad animal** (chip, credencial, normativa y protocolos en discusión), verificación de matrícula, de establecimiento y de recetas, asistente, datos abiertos |
-| Portal del veterinario | `/vet` | Matriculados | Credencial con QR, cuotas, trámites, recetas con QR, credencial, oblea y cartel del establecimiento, declaración de guardia, notificación de casos, asamblea online, ficha pública |
+| Portal del veterinario | `/vet` | Matriculados | Credencial con QR, cuotas, trámites, recetas con QR, credencial, oblea y cartel del establecimiento, declaración de guardia, notificación de casos, ficha pública |
 | **Consultorio** (equivalente a MyVete), dentro del portal del veterinario/a | `/vet/consultorio` | Veterinarias | Agenda y turnos por servicio, pacientes con historia clínica (= libreta oficial), clientes, ventas y facturación, caja, inventario y pet shop, proveedores y compras, cuentas corrientes, mensajería y recordatorios a tutores, reportes |
-| Administración | `/admin` | Colegio | Tablero, padrón (ABM), inscripciones (Ley 7825), establecimientos, guardias, cobranzas, denuncias, salud pública, asamblea, comunicaciones, alta de municipios |
+| Administración | `/admin` | Colegio | Tablero, padrón (ABM), inscripciones (Ley 7825), establecimientos, guardias, cobranzas, denuncias, salud pública, comunicaciones, alta de municipios |
 | **Zoonosis municipal** (equivalente a VetCard), dentro del Colegio | `/muni` | Municipios, o el Colegio desde *Administración → Municipios* | Credencial animal con la identidad del municipio, atenciones, campañas con **modo sin conexión**, mordeduras (observación de 10 días), perros potencialmente peligrosos, panel de cobertura |
 | App del tutor/a | `/tutor` | Familias | Mis mascotas, credencial para Wallet, libreta completa, turnos, mensajes con la veterinaria, aviso de mascota perdida |
 

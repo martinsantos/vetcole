@@ -24,7 +24,6 @@ export default function VetApp() {
     { to: '/vet/recetas', label: 'Recetas', icon: '℞' },
     { to: '/vet/establecimiento', label: 'Mi establecimiento', icon: '⌂' },
     { to: '/vet/casos', label: 'Notificar caso', icon: '✚' },
-    { to: '/vet/asamblea', label: 'Asamblea', icon: '☷' },
     { to: '/vet/ficha', label: 'Mi ficha pública', icon: '☺' },
     { section: 'Consultorio' },
     { to: '/vet/consultorio', end: true, label: 'Tablero del día', icon: '◷' },
@@ -50,7 +49,6 @@ export default function VetApp() {
         <Route path="recetas" element={<P.Recetas />} />
         <Route path="establecimiento" element={<P.Establecimiento />} />
         <Route path="casos" element={<P.Casos />} />
-        <Route path="asamblea" element={<P.Asamblea />} />
         <Route path="ficha" element={<P.Ficha />} />
         <Route path="consultorio" element={<C.ClinicHome />} />
         <Route path="consultorio/agenda" element={<C.Agenda />} />

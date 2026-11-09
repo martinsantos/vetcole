@@ -73,11 +73,12 @@ export function Matriculados() {
         <div className="tblwrap"><table className="tbl"><thead><tr><th>MP</th><th>Apellido y nombre</th><th>Departamento</th><th>Especialidad</th><th>Estado</th><th>Cuotas</th><th /></tr></thead><tbody>
           {list.map(v => <tr key={v.id}>
             <td className="mono"><b>{v.mp}</b></td>
-            <td>{v.apellido}, {v.nombre}<div className="tiny muted">{v.email}</div></td>
+            <td><Link to={`/admin/matriculados/${v.mp}`}><b>{v.apellido}, {v.nombre}</b></Link><div className="tiny muted">{v.email}</div></td>
             <td>{v.departamento}</td><td className="small">{v.especialidades[0]}</td>
             <td><Badge cls={estadoCls(v.estado)}>{v.estado}</Badge></td>
             <td className="small" style={v.deuda ? { color: 'var(--bad)' } : { color: 'var(--ink-3)' }}>{v.deuda ? `Adeuda ${v.deuda}` : 'Al día'}</td>
             <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+              <Link className="btn btn-sm btn-primary" to={`/admin/matriculados/${v.mp}`}>Ficha</Link>{' '}
               <button className="btn btn-sm" onClick={() => setForm({ ...v, especialidad: v.especialidades[0] || ESPECIALIDADES[0] })}>Editar</button>{' '}
               {v.estado === 'Vigente' ? <AsyncBtn className="btn btn-sm" onClick={() => cambiarEstado(v, 'Suspendida')}>Suspender</AsyncBtn> : v.estado === 'Suspendida' ? <AsyncBtn className="btn btn-sm" onClick={() => cambiarEstado(v, 'Vigente')}>Rehabilitar</AsyncBtn> : null}{' '}
               <Link className="btn btn-sm" to={`/verificar/${v.mp}`}>QR</Link>
@@ -157,37 +158,6 @@ export function Cobranzas() {
           {d.pendientes.map(c => { const venc = new Date(c.vence) < new Date(); return <tr key={c.id}><td className="mono">{c.vet.mp}</td><td>{c.vet.nombre}</td><td className="small">{c.periodo}</td><td>{money(c.monto)}</td><td className="small" style={venc ? { color: 'var(--bad)' } : undefined}>{fdate(c.vence)}{venc ? ' · vencida' : ''}</td><td><Badge cls={estadoCls(c.vet.estado)}>{c.vet.estado}</Badge></td>
             <td style={{ textAlign: 'right' }}><button className="btn btn-sm" onClick={() => toast(`Plan de pagos ofrecido a ${c.vet.nombre}`)}>Plan de pagos</button></td></tr>; })}
         </tbody></table></div>
-      </>
-    );
-  }}</Load>;
-}
-
-// ───────────────── Asamblea (resultados en vivo)
-export function AsambleaAdmin() {
-  const q = useApi('/admin/asamblea');
-  return <Load q={q}>{a => {
-    const need = Math.floor(a.padron / 2) + 1, okq = a.presentes >= need;
-    return (
-      <>
-        <PageHead kicker="Asamblea ordinaria · en curso (demo)" title="Asamblea">
-          <button className="btn" onClick={q.reload}>↻ Actualizar</button>
-          <button className="btn btn-primary" onClick={() => toast('Acta generada en PDF con resultados y padrón de presentes (demo)')}>Generar acta</button>
-        </PageHead>
-        <div className="grid g4">
-          <Kpi label="Padrón habilitado" value={a.padron} sub="cuota al día" />
-          <Kpi label="Acreditados" value={a.presentes} sub="sede + online" />
-          <Kpi label="Quórum" value={okq ? 'Alcanzado' : `Faltan ${need - a.presentes}`} color={okq ? 'var(--ok)' : 'var(--warn)'} sub={`mitad + 1 = ${need}`} />
-          <Kpi label="Segunda convocatoria" value="11:00" sub="con los presentes" />
-        </div>
-        <div className="card" style={{ marginTop: 16 }}><div className="qbar"><i style={{ width: `${Math.min(100, (a.presentes / a.padron) * 100)}%` }} /><span style={{ left: '50%' }} /></div></div>
-        <h3 style={{ marginTop: 20 }}>Resultados en vivo</h3>
-        {a.items.map(it => { const tot = it.si + it.no + it.abst || 1; return (
-          <div className="card" style={{ marginBottom: 10 }} key={it.id}>
-            <b className="small">Punto {it.orden} · {it.titulo}</b>
-            <div style={{ marginTop: 10 }}><HBars data={[{ l: 'Sí', v: it.si }, { l: 'No', v: it.no }, { l: 'Abstención', v: it.abst }]} label="l" value="v" fmt={v => `${v} · ${Math.round((v / tot) * 100)}%`} /></div>
-          </div>
-        ); })}
-        <p className="tiny muted">El voto es secreto: el sistema sólo registra quién votó cada punto.</p>
       </>
     );
   }}</Load>;

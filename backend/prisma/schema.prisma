@@ -58,8 +58,6 @@ model Vet {
   recetas             Receta[]
   casos               CasoEpi[]
   animalesCabecera    Animal[]
-  acreditacion        Acreditacion?
-  votos               Voto[]
 }
 
 model Establecimiento {
@@ -170,34 +168,6 @@ model CasoEpi {
   vetId        Int?
   vet          Vet?     @relation(fields: [vetId], references: [id])
   createdAt    DateTime @default(now())
-}
-
-model AsambleaItem {
-  id     Int    @id @default(autoincrement())
-  orden  Int
-  titulo String
-  si     Int    @default(0)
-  no     Int    @default(0)
-  abst   Int    @default(0)
-  votos  Voto[]
-}
-
-model Acreditacion {
-  id        Int      @id @default(autoincrement())
-  vetId     Int      @unique
-  vet       Vet      @relation(fields: [vetId], references: [id])
-  modalidad String   @default("online")
-  createdAt DateTime @default(now())
-}
-
-// Registra QUE votó, no QUÉ votó (voto secreto).
-model Voto {
-  vetId  Int
-  itemId Int
-  vet    Vet          @relation(fields: [vetId], references: [id])
-  item   AsambleaItem @relation(fields: [itemId], references: [id])
-
-  @@id([vetId, itemId])
 }
 
 // ───────────────────────── Animales y libreta ─────────────────────────

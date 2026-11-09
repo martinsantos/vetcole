@@ -91,15 +91,6 @@ test('municipio: campaña sin conexión se sincroniza y crea credenciales', asyn
   assert.ok(lista[0].credencialNro > 0);
 });
 
-test('asamblea: voto secreto, una vez por punto', async () => {
-  const t = await login('lucia.ferreyra@demo.colvet');
-  const a = (await call('GET', '/vet/asamblea', null, t)).data;
-  assert.equal((await call('POST', '/vet/asamblea/votar', { itemId: a.items[0].id, opcion: 'si' }, t)).status, 403);
-  await call('POST', '/vet/asamblea/acreditar', {}, t);
-  assert.equal((await call('POST', '/vet/asamblea/votar', { itemId: a.items[0].id, opcion: 'si' }, t)).status, 200);
-  assert.equal((await call('POST', '/vet/asamblea/votar', { itemId: a.items[0].id, opcion: 'no' }, t)).status, 409);
-});
-
 test('municipios: el Colegio opera el panel de zoonosis del municipio que elige', async () => {
   const t = await login('admin@demo.colvet');
   const muni = (await call('GET', '/admin/municipios', null, t)).data[0];

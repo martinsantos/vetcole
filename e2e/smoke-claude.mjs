@@ -56,9 +56,6 @@ ok((await api('GET', `/tutor/mascotas/${luna.id}`, null, tutor.token)).body.data
   && (await api('GET', '/public/libretas/MZA-000231')).body.data.eventos.some(e => e.titulo === 'Séxtuple E2E'), 'vacuna de la vet llega a tutora, municipio y libreta pública');
 const camp = (await api('GET', '/muni/campanias', null, muni.token)).body.data[0];
 ok((await api('POST', `/muni/campanias/${camp.id}/sync`, { registros: [{ nombre: 'Firulais', tutorDni: '90000001', antirrabica: true }] }, muni.token)).body.data.sincronizados === 1, 'campaña sin conexión sincroniza');
-const asm = (await api('GET', '/vet/asamblea', null, vet.token)).body.data;
-await api('POST', '/vet/asamblea/acreditar', {}, vet.token);
-ok((await api('POST', '/vet/asamblea/votar', { itemId: asm.items[0].id, opcion: 'si' }, vet.token)).status === 200 && (await api('POST', '/vet/asamblea/votar', { itemId: asm.items[0].id, opcion: 'no' }, vet.token)).status === 409, 'voto único');
 const asis = await api('POST', '/public/asistente', { pregunta: '¿hay guardia ahora?' });
 ok(asis.status === 200 && /guardia/i.test(asis.body.data.respuesta), 'asistente responde (respaldo sin Claude)');
 
@@ -68,7 +65,7 @@ if (await page.$('.demotab')) await page.click('.demotab'); // la barra de la de
 await page.click('.demobar nav a:has-text("Veterinario/a")'); await page.waitForTimeout(500); // el consultorio está dentro del portal del veterinario/a
 for (const p of ['/vet', '/vet/credencial', '/vet/establecimiento', '/vet/recetas', '/vet/consultorio', '/vet/consultorio/agenda', '/vet/consultorio/pacientes', `/vet/consultorio/pacientes/${luna.id}`, '/vet/consultorio/ventas', '/vet/consultorio/inventario', '/vet/consultorio/mensajes', '/vet/consultorio/reportes']) await go(p);
 await page.click('.demobar nav a:has-text("Colegio")'); await page.waitForTimeout(500);
-for (const p of ['/admin', '/admin/matriculados', '/admin/inscripciones', '/admin/guardias', '/admin/salud']) await go(p);
+for (const p of ['/admin', '/admin/matriculados', '/admin/matriculados/1342', '/admin/inscripciones', '/admin/guardias', '/admin/salud']) await go(p);
 await page.click('a:has-text("Zoonosis Godoy Cruz")'); await page.waitForTimeout(800); // el Colegio opera el panel de cada municipio
 ok((await page.textContent('body')).includes('Operado por el Colegio'), 'el Colegio entra a la zoonosis de un municipio');
 for (const p of ['/muni', '/muni/credenciales', `/muni/animales/${luna.id}`, '/muni/campanias', '/muni/configuracion']) await go(p);

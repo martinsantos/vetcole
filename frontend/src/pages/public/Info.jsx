@@ -146,9 +146,6 @@ export function Institucional() {
           <div className="sec-head"><h2>Comisión Revisora de Cuentas</h2></div>
           {C ? <ul className="doc-list">{C.revisora.map(([n, mp]) => <li key={n}><span>{n}</span><span className="small muted">Matrícula {mp}</span></li>)}</ul>
             : <p className="muted">Controla la administración y los estados contables.</p>}
-          <div className="sec-head" style={{ marginTop: 28 }}><h2>Asamblea</h2></div>
-          <p>{C ? C.asamblea.texto : 'Órgano máximo del Colegio. Aprueba balances, cuotas y reglamentos y elige a las autoridades.'}</p>
-          {C && <p className="small"><a href={C.asamblea.padron} target="_blank" rel="noopener noreferrer">Padrón de la última asamblea (PDF)</a></p>}
         </div>
       </div></section>
 
@@ -160,7 +157,7 @@ export function Institucional() {
           <p className="small"><Link className="lnk" to="/identidad-animal">Normativa sanitaria e identificación animal →</Link></p>
         </div>
         <div>
-          {C && <><div className="sec-head"><h2>Balances</h2></div><p className="small muted">Aprobados en Asamblea Ordinaria.</p><Docs items={C.balances} /></>}
+          {C && <><div className="sec-head"><h2>Balances</h2></div><p className="small muted">Estados contables del Colegio por ejercicio.</p><Docs items={C.balances} /></>}
           <div className="sec-head" style={{ marginTop: C ? 28 : 0 }}><h2>Subcomisiones</h2></div>
           <ul className="doc-list">{SUBCOM.map(d => <li key={d}><span>{d}</span></li>)}</ul>
         </div>

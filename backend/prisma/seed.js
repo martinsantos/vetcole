@@ -85,7 +85,7 @@ const RAZAS_G = ['Europeo de pelo corto', 'Siamés', 'Persa', 'Mestizo'];
 async function main() {
   seed = 7; // datos idénticos en cada recarga
   // limpiar (orden por dependencias)
-  for (const m of ['voto', 'acreditacion', 'asambleaItem', 'ventaItem', 'venta', 'movCC', 'compra', 'proveedor', 'producto', 'mensaje', 'turno', 'servicio', 'receta', 'evento', 'mordedura', 'campania', 'cliente', 'user', 'animal', 'tutor', 'equipoVet', 'establecimiento', 'cuota', 'tramite', 'casoEpi', 'vet', 'municipio', 'inscripcion', 'noticia', 'denuncia'])
+  for (const m of ['ventaItem', 'venta', 'movCC', 'compra', 'proveedor', 'producto', 'mensaje', 'turno', 'servicio', 'receta', 'evento', 'mordedura', 'campania', 'cliente', 'user', 'animal', 'tutor', 'equipoVet', 'establecimiento', 'cuota', 'tramite', 'casoEpi', 'vet', 'municipio', 'inscripcion', 'noticia', 'denuncia'])
     await prisma[m].deleteMany();
 
   const pass = await bcrypt.hash('demo1234', 8);
@@ -116,7 +116,7 @@ async function main() {
     for (const [n, d, p, c] of SERV) servBy[e.id].push(await prisma.servicio.create({ data: { estId: e.id, nombre: n, duracionMin: d, precio: p, color: c } }));
   }
 
-  // ── Colegio: cuotas, trámites, inscripciones, noticias, denuncias, casos, asamblea
+  // ── Colegio: cuotas, trámites, inscripciones, noticias, denuncias, casos
   const periodos = ['Noviembre 2026', 'Octubre 2026', 'Septiembre 2026', 'Agosto 2026', 'Julio 2026', 'Junio 2026'];
   for (const v of Object.values(vetBy)) {
     for (let i = 0; i < periodos.length; i++) {
@@ -142,8 +142,6 @@ async function main() {
     await prisma.denuncia.create({ data: { numero: `D-2026-00${80 + int(1, 7)}${d * -1}`, tipo: t, lugar: l, descripcion: '', estado: e, origen: o, createdAt: day(d) } });
   for (const [s, e, d, n, sp] of [[45, 'Leptospirosis canina', 'Guaymallén', 3, 'Perros'], [44, 'Brucelosis caprina', 'Lavalle', 5, 'Caprinos'], [44, 'Rabia (murciélago positivo)', 'Godoy Cruz', 1, 'Fauna'], [43, 'Parvovirus (brote en refugio)', 'Las Heras', 9, 'Perros'], [43, 'Sarna sarcóptica', 'San Rafael', 4, 'Perros']])
     await prisma.casoEpi.create({ data: { semana: s, evento: e, departamento: d, casos: n, especie: sp, vetId: pick(Object.values(vetBy)).id } });
-  for (const [o, t, si, no, ab] of [[1, 'Memoria y balance del ejercicio 2025–2026', 201, 12, 9], [2, 'Presupuesto y valor de la cuota 2027', 176, 41, 15], [3, 'Reglamento de la libreta sanitaria digital', 188, 9, 22]])
-    await prisma.asambleaItem.create({ data: { orden: o, titulo: t, si, no, abst: ab } });
 
   // ── Municipios que contratan el servicio de zoonosis
   const gc = await prisma.municipio.create({ data: { slug: 'godoy-cruz', nombre: 'Godoy Cruz', nombreCredencial: 'Identidad Sanitaria Animal', sigla: 'ISA', color: '#1f5e7a' } });
