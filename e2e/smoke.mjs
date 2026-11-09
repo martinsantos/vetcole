@@ -24,7 +24,7 @@ const visit = async (path, expectText) => {
 };
 
 // 1) Sitio público
-for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/profesional/1342', 'Credencial digital'], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
 // Buscador de la portada: profesionales y establecimientos en la misma búsqueda
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
@@ -34,8 +34,12 @@ ok(page.url().includes('q=godoy'), 'buscador: la búsqueda queda en la direcció
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
 { const t = await page.textContent('body'); ok(t.includes('Una libreta para cada animal') && t.includes('Veterinarias de turno y guardias') && !!(await page.$('.lib-card .qrbox')), 'portada: libreta sanitaria destacada y mapa de guardias'); }
 await page.goto(BASE + '/directorio', { waitUntil: 'networkidle' }).catch(() => {});
-await page.click('.vcard'); await page.waitForTimeout(500);
-ok(!!(await page.$('.modal .ficha-mapa .leaflet-container')), 'directorio: la ficha individual muestra el mapa');
+ok(!!(await page.$('.vcard img.foto-vet')), 'directorio: foto de perfil de quien la cargó');
+await page.click('.vcard'); await page.waitForURL('**/profesional/**'); await page.waitForTimeout(800);
+{ const t = await page.textContent('body'); ok(t.includes('Credencial digital') && !!(await page.$('.perfil-cred .cred')) && !!(await page.$('.ficha-mapa .leaflet-container')), 'perfil del profesional: credencial y mapa'); }
+await page.goto(BASE + '/directorio?tab=estab', { waitUntil: 'networkidle' }).catch(() => {});
+await page.click('.vcard'); await page.waitForTimeout(600);
+ok(!!(await page.$('.modal .ficha-mapa .leaflet-container')), 'ficha del establecimiento con mapa');
 await page.goto(BASE + '/directorio?vista=mapa', { waitUntil: 'networkidle' }).catch(() => {});
 ok((await page.$$('.dir-mapa .leaflet-marker-icon')).length > 5, 'directorio: vista de mapa con todos los puntos filtrados');
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});

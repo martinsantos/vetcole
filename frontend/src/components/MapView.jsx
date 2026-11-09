@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { guardiaColor } from '../lib/format.js';
 import { CLAUDE } from '../lib/base.js';
+import { TILES } from '../demo/osm-tiles-stub.js';
 
 // Dentro de Claude el visor no deja cargar imágenes externas (los mosaicos del mapa): se dibuja un fondo propio
 // con los departamentos de Mendoza como referencia y los marcadores reales encima.
@@ -17,8 +18,20 @@ const kind = e => (e.guardia === 'activa' ? '24' : e.guardia === 'pasiva' ? 'P' 
 export default function MapView({ items, selected, onSelect, popup, height = '100%', center = [-32.93, -68.82], zoom = 11, scrollWheel = true, circles }) {
   const el = useRef(null), map = useRef(null), layer = useRef(null), marks = useRef({});
   useEffect(() => {
-    map.current = L.map(el.current, { scrollWheelZoom: scrollWheel }).setView(center, zoom);
-    if (CLAUDE) {
+    map.current = L.map(el.current, { scrollWheelZoom: scrollWheel }).setView(center, CLAUDE && TILES ? Math.min(zoom, 14) : zoom);
+    if (CLAUDE && TILES) {
+      // Mosaicos de OpenStreetMap embebidos en la página (zoom 6 a 14 alrededor de Mendoza).
+      const Embebidos = L.GridLayer.extend({
+        createTile(c) {
+          const img = document.createElement('img'), d = TILES[`${c.z}/${c.x}/${c.y}`];
+          img.alt = ''; img.src = d ? `data:image/webp;base64,${d}` : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+          return img;
+        },
+      });
+      map.current.setMinZoom(6); map.current.setMaxZoom(14);
+      new Embebidos({ attribution: OSM_ATTR, minZoom: 6, maxZoom: 14 }).addTo(map.current);
+      el.current.classList.add('map-embebido');
+    } else if (CLAUDE) {
       el.current.classList.add('map-offline');
       const label = (n, lat, lng, cls) => L.marker([lat, lng], { interactive: false, keyboard: false, icon: L.divIcon({ className: cls, html: n, iconSize: null }) });
       const zonas = L.layerGroup(ZONAS_LL.map(([n, lat, lng]) => label(n, lat, lng, 'dep-label zona-label')));
@@ -47,7 +60,7 @@ export default function MapView({ items, selected, onSelect, popup, height = '10
   }, [items, circles]);
   useEffect(() => {
     const m = selected && marks.current[selected];
-    if (m && map.current) { map.current.setView(m.getLatLng(), 14); m.openPopup(); }
+    if (m && map.current) { map.current.setView(m.getLatLng(), Math.min(14, map.current.getMaxZoom())); m.openPopup(); }
   }, [selected]);
   return <div ref={el} style={{ height, width: '100%', background: '#e9e4e8' }} />;
 }

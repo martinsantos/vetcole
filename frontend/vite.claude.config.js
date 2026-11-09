@@ -20,6 +20,7 @@ export default defineConfig({
       { find: /^jsonwebtoken$/, replacement: shim('shims/jwt.js') },
       { find: /^bcryptjs$/, replacement: shim('shims/bcrypt.js') },
       { find: /^cors$/, replacement: shim('shims/cors.js') },
+      { find: /^.*\/demo\/osm-tiles-stub\.js$/, replacement: fileURLToPath(new URL('./src/demo/osm-tiles.js', import.meta.url)) },
       { find: /^.*\/content\/colegio\.js$/, replacement: fileURLToPath(new URL('./src/content/colegio.demo.js', import.meta.url)) },
     ],
   },

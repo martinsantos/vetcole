@@ -7,6 +7,7 @@ import { Modal, Badge, Av, QR, verifyUrl, Seg, Spinner, LOGO } from '../../compo
 import MapView, { locate, dist } from '../../components/MapView.jsx';
 import TurnoModal from '../../components/TurnoModal.jsx';
 import { DEPTOS, fdate, ini, norm, statusCls, telFmt, guardiaColor, chipFmt } from '../../lib/format.js';
+import { CLAUDE } from '../../lib/base.js';
 import './public.css';
 
 // ── Caché simple en memoria para listados que usan varias páginas
@@ -19,7 +20,7 @@ export function useCached(path) {
 }
 
 export const horario = e => (e.guardia === 'activa' ? `24 h con profesional en el lugar${e.guardiaNota ? ` (${e.guardiaNota})` : ''}` : e.guardia === 'pasiva' ? `Guardia pasiva: llamar antes${e.guardiaNota ? ` (${e.guardiaNota})` : ''}` : 'Lun. a vie. 9–13 y 17–21 · Sáb. 9–13');
-const mapsUrl = e => `https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lng}`;
+export const mapsUrl = e => `https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lng}`;
 
 // ── Turno: abre la agenda real del primer establecimiento con turnos online del profesional
 export function useTurno() {
@@ -42,43 +43,8 @@ export function FichaMapa({ lugares, alto = 220 }) {
   if (!items.length) return null;
   return (
     <div className="ficha-mapa" style={{ height: alto }}>
-      <MapView items={items} center={[items[0].lat, items[0].lng]} zoom={15} scrollWheel={false} popup={e => `<b>${String(e.nombre).replace(/[<>&]/g, '')}</b><div class="small muted">${String(e.direccion || '').replace(/[<>&]/g, '')}</div>`} />
+      <MapView items={items} center={[items[0].lat, items[0].lng]} zoom={CLAUDE ? 13 : 15} scrollWheel={false} popup={e => `<b>${String(e.nombre).replace(/[<>&]/g, '')}</b><div class="small muted">${String(e.direccion || '').replace(/[<>&]/g, '')}</div>`} />
     </div>
-  );
-}
-
-export function VetModal({ vet, onClose, onTurno }) {
-  const ests = useCached('/public/establecimientos');
-  if (!vet) return null;
-  const mine = (vet.establecimientos || []).map(x => (ests || []).find(e => e.codigo === x.codigo) || x);
-  const conTurnos = mine.find(e => e.turnosOnline);
-  const vigente = vet.estado === 'Vigente';
-  return (
-    <Modal open onClose={onClose} icon={<Av lg>{ini(vet.nombre)}</Av>} title={vet.titulo} subtitle={`Médico/a veterinario/a · MP ${vet.mp} · ${vet.departamento}`}>
-      <Badge cls={vigente ? 'b-ok' : 'b-bad'}>{vigente ? '✓ Matrícula vigente · verificada hoy' : `Matrícula ${vet.estado.toLowerCase()}`}</Badge>
-      <div className="grid g2" style={{ gap: 12, marginTop: 14 }}>
-        <div><div className="tiny muted">Especialidades</div><b className="small">{vet.especialidades.join(', ')}</b></div>
-        <div><div className="tiny muted">Especies</div><b className="small">{vet.especies.join(', ')}</b></div>
-      </div>
-      {vet.bio && <p className="small" style={{ marginTop: 12 }}>{vet.bio}</p>}
-      <hr className="s" />
-      <div className="tiny muted" style={{ marginBottom: 6 }}>Atiende en</div>
-      {mine.length ? mine.map(e => (
-        <div key={e.codigo} className="row" style={{ marginBottom: 8 }}>
-          <Link to={`/verificar/e/${e.codigo}`} onClick={onClose}><b>{e.nombre}</b></Link><span className="small muted">{e.direccion}, {e.departamento}</span>
-          {e.turnosOnline && <Badge>Turnos online</Badge>}
-        </div>
-      )) : <div className="small">Atención {vet.domicilio ? 'a domicilio / a campo' : 'particular'} en {vet.departamento} y alrededores.</div>}
-      <FichaMapa lugares={mine} />
-      <hr className="s" />
-      <div className="row">
-        {vigente && vet.turnosOnline && conTurnos && <button className="btn btn-primary" onClick={() => onTurno(conTurnos.codigo, vet.mp)}>Pedir turno</button>}
-        {vet.telefono && <a className="btn" style={{ color: '#128c4a' }} target="_blank" rel="noreferrer" href={`https://wa.me/549${vet.telefono}?text=${encodeURIComponent('Hola, te contacto desde el directorio del Colegio de Veterinarios de Mendoza.')}`}>WhatsApp</a>}
-        {vet.telefono && <a className="btn" href={`tel:${vet.telefono}`}>Llamar</a>}
-        <Link className="btn" to={`/verificar/${vet.mp}`} onClick={onClose}>Ver verificación</Link>
-      </div>
-      <p className="tiny muted" style={{ margin: '14px 0 0' }}>Ficha administrada por el profesional desde su portal. Los datos de matrícula los certifica el Colegio.</p>
-    </Modal>
   );
 }
 
@@ -86,27 +52,37 @@ export function EstModal({ est, onClose, onTurno }) {
   if (!est) return null;
   const e = est;
   return (
-    <Modal open onClose={onClose} icon={<Av lg style={{ background: guardiaColor(e) + '1f', color: guardiaColor(e) }}>⌂</Av>} title={e.nombre} subtitle={`${e.tipo} · ${e.direccion}, ${e.departamento}`}>
-      <Badge cls={statusCls(e.status)}><span className="dot" />{e.status?.label}</Badge>
-      <div className="grid g2" style={{ gap: 12, marginTop: 14 }}>
-        <div><div className="tiny muted">Horario</div><b className="small">{horario(e)}</b></div>
-        <div><div className="tiny muted">Especies</div><b className="small">{e.especies.join(', ')}</b></div>
-        {e.dt ? <>
-          <div><div className="tiny muted">Dirección técnica</div><b className="small">{e.dt.titulo} · MP {e.dt.mp}</b></div>
-          <div><div className="tiny muted">Habilitación</div><b className="small">{e.habilitacion} · <Badge cls="b-ok">Vigente</Badge></b></div>
-        </> : <div style={{ gridColumn: '1/-1' }}><div className="tiny muted">Fuente</div><span className="small">Listado público de Guardias 24 hs del Colegio. Cada establecimiento completa su ficha y equipo desde su portal.</span></div>}
+    <Modal open onClose={onClose} wide>
+      <div className="ficha">
+        <FichaMapa lugares={[e]} alto={210} />
+        <div className="ficha-head">
+          <div>
+            <span className="ficha-tipo">{e.tipo} · {e.departamento}</span>
+            <h2 className="ficha-nombre">{e.nombre}</h2>
+            <p className="muted" style={{ margin: 0 }}>{e.direccion}, {e.departamento}</p>
+          </div>
+          <Badge cls={statusCls(e.status)}><span className="dot" />{e.status?.label}</Badge>
+        </div>
+        <div className="ficha-acc">
+          {e.turnosOnline && <button className="btn btn-primary" onClick={() => onTurno(e.codigo)}>Pedir turno</button>}
+          <a className={`btn ${e.guardia ? 'btn-danger' : ''}`} href={`tel:${e.telefono}`}>Llamar · {telFmt(e.telefono)}</a>
+          <a className="btn" target="_blank" rel="noreferrer" href={mapsUrl(e)}>Cómo llegar</a>
+        </div>
+        <dl className="ficha-datos">
+          <div><dt>Horario</dt><dd>{horario(e)}</dd></div>
+          <div><dt>Especies</dt><dd>{e.especies.join(', ')}</dd></div>
+          {e.dt && <div><dt>Dirección técnica</dt><dd><Link to={`/profesional/${e.dt.mp}`} onClick={onClose}>{e.dt.titulo}</Link> · MP {e.dt.mp}</dd></div>}
+          {e.dt && <div><dt>Habilitación</dt><dd>{e.habilitacion} · <Badge cls="b-ok">Vigente</Badge></dd></div>}
+        </dl>
+        {!!e.equipo?.length && <div className="ficha-equipo"><h3>Equipo profesional</h3>
+          <div className="ficha-equipo-l">{e.equipo.map(v => (
+            <Link key={v.mp} to={`/profesional/${v.mp}`} onClick={onClose} className="ficha-pro"><Av style={{ width: 38, height: 38, fontSize: 13, borderRadius: '50%' }}>{ini(v.titulo.replace(/^Dra?\. /, ''))}</Av><span><b>{v.titulo}</b><span className="small muted">{v.especialidad}</span></span></Link>
+          ))}</div></div>}
+        <div className="ficha-pie">
+          {e.dt && <QR text={verifyUrl(`/verificar/e/${e.codigo}`)} size={64} />}
+          <p className="small muted" style={{ margin: 0, flex: 1 }}>{e.dt ? 'Establecimiento habilitado por el Colegio. El QR de la oblea de la vidriera abre su verificación.' : 'Informado en el listado de guardias del Colegio.'} <Link to={`/verificar/e/${e.codigo}`} onClick={onClose}>Ver verificación</Link></p>
+        </div>
       </div>
-      <FichaMapa lugares={[e]} />
-      {!!e.equipo?.length && <><hr className="s" /><div className="tiny muted" style={{ marginBottom: 8 }}>Equipo profesional</div>
-        {e.equipo.map(v => <div key={v.mp} className="row" style={{ marginBottom: 6 }}><Av style={{ width: 32, height: 32, fontSize: 12 }}>{ini(v.titulo.replace(/^Dra?\. /, ''))}</Av><span className="small"><b>{v.titulo}</b> · {v.especialidad}</span></div>)}</>}
-      <hr className="s" />
-      <div className="row">
-        {e.turnosOnline && <button className="btn btn-primary" onClick={() => onTurno(e.codigo)}>Pedir turno</button>}
-        <a className={`btn ${e.guardia ? 'btn-danger' : ''}`} href={`tel:${e.telefono}`}>Llamar · {telFmt(e.telefono)}</a>
-        <a className="btn" target="_blank" rel="noreferrer" href={mapsUrl(e)}>Cómo llegar</a>
-        <Link className="btn" to={`/verificar/e/${e.codigo}`} onClick={onClose}>Verificación</Link>
-      </div>
-      {e.dt && <div className="row" style={{ marginTop: 14, gap: 12 }}><QR text={verifyUrl(`/verificar/e/${e.codigo}`)} size={80} /><div className="small muted" style={{ flex: 1 }}>Oblea de <b>Establecimiento habilitado</b> para la vidriera: el QR abre esta ficha verificada.</div></div>}
     </Modal>
   );
 }

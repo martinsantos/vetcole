@@ -44,6 +44,7 @@ model Vet {
   domicilio           Boolean        @default(false)
   turnosOnline        Boolean        @default(false)
   fichaPublica        Boolean        @default(true)
+  foto                String? // foto de perfil (data URL JPEG) que carga el profesional
   bio                 String?
   prescriptorCannabis String         @default("no") // no | tramite | si
   alta                Int            @default(2015)

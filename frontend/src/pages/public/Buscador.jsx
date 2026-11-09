@@ -7,6 +7,7 @@ import { norm, ini, statusCls, telFmt } from '../../lib/format.js';
 import { useCached } from './shared.jsx';
 import { TRAMITES } from './Info.jsx';
 import { NORMAS } from './normativa.js';
+import { FotoVet } from './Profesional.jsx';
 import { COLEGIO } from '../../content/colegio.js';
 import { useNoticias } from '../../lib/noticias.js';
 
@@ -83,9 +84,9 @@ export default function Buscador({ onVet, onEst, onTurno }) {
       <div className="bres-h"><h3>Profesionales</h3><span className="muted small">{res.v.length}</span></div>
       {res.v.slice(0, lim).map(v => (
         <div key={v.mp} className="bres-item">
-          <div className="av">{ini(v.nombre)}</div>
+          <FotoVet vet={v} size={44} />
           <div className="bres-main">
-            <a href="#" onClick={e => { e.preventDefault(); onVet(v); }}><b>{v.titulo}</b></a>
+            <Link to={`/profesional/${v.mp}`}><b>{v.titulo}</b></Link>
             <span className="small muted">Matrícula {v.mp} · {v.especialidades.slice(0, 2).join(', ')} · {v.departamento}</span>
             <span className="row" style={{ gap: 6, marginTop: 4 }}><Badge cls="b-ok">Matrícula vigente</Badge>{v.turnosOnline && <Badge>Turnos online</Badge>}</span>
           </div>

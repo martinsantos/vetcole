@@ -901,3 +901,57 @@ main:focus{outline:none}
 @media(max-width:420px){.lib-id{grid-template-columns:auto 1fr}.lib-id .qrbox{display:none}}
 .ficha-mapa{margin-top:14px;border:1px solid #e6dde2;border-radius:10px;overflow:hidden}
 .ficha-mapa>div{height:100%!important}
+.map-embebido{background:#f2efe9!important}
+
+/* ===== Perfil del profesional ===== */
+.foto-vet{border-radius:50%;object-fit:cover;flex:none;display:block;background:#f3e7ef}
+.foto-ini{display:grid;place-items:center;background:#f3e7ef;color:var(--plum);font-weight:700}
+.perfil-head{background:#fff;border-bottom:1px solid #ece4e9;padding:28px 0 32px}
+.perfil-head-in{display:grid;grid-template-columns:auto 1fr;gap:8px 28px;align-items:center}
+.perfil-volver{grid-column:1/-1;justify-self:start;border:0;background:none;padding:0;cursor:pointer;margin-bottom:10px}
+.perfil-foto{box-shadow:0 0 0 5px #fff,0 0 0 6px #e6d3df,0 12px 30px rgba(80,20,70,.18)}
+.perfil-id h1{font-size:clamp(30px,3.6vw,44px);margin:0}
+.perfil-sub{font-size:17px;color:var(--ink-2);margin:6px 0 0}
+.perfil-acciones{gap:10px;margin-top:18px}
+@media(max-width:640px){.perfil-head-in{grid-template-columns:1fr;justify-items:start}.perfil-foto{width:104px!important;height:104px!important}}
+.perfil-grid{display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start}
+@media(max-width:980px){.perfil-grid{grid-template-columns:1fr}}
+.perfil-bloque{margin-bottom:32px}
+.perfil-bloque h2,.perfil-cred h2{font-size:24px;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #e6dde2}
+.perfil-h3{font-size:16px!important;margin:18px 0 8px!important;font-family:var(--sans)!important;color:var(--ink-2)!important}
+.perfil-bio{font-family:"Source Serif 4",Georgia,serif;font-size:19px;line-height:1.55;color:#3a3236;margin:0}
+.perfil-chips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{background:#f3e7ef;color:var(--plum-d);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px}
+.pchip-s{background:#fff;border:1px solid #e0d3db;color:var(--ink-2);font-weight:500}
+.perfil-lugares{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.perfil-lugar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #e6dde2;border-left:4px solid var(--plum);border-radius:8px;padding:14px 16px}
+.perfil-lugar a b{color:var(--ink);font-size:16px}
+.perfil-lugar a:hover b{color:var(--plum);text-decoration:underline}
+.perfil-lugar-acc{display:flex;gap:8px}
+.perfil-side{position:sticky;top:20px;display:flex;flex-direction:column;gap:16px}
+.perfil-cred{background:#fff;border:1px solid #e6dde2;border-radius:12px;padding:20px}
+.perfil-cred .cred{max-width:none}
+.perfil-verif{display:flex;flex-direction:column;gap:4px;background:var(--ok-l);border-radius:10px;padding:14px 16px;color:var(--ok)}
+.perfil-verif .lnk{margin-top:4px}
+.vcard .foto-vet{flex:none}
+
+/* ===== Ficha de establecimiento (modal) ===== */
+.ficha{margin:-4px}
+.ficha .ficha-mapa{margin:0 0 16px;border-radius:10px}
+.ficha-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.ficha-tipo{color:var(--plum);font-weight:600;font-size:14px}
+.ficha-nombre{font-size:28px!important;margin:2px 0 4px!important}
+.ficha-acc{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.ficha-datos{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;margin:0;padding:16px 0;border-top:1px solid #eee6eb;border-bottom:1px solid #eee6eb}
+.ficha-datos dt{font-size:13px;color:var(--ink-3);margin-bottom:2px}
+.ficha-datos dd{margin:0;font-weight:600;font-size:14.5px}
+@media(max-width:560px){.ficha-datos{grid-template-columns:1fr}}
+.ficha-equipo h3{font-size:18px;margin:16px 0 10px}
+.ficha-equipo-l{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:560px){.ficha-equipo-l{grid-template-columns:1fr}}
+.ficha-pro{display:flex;gap:10px;align-items:center;color:var(--ink);border:1px solid #eee6eb;border-radius:8px;padding:8px 10px}
+.ficha-pro:hover{border-color:var(--plum)}
+.ficha-pro>span{display:flex;flex-direction:column}
+.ficha-pie{display:flex;gap:14px;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid #eee6eb}
+.foto-carga{display:flex;gap:16px;align-items:center;margin:4px 0 16px;padding:12px;border:1px dashed #d9ccd4;border-radius:10px}
+.modal .x{z-index:1000;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2)}

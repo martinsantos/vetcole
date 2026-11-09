@@ -63,7 +63,7 @@ const asis = await api('POST', '/public/asistente', { pregunta: '¿hay guardia a
 ok(asis.status === 200 && /guardia/i.test(asis.body.data.respuesta), 'asistente responde (respaldo sin Claude)');
 
 // Pantallas de las 5 aplicaciones
-for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/estandar-libreta', 'LSAA'], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta/MZA-000231', 'Luna'], ['/verificar/1342', 'Ferreyra'], ['/verificar/e/e1', 'Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/datos', ''], ['/servicios', ''], ['/estandar-libreta', 'LSAA'], ['/profesional/1342', 'Credencial digital'], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await go(p, t);
 if (await page.$('.demotab')) await page.click('.demotab'); // la barra de la demo arranca achicada
 await page.click('.demobar nav a:has-text("Consultorio")'); await page.waitForTimeout(500);
 for (const p of ['/vet', '/vet/credencial', '/vet/establecimiento', '/vet/recetas', '/vet/consultorio', '/vet/consultorio/agenda', '/vet/consultorio/pacientes', `/vet/consultorio/pacientes/${luna.id}`, '/vet/consultorio/ventas', '/vet/consultorio/inventario', '/vet/consultorio/mensajes', '/vet/consultorio/reportes']) await go(p);
@@ -85,7 +85,7 @@ const m = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await m.route(/^https?:\/\/(?!localhost)/, r => (/fonts\.(googleapis|gstatic)/.test(r.request().url()) ? r.continue() : r.abort()));
 await m.goto(URL0); await m.waitForFunction(() => document.body.innerText.includes('Guardias de hoy'), null, { timeout: 20000 });
 ok(!(await m.evaluate(() => document.documentElement.scrollWidth > 392)), 'celular 390 px sin scroll horizontal');
-if (process.env.SHOTS) { await page.evaluate(() => window.__colvetNav('/')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-home.png' }); await page.evaluate(() => window.__colvetNav('/mapa')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-mapa.png' }); }
+if (process.env.SHOTS) { await page.evaluate(() => window.__colvetNav('/')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-home.png' }); await page.evaluate(() => window.__colvetNav('/mapa')); await page.waitForTimeout(600); await page.screenshot({ path: process.env.SHOTS + '/claude-mapa.png' }); await page.evaluate(() => window.__colvetNav('/profesional/1342')); await page.waitForTimeout(1500); await page.screenshot({ path: process.env.SHOTS + '/claude-perfil.png', fullPage: true }); }
 
 await browser.close(); srv.close();
 const fails = results.filter(x => !x).length;

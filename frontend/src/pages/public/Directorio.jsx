@@ -1,10 +1,11 @@
 // Directorio oficial: veterinarios (sólo matrícula vigente) y establecimientos. Filtros en la URL (?turnos=1, ?domicilio=1, ?especie=…).
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { Badge, Av, Kicker, Spinner, ErrorBox, Switch } from '../../components/ui.jsx';
 import { DEPTOS, ESPECIES, ESPECIALIDADES, ini, norm, statusCls, guardiaColor } from '../../lib/format.js';
-import { VetModal, EstModal, useTurno } from './shared.jsx';
+import { EstModal, useTurno } from './shared.jsx';
+import { FotoVet } from './Profesional.jsx';
 import MapView, { DEPTOS_LL } from '../../components/MapView.jsx';
 
 const centroDepto = d => { const x = DEPTOS_LL.find(([n]) => n === d); return x ? [x[1], x[2]] : [-32.89, -68.84]; };
@@ -18,7 +19,9 @@ export default function Directorio() {
   const qs = new URLSearchParams({ q: f.q, especialidad: f.especialidad, especie: f.especie, departamento: f.departamento, ...(f.domicilio ? { domicilio: 'true' } : {}), ...(f.turnos ? { turnos: 'true' } : {}) });
   const vets = useApi(tab === 'vets' ? `/public/vets?${qs}` : null);
   const ests = useApi('/public/establecimientos');
-  const [vet, setVet] = useState(null), [est, setEst] = useState(null);
+  const [est, setEst] = useState(null);
+  const navigate = useNavigate();
+  const setVet = v => v && navigate(`/profesional/${v.mp}`);
   const t = useTurno();
   const vista = sp.get('vista') === 'mapa' ? 'mapa' : 'lista';
   const estBy = Object.fromEntries((ests.data || []).map(e => [e.codigo, e]));
@@ -56,8 +59,8 @@ export default function Directorio() {
       ) : (
         <div className="grid g3">
           {vets.data.map(v => { const l = lugarVet(v); return (
-            <div key={v.mp} className="card vcard" onClick={() => setVet(v)}>
-              <Av>{ini(v.nombre)}</Av>
+            <div key={v.mp} className="card vcard" role="link" tabIndex={0} onClick={() => setVet(v)} onKeyDown={e => e.key === 'Enter' && setVet(v)}>
+              <FotoVet vet={v} size={56} />
               <div style={{ minWidth: 0 }}><b>{v.titulo}</b><div className="tiny muted">MP {v.mp} · {v.departamento}</div>
                 <div className="small" style={{ margin: '6px 0' }}>{v.especialidades.join(' · ')}</div>
                 <div className="row" style={{ gap: 6 }}><Badge cls="b-ok">✓ Matrícula vigente</Badge>{v.turnosOnline && <Badge>Turnos online</Badge>}{v.domicilio && <Badge cls="b-grey">A domicilio</Badge>}</div>
@@ -81,7 +84,6 @@ export default function Directorio() {
           <p className="tiny muted" style={{ marginTop: 14 }}>Hoy el listado de establecimientos habilitados se publica como PDF mensual. Acá es la misma base que usa el Colegio para habilitar e inspeccionar, siempre actualizada.</p>
         </>
       ))}
-      <VetModal vet={vet} onClose={() => setVet(null)} onTurno={(c, mp) => { setVet(null); t.open(c, mp); }} />
       <EstModal est={est} onClose={() => setEst(null)} onTurno={c => { setEst(null); t.open(c); }} />
       {t.modal}
     </div></section>

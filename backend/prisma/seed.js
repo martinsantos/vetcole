@@ -1,5 +1,6 @@
 // Datos de demostración. Las guardias salen del listado público de colvetmza.com.ar (ubicación aproximada);
 // profesionales, tutores, animales, ventas y municipios en servicio son FICTICIOS.
+import { FOTOS } from './fotos.js';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -92,7 +93,7 @@ async function main() {
   // ── Veterinarios
   const vetBy = {};
   for (const [mp, nombre, apellido, f, dep, esp, sp, o] of VETS) {
-    vetBy[mp] = await prisma.vet.create({ data: { mp, nombre, apellido, femenino: !!f, departamento: dep, especialidadesJson: J(esp), especiesJson: J(sp), estado: o.estado || 'Vigente', domicilio: !!o.dom, turnosOnline: !!o.turnos, telefono: `26155${String(mp).padStart(5, '0')}`, email: `${nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}.${apellido.split(' ')[0].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}@mail.com`, alta: 2008 + (mp % 17), dni: `${20 + (mp % 20)}.${String(mp * 7).padStart(3, '0').slice(0, 3)}.${String(mp).padStart(3, '0').slice(-3)}`, bio: mp === 1342 ? 'Clínica de pequeños animales con orientación en dermatología. Atención con turno.' : null } });
+    vetBy[mp] = await prisma.vet.create({ data: { mp, nombre, apellido, femenino: !!f, departamento: dep, especialidadesJson: J(esp), especiesJson: J(sp), estado: o.estado || 'Vigente', domicilio: !!o.dom, turnosOnline: !!o.turnos, telefono: `26155${String(mp).padStart(5, '0')}`, email: `${nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}.${apellido.split(' ')[0].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')}@mail.com`, alta: 2008 + (mp % 17), dni: `${20 + (mp % 20)}.${String(mp * 7).padStart(3, '0').slice(0, 3)}.${String(mp).padStart(3, '0').slice(-3)}`, bio: mp === 1342 ? 'Clínica de pequeños animales con orientación en dermatología. Atención con turno.' : null, foto: FOTOS[mp] || null } });
   }
 
   // ── Establecimientos

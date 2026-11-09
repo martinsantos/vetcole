@@ -1,9 +1,9 @@
 // Portada institucional del Colegio: buscador general, matriculados, noticias y agenda, comunidad e institucional.
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { fdate } from '../../lib/format.js';
-import { VetModal, EstModal, useTurno, MapSection } from './shared.jsx';
+import { EstModal, useTurno, MapSection } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
 import heroFoto from '../../assets/hero-veterinaria.jpg';
 import { COLEGIO } from '../../content/colegio.js';
@@ -58,7 +58,8 @@ function GuardiasHoy() {
 export default function Home() {
   const news = useNoticias(5);
   const agenda = (COLEGIO?.agenda || AGENDA).map(([d, ti, lugar]) => [typeof d === 'number' ? enDias(d) : new Date(`${d}T12:00:00`), ti, lugar]);
-  const [vet, setVet] = useState(null), [est, setEst] = useState(null);
+  const [est, setEst] = useState(null);
+  const navigate = useNavigate();
   const t = useTurno();
   return (
     <>
@@ -68,7 +69,7 @@ export default function Home() {
           <p className="ihero-org">{BRAND.nombre}</p>
           <h1>Al servicio de la salud animal y de la comunidad</h1>
           <p className="ihf-lead">Profesionales matriculados que cuidan a los animales y a sus familias, con ética, formación continua y compromiso con la salud pública.</p>
-          <Buscador onVet={setVet} onEst={setEst} onTurno={v => { if (!t.forVet(v)) setVet(v); }} />
+          <Buscador onVet={v => navigate(`/profesional/${v.mp}`)} onEst={setEst} onTurno={v => { if (!t.forVet(v)) navigate(`/profesional/${v.mp}`); }} />
         </div>
         <span className="ihf-credit">Foto: Unsplash</span>
       </section>
@@ -138,7 +139,6 @@ export default function Home() {
         </div>
       </div></section>
 
-      <VetModal vet={vet} onClose={() => setVet(null)} onTurno={(c, mp) => { setVet(null); t.open(c, mp); }} />
       <EstModal est={est} onClose={() => setEst(null)} onTurno={c => { setEst(null); t.open(c); }} />
       {t.modal}
     </>

@@ -64,6 +64,7 @@ export const publicVet = v => ({
   domicilio: v.domicilio,
   turnosOnline: v.turnosOnline,
   bio: v.bio,
+  foto: v.foto || null,
   telefono: v.telefono,
   establecimientos: (v.equipos || []).map(q => q.est && { codigo: q.est.codigo, nombre: q.est.nombre, direccion: q.est.direccion, departamento: q.est.departamento }).filter(Boolean),
 });

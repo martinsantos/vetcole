@@ -49,8 +49,10 @@ r.post('/tramites', h(async (req, res) => {
 
 // Ficha pública del directorio
 r.patch('/ficha', h(async (req, res) => {
-  const { fichaPublica, domicilio, turnosOnline, bio } = req.body || {};
-  const v = await prisma.vet.update({ where: { id: req.user.vetId }, data: { fichaPublica, domicilio, turnosOnline, bio } });
+  const { fichaPublica, domicilio, turnosOnline, bio, foto } = req.body || {};
+  // Foto de perfil: imagen ya reducida en el navegador (data URL), hasta ~400 KB. null la quita.
+  if (foto !== undefined && foto !== null && (typeof foto !== 'string' || !/^data:image\/(jpeg|png|webp);base64,/.test(foto) || foto.length > 550_000)) return fail(res, 400, 'La foto tiene que ser una imagen JPG, PNG o WebP de hasta 400 KB.');
+  const v = await prisma.vet.update({ where: { id: req.user.vetId }, data: { fichaPublica, domicilio, turnosOnline, bio, ...(foto !== undefined ? { foto } : {}) } });
   ok(res, v);
 }));
 

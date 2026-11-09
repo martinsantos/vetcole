@@ -1,5 +1,6 @@
 // Portal del matriculado (lado Colegio): resumen + guardia, credencial, cuotas, trámites, recetas,
 // establecimiento (credencial/oblea/cartel), notificación de casos, asamblea y ficha pública.
+import { FotoVet } from '../public/Profesional.jsx';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
@@ -307,10 +308,24 @@ export function Asamblea() {
 }
 
 // ───────────────── Ficha pública
+// Reduce la foto en el navegador: recorte cuadrado centrado de 320 px, JPEG.
+function reducirFoto(file) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const lado = Math.min(img.width, img.height), c = document.createElement('canvas');
+      c.width = c.height = 320;
+      c.getContext('2d').drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, 320, 320);
+      URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = rej; img.src = URL.createObjectURL(file);
+  });
+}
+
 export function Ficha() {
   const q = useResumen();
   const [f, setF] = useState(null);
-  useEffect(() => { if (q.data && !f) { const v = q.data.vet; setF({ fichaPublica: v.fichaPublica, turnosOnline: v.turnosOnline, domicilio: v.domicilio, bio: v.bio || '' }); } }, [q.data, f]);
+  useEffect(() => { if (q.data && !f) { const v = q.data.vet; setF({ fichaPublica: v.fichaPublica, turnosOnline: v.turnosOnline, domicilio: v.domicilio, bio: v.bio || '', foto: v.foto || null }); } }, [q.data, f]);
   const guardar = async () => { await api.patch('/vet/ficha', f); toast('Ficha actualizada en el directorio público'); };
   const v = q.data?.vet;
   const prev = useMemo(() => f && v, [f, v]);
@@ -318,12 +333,23 @@ export function Ficha() {
   if (!f || !v) return <Spinner />;
   return (
     <>
-      <PageHead kicker="Directorio público" title="Mi ficha pública"><AsyncBtn className="btn btn-primary" onClick={guardar}>Guardar cambios</AsyncBtn></PageHead>
+      <PageHead kicker="Directorio público" title="Mi ficha pública"><Link className="btn" to={`/profesional/${v.mp}`}>Ver mi perfil público</Link><AsyncBtn className="btn btn-primary" onClick={guardar}>Guardar cambios</AsyncBtn></PageHead>
       <div className="grid g2" style={{ alignItems: 'start' }}>
         <div className="card">
           <Switch checked={f.fichaPublica} onChange={x => setF({ ...f, fichaPublica: x })}>Aparecer en el directorio público</Switch>
           <Switch checked={f.turnosOnline} onChange={x => setF({ ...f, turnosOnline: x })}>Recibir turnos online</Switch>
           <Switch checked={f.domicilio} onChange={x => setF({ ...f, domicilio: x })}>Atiendo a domicilio / a campo</Switch>
+          <div className="foto-carga">
+            <FotoVet vet={{ ...v, foto: f.foto, nombre: `${v.nombre} ${v.apellido}` }} size={88} />
+            <div>
+              <b className="small">Foto de perfil</b>
+              <div className="tiny muted" style={{ margin: '2px 0 8px' }}>Opcional. Se ve en el directorio y en tu perfil público. Se recorta cuadrada.</div>
+              <div className="row" style={{ gap: 8 }}>
+                <label className="btn btn-sm">{f.foto ? 'Cambiar foto' : 'Subir foto'}<input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={async e => { const file = e.target.files?.[0]; if (!file) return; try { setF({ ...f, foto: await reducirFoto(file) }); } catch { toast('No se pudo leer la imagen.', 'error'); } e.target.value = ''; }} /></label>
+                {f.foto && <button type="button" className="btn btn-sm" onClick={() => setF({ ...f, foto: null })}>Quitar</button>}
+              </div>
+            </div>
+          </div>
           <Field label="Presentación"><textarea rows={4} value={f.bio} onChange={e => setF({ ...f, bio: e.target.value })} /></Field>
           <div className="small muted">Especialidades registradas: {v.especialidades.join(', ')} <Badge cls="b-ok">Validadas por el Colegio</Badge></div>
         </div>
@@ -331,7 +357,7 @@ export function Ficha() {
           <div className="tiny muted" style={{ marginBottom: 6 }}>Vista previa</div>
           {!prev || !f.fichaPublica ? <div className="card flat empty">Tu ficha no aparece en el directorio. Igual se puede verificar tu matrícula por número o QR.</div> : (
             <div className="card">
-              <div className="row" style={{ alignItems: 'flex-start' }}><Av lg>{v.nombre[0]}{v.apellido[0]}</Av>
+              <div className="row" style={{ alignItems: 'flex-start' }}><FotoVet vet={{ ...v, foto: f.foto, nombre: `${v.nombre} ${v.apellido}` }} size={56} />
                 <div style={{ flex: 1 }}><b>{v.titulo}</b><div className="tiny muted">MP {v.mp} · {v.departamento}</div>
                   <div className="row" style={{ gap: 6, marginTop: 6 }}><Badge cls="b-ok">Matrícula vigente</Badge>{f.turnosOnline && <Badge>Turnos online</Badge>}{f.domicilio && <Badge cls="b-grey">A domicilio</Badge>}</div></div></div>
               <p className="small" style={{ marginTop: 12 }}>{f.bio}</p>
