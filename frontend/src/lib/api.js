@@ -9,9 +9,10 @@ export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || `${BA
 if (CLAUDE) api.defaults.adapter = cfg => import('../demo/adapter.js').then(m => m.localAdapter(cfg));
 
 api.interceptors.request.use(cfg => {
-  const { token, clinicId } = useAuth.getState();
+  const { token, clinicId, muniId, user } = useAuth.getState();
   if (token) cfg.headers.Authorization = `Bearer ${token}`;
   if (clinicId) cfg.headers['X-Establecimiento'] = clinicId;
+  if (muniId && user?.rol === 'ADMIN') cfg.headers['X-Municipio'] = muniId;
   return cfg;
 });
 api.interceptors.response.use(

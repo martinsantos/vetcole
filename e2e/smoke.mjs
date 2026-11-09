@@ -87,8 +87,14 @@ await asUser('sofia.rios@demo.colvet');
 for (const p of ['/tutor', `/tutor/mascotas/${luna.id}`, '/tutor/turnos', '/tutor/mensajes', '/tutor/perfil']) await visit(p);
 
 // 7) Barra de demo: cambiar de rol en un clic
-await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Municipio")'); await page.waitForURL('**/muni**');
-ok(page.url().includes('/muni'), 'barra de demo cambia de rol (municipio)');
+await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Colegio")'); await page.waitForURL('**/admin**');
+await page.click('a:has-text("Zoonosis Godoy Cruz")'); await page.waitForURL('**/muni**'); await page.waitForTimeout(600);
+ok(page.url().includes('/muni') && (await page.textContent('body')).includes('Operado por el Colegio'), 'el Colegio abre el panel de zoonosis de un municipio');
+await page.goto(BASE + '/muni/credenciales', { waitUntil: 'networkidle' }).catch(() => {});
+ok((await page.textContent('body')).includes('Luna'), 'el Colegio ve las credenciales del municipio elegido');
+await page.goto(BASE + '/'); await page.click('.demobar nav a:has-text("Veterinario/a")'); await page.waitForURL('**/vet**');
+await page.click('a:has-text("Tablero del día")'); await page.waitForURL('**/vet/consultorio**');
+ok(page.url().includes('/vet/consultorio'), 'el consultorio está dentro del portal del veterinario/a');
 
 // 8) Celular: sin scroll horizontal
 const m = await browser.newPage({ viewport: { width: 390, height: 844 } });

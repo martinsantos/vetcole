@@ -1,6 +1,6 @@
 // Pantallas de la administración del Colegio.
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { money, fdate, fdt, norm, DEPTOS, ESPECIALIDADES } from '../../lib/format.js';
 import { Badge, Kpi, PageHead, Spinner, ErrorBox, Empty, Modal, Field, Seg, AsyncBtn, HBars, toast, saveFile } from '../../components/ui.jsx';
@@ -318,6 +318,8 @@ export function Salud() {
 // ───────────────── Municipios (zoonosis como servicio)
 export function Municipios() {
   const q = useApi('/admin/municipios');
+  const nav = useNavigate();
+  const abrir = m => nav(`/admin/municipios/${m.id}/abrir`);
   const [f, setF] = useState(null);
   const alta = async () => { await api.post('/admin/municipios', f); toast(`Municipio dado de alta. Usuario ${f.email} con contraseña demo1234.`); setF(null); q.reload(); };
   const set = k => e => setF({ ...f, [k]: e.target.value });
@@ -336,6 +338,7 @@ export function Municipios() {
                 <div><div className="tiny muted">Campañas</div><b>{m._count.campanias}</b></div>
                 <div><div className="tiny muted">Mordeduras</div><b>{m._count.mordeduras}</b></div>
               </div>
+              <button className="btn btn-primary btn-sm" style={{ marginTop: 14, width: '100%' }} onClick={() => abrir(m)}>Abrir el panel de zoonosis</button>
             </div>
           ))}
           {!list.length && <Empty>Todavía no hay municipios.</Empty>}

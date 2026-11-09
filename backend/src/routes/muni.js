@@ -6,7 +6,15 @@ import { prisma, ok, fail, h, vetName, startOfDay, addDays, estadoSanitario } fr
 import { authenticate, requireRole } from '../middleware/auth.js';
 
 const r = Router();
-r.use(authenticate, requireRole('MUNICIPIO'));
+r.use(authenticate, requireRole('MUNICIPIO', 'ADMIN'), async (req, res, next) => {
+  // El Colegio opera el servicio: un administrador entra al panel del municipio que elige (encabezado X-Municipio).
+  if (req.user.rol !== 'ADMIN') return next();
+  let m;
+  try { m = await prisma.municipio.findUnique({ where: { id: Number(req.headers['x-municipio']) || 0 } }); } catch (e) { return fail(res, 500, e.message); }
+  if (!m) return fail(res, 400, 'Elegí el municipio desde el Colegio.');
+  req.user.municipioId = m.id; req.user.municipio = m;
+  next();
+});
 const mid = req => req.user.municipioId;
 
 r.get('/config', h(async (req, res) => ok(res, await prisma.municipio.findUnique({ where: { id: mid(req) } }))));

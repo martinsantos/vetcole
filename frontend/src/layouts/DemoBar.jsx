@@ -9,9 +9,7 @@ import { toast } from '../components/ui.jsx';
 const APPS = [
   ['pub', 'Sitio público', '/', null],
   ['vet', 'Veterinario/a', '/vet', 'lucia.ferreyra@demo.colvet'],
-  ['clinic', 'Consultorio', '/vet/consultorio', 'lucia.ferreyra@demo.colvet'],
   ['admin', 'Colegio', '/admin', 'admin@demo.colvet'],
-  ['muni', 'Municipio', '/muni', 'zoonosis@godoycruz.demo'],
   ['tutor', 'App tutor/a', '/tutor', 'sofia.rios@demo.colvet'],
 ];
 
@@ -25,7 +23,7 @@ export default function DemoBar() {
   const nav = useNavigate(), { pathname } = useLocation();
   const user = useAuth(s => s.user);
   if (CLAUDE) window.__colvetNav = nav; // pruebas automáticas: navegar en el router en memoria
-  const cur = pathname.startsWith('/vet/consultorio') ? 'clinic' : pathname.startsWith('/vet') ? 'vet' : pathname.startsWith('/admin') ? 'admin' : pathname.startsWith('/muni') ? 'muni' : pathname.startsWith('/tutor') ? 'tutor' : 'pub';
+  const cur = pathname.startsWith('/vet') ? 'vet' : pathname.startsWith('/admin') || (pathname.startsWith('/muni') && user?.rol === 'ADMIN') ? 'admin' : pathname.startsWith('/tutor') ? 'tutor' : pathname.startsWith('/muni') ? '' : 'pub';
   const go = async ([, , to, email]) => {
     if (!email || user?.email === email) return nav(to);
     try { await loginAs(email, nav, to); } catch (e) { toast(e.message, 'error'); }

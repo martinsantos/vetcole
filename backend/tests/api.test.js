@@ -99,3 +99,14 @@ test('asamblea: voto secreto, una vez por punto', async () => {
   assert.equal((await call('POST', '/vet/asamblea/votar', { itemId: a.items[0].id, opcion: 'si' }, t)).status, 200);
   assert.equal((await call('POST', '/vet/asamblea/votar', { itemId: a.items[0].id, opcion: 'no' }, t)).status, 409);
 });
+
+test('municipios: el Colegio opera el panel de zoonosis del municipio que elige', async () => {
+  const t = await login('admin@demo.colvet');
+  const muni = (await call('GET', '/admin/municipios', null, t)).data[0];
+  const sin = await fetch(`${B}/muni/config`, { headers: { authorization: `Bearer ${t}` } });
+  assert.equal(sin.status, 400);
+  const con = await (await fetch(`${B}/muni/config`, { headers: { authorization: `Bearer ${t}`, 'x-municipio': String(muni.id) } })).json();
+  assert.equal(con.data.id, muni.id);
+  const tutor = await login('sofia.rios@demo.colvet');
+  assert.equal((await fetch(`${B}/muni/config`, { headers: { authorization: `Bearer ${tutor}`, 'x-municipio': String(muni.id) } })).status, 403);
+});

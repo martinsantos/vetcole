@@ -11,9 +11,17 @@ import TutorApp from './routes/TutorApp.jsx';
 
 export function RequireRole({ rol, children }) {
   const user = useAuth(s => s.user);
-  if (!user) return <Navigate to={`/ingresar?rol=${rol}`} replace />;
-  if (user.rol !== rol) return <Navigate to={`/ingresar?rol=${rol}&otro=1`} replace />;
+  const roles = [].concat(rol);
+  if (!user) return <Navigate to={`/ingresar?rol=${roles[0]}`} replace />;
+  if (!roles.includes(user.rol)) return <Navigate to={`/ingresar?rol=${roles[0]}&otro=1`} replace />;
   return children;
+}
+
+// Zoonosis municipal: la usa el municipio o el Colegio, que elige qué municipio operar desde su administración.
+function MuniRoute() {
+  const user = useAuth(s => s.user), muniId = useAuth(s => s.muniId);
+  if (user?.rol === 'ADMIN' && !muniId) return <Navigate to="/admin/municipios" replace />;
+  return <MuniApp key={muniId || 'propio'} />;
 }
 
 export default function App() {
@@ -23,7 +31,7 @@ export default function App() {
       <Routes>
         <Route path="/vet/*" element={<RequireRole rol="VET"><VetApp /></RequireRole>} />
         <Route path="/admin/*" element={<RequireRole rol="ADMIN"><AdminApp /></RequireRole>} />
-        <Route path="/muni/*" element={<RequireRole rol="MUNICIPIO"><MuniApp /></RequireRole>} />
+        <Route path="/muni/*" element={<RequireRole rol={['MUNICIPIO', 'ADMIN']}><MuniRoute /></RequireRole>} />
         <Route path="/tutor/*" element={<RequireRole rol="TUTOR"><TutorApp /></RequireRole>} />
         <Route path="/*" element={<PublicApp />} />
       </Routes>

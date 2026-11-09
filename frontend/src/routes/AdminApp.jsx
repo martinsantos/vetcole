@@ -1,5 +1,7 @@
 // Administración del Colegio (Mesa de Entradas).
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { useApi } from '../lib/api.js';
 import AppShell from '../layouts/AppShell.jsx';
 import { useAuth } from '../lib/store.js';
 import * as A from '../pages/admin/index.jsx';
@@ -17,17 +19,28 @@ const items = [
   { to: '/admin/guardias', label: 'Guardias', icon: '◷' },
   { to: '/admin/denuncias', label: 'Denuncias', icon: '⚑' },
   { to: '/admin/salud', label: 'Salud pública', icon: '✚' },
-  { section: 'Servicios' },
-  { to: '/admin/municipios', label: 'Municipios (zoonosis)', icon: '⌘', badge: 'SaaS' },
+  { section: 'Municipios · zoonosis' },
+  { to: '/admin/municipios', end: true, label: 'Municipios adheridos', icon: '⌘', badge: 'SaaS' },
 ];
+
+// Abre el panel de zoonosis de un municipio operado por el Colegio.
+function AbrirMunicipio() {
+  const { id } = useParams();
+  const [listo, setListo] = useState(false);
+  useEffect(() => { useAuth.getState().setMuni(Number(id)); setListo(true); }, [id]);
+  return listo ? <Navigate to="/muni" replace /> : null;
+}
 
 export default function AdminApp() {
   const user = useAuth(s => s.user);
+  const { data: munis } = useApi('/admin/municipios');
+  const menu = [...items, ...(munis || []).map(m => ({ to: `/admin/municipios/${m.id}/abrir`, label: `Zoonosis ${m.nombre}`, icon: '→' }))];
   return (
     <Routes>
-      <Route element={<AppShell dark items={items} who={user.nombre} whoSub="Administración del Colegio" />}>
+      <Route element={<AppShell dark items={menu} who={user.nombre} whoSub="Administración del Colegio" />}>
         <Route index element={<Navigate to="tablero" replace />} />
         <Route path="tablero" element={<A.Tablero />} />
+        <Route path="municipios/:id/abrir" element={<AbrirMunicipio />} />
         <Route path="matriculados" element={<A.Matriculados />} />
         <Route path="inscripciones" element={<A.Inscripciones />} />
         <Route path="cobranzas" element={<A.Cobranzas />} />

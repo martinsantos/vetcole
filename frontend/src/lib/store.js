@@ -10,9 +10,11 @@ export const useAuth = create(
       token: null,
       user: null,
       clinicId: null,
-      login: (token, user) => set({ token, user, clinicId: null }),
-      logout: () => set({ token: null, user: null, clinicId: null }),
+      muniId: null, // municipio que opera el Colegio desde su panel de zoonosis
+      login: (token, user) => set({ token, user, clinicId: null, muniId: null }),
+      logout: () => set({ token: null, user: null, clinicId: null, muniId: null }),
       setClinic: clinicId => set({ clinicId }),
+      setMuni: muniId => set({ muniId }),
     }),
     { name: 'colvet-auth', storage: createJSONStorage(() => safeStorage) },
   ),

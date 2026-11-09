@@ -10,9 +10,9 @@ Plataforma del **Colegio de Médicos Veterinarios de Mendoza**: una sola base de
 |---|---|---|---|
 | Sitio público | `/` | Comunidad | Directorio, mapa, **tablero de guardia en vivo**, turnos online, libreta sanitaria, **identidad animal** (chip, credencial, normativa y protocolos en discusión), verificación de matrícula, de establecimiento y de recetas, asistente, datos abiertos |
 | Portal del veterinario | `/vet` | Matriculados | Credencial con QR, cuotas, trámites, recetas con QR, credencial, oblea y cartel del establecimiento, declaración de guardia, notificación de casos, asamblea online, ficha pública |
-| **Consultorio** (equivalente a MyVete) | `/vet/consultorio` | Veterinarias | Agenda y turnos por servicio, pacientes con historia clínica (= libreta oficial), clientes, ventas y facturación, caja, inventario y pet shop, proveedores y compras, cuentas corrientes, mensajería y recordatorios a tutores, reportes |
+| **Consultorio** (equivalente a MyVete), dentro del portal del veterinario/a | `/vet/consultorio` | Veterinarias | Agenda y turnos por servicio, pacientes con historia clínica (= libreta oficial), clientes, ventas y facturación, caja, inventario y pet shop, proveedores y compras, cuentas corrientes, mensajería y recordatorios a tutores, reportes |
 | Administración | `/admin` | Colegio | Tablero, padrón (ABM), inscripciones (Ley 7825), establecimientos, guardias, cobranzas, denuncias, salud pública, asamblea, comunicaciones, alta de municipios |
-| **Zoonosis municipal** (equivalente a VetCard) | `/muni` | Municipios | Credencial animal con la identidad del municipio, atenciones, campañas con **modo sin conexión**, mordeduras (observación de 10 días), perros potencialmente peligrosos, panel de cobertura |
+| **Zoonosis municipal** (equivalente a VetCard), dentro del Colegio | `/muni` | Municipios, o el Colegio desde *Administración → Municipios* | Credencial animal con la identidad del municipio, atenciones, campañas con **modo sin conexión**, mordeduras (observación de 10 días), perros potencialmente peligrosos, panel de cobertura |
 | App del tutor/a | `/tutor` | Familias | Mis mascotas, credencial para Wallet, libreta completa, turnos, mensajes con la veterinaria, aviso de mascota perdida |
 
 **La idea central:** lo que firma un matriculado vigente en su consultorio queda en la libreta del animal. Esa libreta la ve el tutor en su app, el municipio en su panel de zoonosis, y cualquiera puede verificarla por QR. Ni MyVete (que gestiona el consultorio) ni VetCard (que gestiona la zoonosis municipal) pueden dar fe de una matrícula; el Colegio sí.
@@ -124,7 +124,7 @@ BASE_PATH=/casos/vetcole npm start --prefix backend   # http://localhost:4000/ca
 
 ## Cuentas de la demo
 
-Todas con contraseña `demo1234`. La barra superior de la demo cambia de rol en un clic.
+Todas con contraseña `demo1234`. La barra de la demo cambia de rol en un clic: sitio público, veterinario/a (con su consultorio), Colegio (con el panel de zoonosis de cada municipio) y app del tutor/a.
 
 | Rol | Email |
 |---|---|

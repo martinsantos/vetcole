@@ -7,9 +7,11 @@ import * as M from '../pages/muni/index.jsx';
 
 export default function MuniApp() {
   const user = useAuth(s => s.user);
+  const colegio = user.rol === 'ADMIN';
   const { data: cfg, reload } = useApi('/muni/config');
   const muni = cfg || user.municipio || {};
   const items = [
+    ...(colegio ? [{ section: 'Colegio' }, { to: '/admin/municipios', label: 'Volver al Colegio', icon: '←' }] : []),
     { section: muni.nombreCredencial || 'Zoonosis' },
     { to: '/muni', end: true, label: 'Panel', icon: '◧' },
     { to: '/muni/credenciales', label: 'Credenciales', icon: '▣' },
@@ -21,7 +23,7 @@ export default function MuniApp() {
   ];
   return (
     <Routes>
-      <Route element={<AppShell items={items} accent={muni.color} who={`Zoonosis ${muni.nombre || ''}`} whoSub={`Municipio · ${muni.sigla || ''}`} />}>
+      <Route element={<AppShell items={items} accent={muni.color} who={`Zoonosis ${muni.nombre || ''}`} whoSub={colegio ? 'Operado por el Colegio' : `Municipio · ${muni.sigla || ''}`} />}>
         <Route index element={<M.Panel />} />
         <Route path="credenciales" element={<M.Credenciales />} />
         <Route path="animales/:id" element={<M.Animal />} />
