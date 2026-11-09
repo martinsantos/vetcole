@@ -2,6 +2,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { app } from '../src/app.js';
+import { prisma } from '../src/lib/core.js';
 
 let server, B;
 before(async () => { server = app.listen(0); await new Promise(r => server.once('listening', r)); B = `http://localhost:${server.address().port}/api/v1`; });
@@ -100,4 +101,40 @@ test('municipios: el Colegio opera el panel de zoonosis del municipio que elige'
   assert.equal(con.data.id, muni.id);
   const tutor = await login('sofia.rios@demo.colvet');
   assert.equal((await fetch(`${B}/muni/config`, { headers: { authorization: `Bearer ${tutor}`, 'x-municipio': String(muni.id) } })).status, 403);
+});
+
+test('inspecciones: el acta define la acreditación del establecimiento', async () => {
+  const t = await login('inspeccion@demo.colvet');
+  const ests = (await call('GET', '/inspeccion/establecimientos', null, t)).data;
+  const e = ests.find(x => !x.acreditacion);
+  const i = (await call('POST', '/inspeccion', { estId: e.id, motivo: 'Habilitación' }, t)).data;
+  const checklist = (await call('GET', '/inspeccion/checklist', null, t)).data.flatMap(s => s.items);
+  const resp = Object.fromEntries(checklist.map(it => [it.id, { r: 'si' }]));
+  resp.pub_oblea = { r: 'no', obs: 'Sin oblea' };
+  await call('PATCH', `/inspeccion/${i.id}`, { checklist: resp }, t);
+  assert.equal((await call('POST', `/inspeccion/${i.id}/finalizar`, {}, t)).status, 400, 'pide quién atendió');
+  await call('PATCH', `/inspeccion/${i.id}`, { checklist: resp, responsable: 'DT' }, t);
+  const fin = await call('POST', `/inspeccion/${i.id}/finalizar`, {}, t);
+  assert.equal(fin.data.resultado, 'Acreditado con observaciones');
+  assert.equal((await call('POST', `/inspeccion/${i.id}/finalizar`, {}, t)).status, 409, 'el acta cerrada no se modifica');
+  const pub = (await call('GET', '/public/establecimientos')).data.find(x => x.id === e.id);
+  assert.equal(pub.acreditacion, 'Acreditado con observaciones');
+  const tutor = await login('sofia.rios@demo.colvet');
+  assert.equal((await call('GET', '/inspeccion', null, tutor)).status, 403);
+});
+
+test('dinero: el pago de una cuota queda como cobro con el medio elegido, sólo si está habilitado', async () => {
+  const admin = await login('admin@demo.colvet');
+  const efectivo = (await call('GET', '/admin/medios-pago', null, admin)).data.find(m => m.clave === 'Efectivo');
+  assert.equal(efectivo.activo, false);
+  const lucia = await prisma.vet.findUnique({ where: { mp: 1342 } });
+  const c = await prisma.cuota.create({ data: { vetId: lucia.id, periodo: 'Diciembre 2026', monto: 18500, vence: new Date(Date.now() + 864e6), estado: 'Pendiente' } });
+  const vet = await login('lucia.ferreyra@demo.colvet');
+  const antes = (await call('GET', '/admin/dinero', null, admin)).data.mes.cobros;
+  assert.equal((await call('POST', `/vet/cuotas/${c.id}/pagar`, { medio: 'Efectivo' }, vet)).status, 400);
+  assert.equal((await call('POST', `/vet/cuotas/${c.id}/pagar`, { medio: 'Mercado Pago' }, vet)).status, 200);
+  assert.equal((await call('GET', '/admin/dinero', null, admin)).data.mes.cobros, antes + 1);
+  assert.ok(await prisma.cobro.findFirst({ where: { cuotaId: c.id, medio: 'Mercado Pago' } }));
+  assert.equal((await call('PATCH', `/admin/medios-pago/${efectivo.id}`, { comisionPct: 99 }, admin)).status, 400);
+  assert.equal((await call('PATCH', `/admin/medios-pago/${efectivo.id}`, { activo: true }, admin)).data.activo, true);
 });

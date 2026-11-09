@@ -955,3 +955,7 @@ main:focus{outline:none}
 .ficha-pie{display:flex;gap:14px;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid #eee6eb}
 .foto-carga{display:flex;gap:16px;align-items:center;margin:4px 0 16px;padding:12px;border:1px dashed #d9ccd4;border-radius:10px}
 .modal .x{z-index:1000;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.acred-insp{margin-top:12px;padding:10px 12px;border-radius:8px;font-size:14px}
+.acred-insp.ok{background:var(--ok-l);color:var(--ok)}
+.acred-insp.warn{background:var(--warn-l);color:var(--warn)}
+.acred-insp.bad{background:var(--bad-l);color:var(--bad)}

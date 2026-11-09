@@ -75,6 +75,7 @@ export function VerificarEst() {
                 <div><div className="tiny muted">Vigente hasta</div><b>{fdate(e.venceHab)}</b></div>
                 <div><div className="tiny muted">Director/a técnico/a</div><b>{e.dt.titulo} · <Link to={`/verificar/${e.dt.mp}`}>MP {e.dt.mp}</Link></b></div>
               </div>
+              {e.acreditacion && <div className={`acred-insp ${e.acreditacion === 'Acreditado' ? 'ok' : e.acreditacion === 'No acreditado' ? 'bad' : 'warn'}`}><b>{e.acreditacion === 'No acreditado' ? '✕' : '✓'} {e.acreditacion} por inspección del Colegio</b>{e.acreditadoHasta && <span> · {e.acreditacion === 'Acreditado' ? 'vigente hasta' : 'plazo de corrección hasta'} {fdate(e.acreditadoHasta)}</span>}</div>}
               <div className="small muted" style={{ marginTop: 10 }}>Consultado el {new Date(e.verificadoEn).toLocaleString('es-AR')} contra el registro del Colegio.</div>
             </div>
             <QR text={verifyUrl(`/verificar/e/${e.codigo}`)} size={96} />

@@ -20,4 +20,4 @@ export const useAuth = create(
   ),
 );
 
-export const homeFor = rol => ({ VET: '/vet', ADMIN: '/admin', MUNICIPIO: '/muni', TUTOR: '/tutor' }[rol] || '/');
+export const homeFor = rol => ({ VET: '/vet', ADMIN: '/admin', MUNICIPIO: '/muni', TUTOR: '/tutor', INSPECTOR: '/inspeccion' }[rol] || '/');

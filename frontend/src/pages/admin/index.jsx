@@ -1,6 +1,7 @@
 // Pantallas de la administración del Colegio.
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { FichaContenido } from './FichaMatriculado.jsx';
 import { api, useApi } from '../../lib/api.js';
 import { money, fdate, fdt, norm, DEPTOS, ESPECIALIDADES } from '../../lib/format.js';
 import { Badge, Kpi, PageHead, Spinner, ErrorBox, Empty, Modal, Field, Seg, AsyncBtn, HBars, toast, saveFile } from '../../components/ui.jsx';
@@ -44,6 +45,9 @@ export function Tablero() {
 const EMPTY = { mp: '', nombre: '', apellido: '', femenino: true, departamento: 'Capital', estado: 'Vigente', email: '', telefono: '', especialidad: ESPECIALIDADES[0] };
 export function Matriculados() {
   const [qs, setQs] = useState(''), [estado, setEstado] = useState('');
+  const [sp, setSp] = useSearchParams();
+  const ficha = sp.get('ficha');
+  const abrirFicha = mp => setSp(mp ? { ficha: String(mp) } : {}, { replace: !mp });
   const q = useApi(`/admin/vets?q=${encodeURIComponent(qs)}&estado=${encodeURIComponent(estado)}`);
   const [form, setForm] = useState(null);
   const guardar = async () => {
@@ -73,12 +77,12 @@ export function Matriculados() {
         <div className="tblwrap"><table className="tbl"><thead><tr><th>MP</th><th>Apellido y nombre</th><th>Departamento</th><th>Especialidad</th><th>Estado</th><th>Cuotas</th><th /></tr></thead><tbody>
           {list.map(v => <tr key={v.id}>
             <td className="mono"><b>{v.mp}</b></td>
-            <td><Link to={`/admin/matriculados/${v.mp}`}><b>{v.apellido}, {v.nombre}</b></Link><div className="tiny muted">{v.email}</div></td>
+            <td><a href="#" onClick={e => { e.preventDefault(); abrirFicha(v.mp); }}><b>{v.apellido}, {v.nombre}</b></a><div className="tiny muted">{v.email}</div></td>
             <td>{v.departamento}</td><td className="small">{v.especialidades[0]}</td>
             <td><Badge cls={estadoCls(v.estado)}>{v.estado}</Badge></td>
             <td className="small" style={v.deuda ? { color: 'var(--bad)' } : { color: 'var(--ink-3)' }}>{v.deuda ? `Adeuda ${v.deuda}` : 'Al día'}</td>
             <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-              <Link className="btn btn-sm btn-primary" to={`/admin/matriculados/${v.mp}`}>Ficha</Link>{' '}
+              <button className="btn btn-sm btn-primary" onClick={() => abrirFicha(v.mp)}>Ficha</button>{' '}
               <button className="btn btn-sm" onClick={() => setForm({ ...v, especialidad: v.especialidades[0] || ESPECIALIDADES[0] })}>Editar</button>{' '}
               {v.estado === 'Vigente' ? <AsyncBtn className="btn btn-sm" onClick={() => cambiarEstado(v, 'Suspendida')}>Suspender</AsyncBtn> : v.estado === 'Suspendida' ? <AsyncBtn className="btn btn-sm" onClick={() => cambiarEstado(v, 'Vigente')}>Rehabilitar</AsyncBtn> : null}{' '}
               <Link className="btn btn-sm" to={`/verificar/${v.mp}`}>QR</Link>
@@ -87,6 +91,7 @@ export function Matriculados() {
         </tbody></table></div>
       )}</Load>
       <p className="tiny muted" style={{ marginTop: 8 }}>Cada cambio impacta en el directorio, la credencial digital y la verificación pública.</p>
+      <Modal open={!!ficha} onClose={() => abrirFicha(null)} wide>{ficha && <div className="fm-modal"><FichaContenido mp={ficha} onCambio={q.reload} /></div>}</Modal>
       <Modal open={!!form} onClose={() => setForm(null)} title={form?.id ? 'Editar matriculado' : 'Nuevo matriculado'} subtitle="ABM del padrón">
         {form && <>
           <div className="grid g2" style={{ gap: 10 }}>

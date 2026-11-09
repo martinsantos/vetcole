@@ -1,0 +1,26 @@
+/* Inspecciones de establecimientos */
+.insp-lista{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.insp-item{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.insp-item.atrasada{border-left:4px solid var(--bad)}
+.insp-fecha{width:56px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 0;flex:none}
+.insp-fecha b{display:block;font-size:22px;line-height:1}
+.insp-fecha span{font-size:12px;color:var(--ink-3)}
+.insp-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:10px 0 16px}
+.insp-res{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:220px}
+.insp-prog{width:220px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.insp-prog i{display:block;height:100%;background:var(--plum)}
+.insp-sec{margin-bottom:14px}
+.insp-sec h3{margin:0 0 6px;font-size:18px}
+.insp-row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.insp-row.mal{background:linear-gradient(90deg,var(--warn-l),transparent 60%);margin:0 -18px;padding:12px 18px}
+.insp-row.mal-critico{background:linear-gradient(90deg,var(--bad-l),transparent 60%);margin:0 -18px;padding:12px 18px}
+.insp-q{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14.5px}
+.insp-op{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.insp-op button{border:0;background:#fff;padding:8px 12px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--ink-2);border-left:1px solid var(--line)}
+.insp-op button:first-child{border-left:0}
+.insp-op button.op-si.on{background:var(--ok);color:#fff}
+.insp-op button.op-no.on{background:var(--bad);color:#fff}
+.insp-op button.op-na.on{background:var(--ink-3);color:#fff}
+.insp-op button:disabled{cursor:default}
+.insp-obs{grid-column:1/-1}
+@media(max-width:700px){.insp-row{grid-template-columns:1fr}.insp-res{align-items:flex-start}}

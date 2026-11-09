@@ -1,7 +1,7 @@
 // Ficha completa de un matriculado para la administración del Colegio: reúne en un solo lugar la matrícula,
 // los datos personales, la credencial, las cuotas, los trámites, los establecimientos, las recetas,
 // los registros firmados en libretas, los turnos y los casos notificados.
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { api, useApi } from '../../lib/api.js';
 import { Badge, Kpi, Spinner, ErrorBox, Empty, AsyncBtn, toast } from '../../components/ui.jsx';
 import { money, fdate, fdt, EVT, telFmt } from '../../lib/format.js';
@@ -14,16 +14,20 @@ const Seccion = ({ titulo, extra, children }) => (
 );
 const Dato = ({ l, children }) => <div className="fm-dato"><span>{l}</span><b>{children || '—'}</b></div>;
 
+// La ficha se abre como ventana emergente desde el padrón (?ficha=MP). La ruta /admin/matriculados/:mp la redirige.
 export default function FichaMatriculado() {
   const { mp } = useParams();
+  return <Navigate to={`/admin/matriculados?ficha=${mp}`} replace />;
+}
+
+export function FichaContenido({ mp, onCambio }) {
   const q = useApi(`/admin/vets/${mp}/ficha`);
   if (q.error) return <ErrorBox error={q.error} onRetry={q.reload} />;
   if (!q.data) return <Spinner />;
   const d = q.data, v = d.vet;
-  const cambiarEstado = async est => { await api.patch(`/admin/vets/${v.id}`, { estado: est }); toast(est === 'Suspendida' ? `MP ${v.mp} suspendida: sale del directorio y la credencial muestra «no habilitado».` : `MP ${v.mp} rehabilitada.`); q.reload(); };
+  const cambiarEstado = async est => { await api.patch(`/admin/vets/${v.id}`, { estado: est }); toast(est === 'Suspendida' ? `MP ${v.mp} suspendida: sale del directorio y la credencial muestra «no habilitado».` : `MP ${v.mp} rehabilitada.`); q.reload(); onCambio?.(); };
   return (
     <>
-      <Link className="small" to="/admin/matriculados">← Volver al padrón</Link>
       <header className="fm-head">
         <FotoVet vet={{ ...v, nombre: `${v.nombre} ${v.apellido}` }} size={96} />
         <div style={{ flex: 1, minWidth: 240 }}>

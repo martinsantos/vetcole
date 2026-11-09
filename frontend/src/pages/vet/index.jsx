@@ -101,8 +101,10 @@ export function Credencial() {
 // ───────────────── Cuotas
 export function Cuotas() {
   const q = useApi('/vet/cuotas');
-  const [pay, setPay] = useState(null), [medio, setMedio] = useState('Tarjeta');
-  const pagar = async () => { await api.post(`/vet/cuotas/${pay.id}/pagar`, { medio }); toast('Pago confirmado. La credencial ya muestra «cuota al día».'); setPay(null); q.reload(); };
+  const [pay, setPay] = useState(null), [medio, setMedio] = useState('');
+  const { data: medios } = useApi('/vet/medios-pago');
+  const medioSel = medio || medios?.[0]?.clave || '';
+  const pagar = async () => { await api.post(`/vet/cuotas/${pay.id}/pagar`, { medio: medioSel }); toast('Pago confirmado. La credencial ya muestra «cuota al día».'); setPay(null); q.reload(); };
   return (
     <>
       <PageHead kicker="Cuotas y pagos" title="Estado de cuenta"><Switch checked={false} onChange={v => toast(v ? 'Débito automático activado (demo)' : 'Débito automático desactivado')}>Débito automático</Switch></PageHead>
@@ -113,10 +115,11 @@ export function Cuotas() {
             <td style={{ textAlign: 'right' }}>{c.estado === 'Pagada' ? <button className="btn btn-sm" onClick={() => toast('Comprobante descargado (demo)')}>Comprobante</button> : <button className="btn btn-sm btn-primary" onClick={() => setPay(c)}>Pagar</button>}</td></tr>)}
         </tbody></table></div>
       )}</Load>
-      <p className="tiny muted" style={{ marginTop: 10 }}>El Colegio elige pasarela y medios de pago; Última Milla no cobra comisión por cuota.</p>
+      <p className="tiny muted" style={{ marginTop: 10 }}>Los medios de pago los define el Colegio desde su administración.</p>
       <Modal open={!!pay} onClose={() => setPay(null)} title={`Pagar cuota ${pay?.periodo || ''}`} subtitle={pay ? `${money(pay.monto)} · vence ${fdate(pay.vence)}` : ''}>
-        <Seg value={medio} onChange={setMedio} options={['Tarjeta', 'Transferencia', 'Mercado Pago', 'Débito automático']} />
-        {medio === 'Tarjeta' && <div style={{ marginTop: 12 }}><Field label="Número de tarjeta"><input type="text" defaultValue="4509 9535 6623 3704" /></Field><div className="grid g2" style={{ gap: 10 }}><Field label="Vencimiento"><input type="text" defaultValue="11/28" /></Field><Field label="CVV"><input type="text" defaultValue="123" /></Field></div></div>}
+        <Seg value={medioSel} onChange={setMedio} options={(medios || []).map(m => m.clave)} />
+        {medios?.find(m => m.clave === medioSel)?.detalle && <div className="tiny muted" style={{ marginTop: 6 }}>{medios.find(m => m.clave === medioSel).detalle}</div>}
+        {medioSel === 'Tarjeta' && <div style={{ marginTop: 12 }}><Field label="Número de tarjeta"><input type="text" defaultValue="4509 9535 6623 3704" /></Field><div className="grid g2" style={{ gap: 10 }}><Field label="Vencimiento"><input type="text" defaultValue="11/28" /></Field><Field label="CVV"><input type="text" defaultValue="123" /></Field></div></div>}
         <AsyncBtn className="btn btn-primary btn-block" style={{ marginTop: 12 }} onClick={pagar}>Pagar {pay && money(pay.monto)}</AsyncBtn>
         <p className="tiny muted" style={{ margin: '8px 0 0' }}>Simulación: no se realiza ningún cobro.</p>
       </Modal>

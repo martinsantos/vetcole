@@ -80,11 +80,27 @@ ok((await api(`/clinic/mensajes/${tutorId}`, {}, tVet)).some(m => m.texto === 'M
 await asUser('lucia.ferreyra@demo.colvet');
 for (const p of ['/vet', '/vet/credencial', '/vet/cuotas', '/vet/tramites', '/vet/recetas', '/vet/establecimiento', '/vet/casos', '/vet/ficha', '/vet/consultorio', '/vet/consultorio/agenda', '/vet/consultorio/pacientes', `/vet/consultorio/pacientes/${luna.id}`, '/vet/consultorio/clientes', '/vet/consultorio/ventas', '/vet/consultorio/caja', '/vet/consultorio/inventario', '/vet/consultorio/proveedores', '/vet/consultorio/cuentas', '/vet/consultorio/mensajes', '/vet/consultorio/recordatorios', '/vet/consultorio/reportes']) await visit(p);
 await asUser('admin@demo.colvet');
-for (const p of ['/admin', '/admin/matriculados', '/admin/matriculados/1342', '/admin/inscripciones', '/admin/establecimientos', '/admin/guardias', '/admin/cobranzas', '/admin/denuncias', '/admin/salud', '/admin/comunicaciones', '/admin/municipios']) await visit(p);
+for (const p of ['/admin', '/admin/matriculados', '/admin/matriculados/1342', '/admin/dinero', '/admin/medios-pago', '/inspeccion', '/inspeccion/establecimientos', '/inspeccion/actas', '/admin/inscripciones', '/admin/establecimientos', '/admin/guardias', '/admin/cobranzas', '/admin/denuncias', '/admin/salud', '/admin/comunicaciones', '/admin/municipios']) await visit(p);
 await asUser('zoonosis@godoycruz.demo');
 for (const p of ['/muni', '/muni/credenciales', `/muni/animales/${luna.id}`, '/muni/campanias', '/muni/mordeduras', '/muni/peligrosos', '/muni/configuracion']) await visit(p);
 await asUser('sofia.rios@demo.colvet');
 for (const p of ['/tutor', `/tutor/mascotas/${luna.id}`, '/tutor/turnos', '/tutor/mensajes', '/tutor/perfil']) await visit(p);
+
+// Colegio: ficha del matriculado como ventana emergente, dinero e inspecciones
+await asUser('admin@demo.colvet');
+await page.goto(BASE + '/admin/matriculados', { waitUntil: 'networkidle' }).catch(() => {});
+await page.click('button:has-text("Ficha") >> nth=0'); await page.waitForTimeout(800);
+ok(!!(await page.$('.modal .fm-modal .cred')) && page.url().includes('ficha='), 'la ficha del matriculado se abre como ventana emergente');
+await page.goto(BASE + '/admin/dinero', { waitUntil: 'networkidle' }).catch(() => {});
+{ const t = await page.textContent('body'); ok(t.includes('Recaudado este mes') && t.includes('Mercado Pago') && t.includes('Servicio de zoonosis municipal'), 'dinero: recaudación por medio y concepto'); }
+await asUser('inspeccion@demo.colvet');
+await page.goto(BASE + '/inspeccion', { waitUntil: 'networkidle' }).catch(() => {});
+await page.click('.insp-item .btn-primary >> nth=0'); await page.waitForTimeout(800);
+for (const b of await page.$$('.insp-op')) { const si = await b.$('button.op-si'); const on = await b.$('button.on'); if (!on) await si.click(); }
+await page.fill('input[placeholder^="Ej.: Dra."]', 'Responsable del establecimiento');
+await page.click('button:has-text("Finalizar y cerrar el acta")'); await page.waitForTimeout(300);
+await page.click('.modal button:has-text("Cerrar el acta")'); await page.waitForTimeout(1200);
+ok((await page.textContent('body')).includes('Resultado del acta'), 'inspección: el inspector completa el formulario y cierra el acta');
 
 // 7) Barra de demo: cambiar de rol en un clic
 await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Colegio")'); await page.waitForURL('**/admin**');

@@ -6,15 +6,20 @@ import AppShell from '../layouts/AppShell.jsx';
 import { useAuth } from '../lib/store.js';
 import * as A from '../pages/admin/index.jsx';
 import FichaMatriculado from '../pages/admin/FichaMatriculado.jsx';
+import { Recaudacion, MediosPago } from '../pages/admin/dinero.jsx';
 
 const items = [
   { section: 'Colegio' },
   { to: '/admin/tablero', label: 'Tablero', icon: '◧' },
   { to: '/admin/matriculados', label: 'Matriculados (ABM)', icon: '☻' },
   { to: '/admin/inscripciones', label: 'Inscripciones', icon: '⇥' },
-  { to: '/admin/cobranzas', label: 'Cobranzas', icon: '$' },
   { to: '/admin/comunicaciones', label: 'Comunicaciones', icon: '✉' },
+  { section: 'Dinero' },
+  { to: '/admin/dinero', label: 'Recaudación', icon: '$' },
+  { to: '/admin/cobranzas', label: 'Cuotas pendientes', icon: '◔' },
+  { to: '/admin/medios-pago', label: 'Medios de pago', icon: '▭' },
   { section: 'Control y salud pública' },
+  { to: '/inspeccion', label: 'Inspecciones', icon: '✓' },
   { to: '/admin/establecimientos', label: 'Establecimientos', icon: '⌂' },
   { to: '/admin/guardias', label: 'Guardias', icon: '◷' },
   { to: '/admin/denuncias', label: 'Denuncias', icon: '⚑' },
@@ -43,6 +48,8 @@ export default function AdminApp() {
         <Route path="municipios/:id/abrir" element={<AbrirMunicipio />} />
         <Route path="matriculados" element={<A.Matriculados />} />
         <Route path="matriculados/:mp" element={<FichaMatriculado />} />
+        <Route path="dinero" element={<Recaudacion />} />
+        <Route path="medios-pago" element={<MediosPago />} />
         <Route path="inscripciones" element={<A.Inscripciones />} />
         <Route path="cobranzas" element={<A.Cobranzas />} />
         <Route path="comunicaciones" element={<A.Comunicaciones />} />

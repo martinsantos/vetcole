@@ -28,12 +28,20 @@ r.get('/resumen', h(async (req, res) => {
   });
 }));
 
+r.get('/medios-pago', h(async (req, res) => ok(res, await prisma.medioPago.findMany({ where: { activo: true }, orderBy: { orden: 'asc' } }))));
 r.get('/cuotas', h(async (req, res) => ok(res, await prisma.cuota.findMany({ where: { vetId: req.user.vetId }, orderBy: { vence: 'desc' } }))));
 r.post('/cuotas/:id/pagar', h(async (req, res) => {
   const c = await prisma.cuota.findFirst({ where: { id: Number(req.params.id), vetId: req.user.vetId } });
   if (!c) return fail(res, 404, 'Cuota no encontrada.');
   if (c.estado === 'Pagada') return fail(res, 409, 'Esa cuota ya está paga.');
-  const upd = await prisma.cuota.update({ where: { id: c.id }, data: { estado: 'Pagada', pagadaEn: new Date(), medio: req.body?.medio || 'Tarjeta' } });
+  // Sólo los medios de pago que el Colegio tiene habilitados; cada pago queda registrado como cobro.
+  const medio = await prisma.medioPago.findFirst({ where: { clave: String(req.body?.medio || ''), activo: true } });
+  if (!medio) return fail(res, 400, 'Ese medio de pago no está habilitado.');
+  const ahora = new Date();
+  const [upd] = await prisma.$transaction([
+    prisma.cuota.update({ where: { id: c.id }, data: { estado: 'Pagada', pagadaEn: ahora, medio: medio.clave } }),
+    prisma.cobro.create({ data: { fecha: ahora, concepto: 'Cuota de matrícula', detalle: c.periodo, medio: medio.clave, monto: c.monto, comision: Math.round(c.monto * medio.comisionPct) / 100, estado: medio.acreditacionDias ? 'A acreditar' : 'Acreditado', vetId: c.vetId, cuotaId: c.id } }),
+  ]);
   ok(res, upd);
 }));
 

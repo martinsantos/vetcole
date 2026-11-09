@@ -8,6 +8,7 @@ import VetApp from './routes/VetApp.jsx';
 import AdminApp from './routes/AdminApp.jsx';
 import MuniApp from './routes/MuniApp.jsx';
 import TutorApp from './routes/TutorApp.jsx';
+import InspeccionApp from './routes/InspeccionApp.jsx';
 
 export function RequireRole({ rol, children }) {
   const user = useAuth(s => s.user);
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/vet/*" element={<RequireRole rol="VET"><VetApp /></RequireRole>} />
         <Route path="/admin/*" element={<RequireRole rol="ADMIN"><AdminApp /></RequireRole>} />
         <Route path="/muni/*" element={<RequireRole rol={['MUNICIPIO', 'ADMIN']}><MuniRoute /></RequireRole>} />
+        <Route path="/inspeccion/*" element={<RequireRole rol={['INSPECTOR', 'ADMIN']}><InspeccionApp /></RequireRole>} />
         <Route path="/tutor/*" element={<RequireRole rol="TUTOR"><TutorApp /></RequireRole>} />
         <Route path="/*" element={<PublicApp />} />
       </Routes>

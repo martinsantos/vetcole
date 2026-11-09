@@ -1,6 +1,8 @@
 // Datos de demostración. Las guardias salen del listado público de colvetmza.com.ar (ubicación aproximada);
 // profesionales, tutores, animales, ventas y municipios en servicio son FICTICIOS.
 import { FOTOS } from './fotos.js';
+import { ITEMS as CHECK_ITEMS } from '../src/lib/inspeccion.js';
+const CHECK_IDS = CHECK_ITEMS.map(i => i.id);
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -85,7 +87,7 @@ const RAZAS_G = ['Europeo de pelo corto', 'Siamés', 'Persa', 'Mestizo'];
 async function main() {
   seed = 7; // datos idénticos en cada recarga
   // limpiar (orden por dependencias)
-  for (const m of ['ventaItem', 'venta', 'movCC', 'compra', 'proveedor', 'producto', 'mensaje', 'turno', 'servicio', 'receta', 'evento', 'mordedura', 'campania', 'cliente', 'user', 'animal', 'tutor', 'equipoVet', 'establecimiento', 'cuota', 'tramite', 'casoEpi', 'vet', 'municipio', 'inscripcion', 'noticia', 'denuncia'])
+  for (const m of ['inspeccion', 'cobro', 'medioPago', 'ventaItem', 'venta', 'movCC', 'compra', 'proveedor', 'producto', 'mensaje', 'turno', 'servicio', 'receta', 'evento', 'mordedura', 'campania', 'cliente', 'user', 'animal', 'tutor', 'equipoVet', 'establecimiento', 'cuota', 'tramite', 'casoEpi', 'vet', 'municipio', 'inscripcion', 'noticia', 'denuncia'])
     await prisma[m].deleteMany();
 
   const pass = await bcrypt.hash('demo1234', 8);
@@ -311,7 +313,45 @@ async function main() {
   await prisma.user.create({ data: { email: 'zoonosis@guaymallen.demo', password: pass, nombre: 'Zoonosis Guaymallén', rol: 'MUNICIPIO', municipioId: gm.id } });
   await prisma.user.create({ data: { email: 'sofia.rios@demo.colvet', password: pass, nombre: 'Sofía Ríos', rol: 'TUTOR', tutorId: sofia.id } });
 
-  const counts = await Promise.all(['vet', 'establecimiento', 'animal', 'evento', 'turno', 'venta', 'producto', 'mensaje'].map(m => prisma[m].count().then(c => `${m}: ${c}`)));
+  // ── Inspecciones de establecimientos (rol INSPECTOR del Colegio)
+  const inspector = await prisma.user.create({ data: { email: 'inspeccion@demo.colvet', password: pass, nombre: 'M.V. Andrea Quiroga (inspectora)', rol: 'INSPECTOR' } });
+  const estsDT = await prisma.establecimiento.findMany({ where: { dtId: { not: null } }, orderBy: { id: 'asc' } });
+  const todosSi = () => Object.fromEntries(CHECK_IDS.map(id => [id, { r: id === 'ins_internacion' || id === 'ins_quirofano' ? pick(['si', 'na']) : 'si', obs: '' }]));
+  let acta = 0;
+  const nro = () => `ACTA-2026-${String(++acta).padStart(4, '0')}`;
+  for (const [k, e] of estsDT.entries()) {
+    const r = todosSi();
+    let resultado = 'Acreditado', plazo = null, hasta = day(730 - int(30, 300));
+    if (k === 2) { r.pub_oblea = { r: 'no', obs: 'No tiene la oblea del Colegio en la vidriera.' }; r.bio_corto = { r: 'no', obs: 'Faltan descartadores en el consultorio 2.' }; resultado = 'Acreditado con observaciones'; plazo = 30; hasta = day(12); }
+    if (k === 4) { r.bio_frio = { r: 'no', obs: 'Heladera de vacunas sin registro de temperatura.' }; resultado = 'No acreditado'; plazo = 60; hasta = null; }
+    const realizada = day(-int(20, 200));
+    await prisma.inspeccion.create({ data: { numero: nro(), estId: e.id, inspectorId: inspector.id, motivo: k % 3 ? 'Control periódico' : 'Renovación', programada: realizada, realizada, estado: 'Finalizada', resultado, plazoDias: plazo, checklistJson: JSON.stringify(r), responsable: 'Director/a técnico/a', observaciones: plazo ? 'Se labró acta con plazo de corrección.' : 'Sin observaciones.' } });
+    await prisma.establecimiento.update({ where: { id: e.id }, data: { acreditacion: resultado, acreditadoHasta: hasta } });
+    if (plazo) await prisma.inspeccion.create({ data: { numero: nro(), estId: e.id, inspectorId: inspector.id, motivo: 'Reinspección', programada: k === 2 ? day(12) : day(-3) } });
+  }
+  const sinInsp = await prisma.establecimiento.findMany({ where: { inspecciones: { none: {} } }, orderBy: { id: 'asc' }, take: 4 });
+  for (const [k, e] of sinInsp.entries()) await prisma.inspeccion.create({ data: { numero: nro(), estId: e.id, inspectorId: inspector.id, motivo: k === 0 ? 'Denuncia' : 'Habilitación', programada: day(k + 1) } });
+
+  // ── Dinero del Colegio: medios de pago y cobros de los últimos 12 meses (valores de ejemplo)
+  const MEDIOS = [['Mercado Pago', 'Link de pago, QR y tarjetas', 4.99, 0, true], ['Débito automático', 'Adhesión con CBU', 1.2, 2, true], ['Transferencia', 'CBU y alias del Colegio', 0, 0, true], ['Tarjeta', 'Crédito y débito por pasarela', 3.5, 18, true], ['Efectivo', 'En la sede del Colegio', 0, 0, false]];
+  for (const [i, [nombre, detalle, comisionPct, acreditacionDias, activo]] of MEDIOS.entries()) await prisma.medioPago.create({ data: { clave: nombre, nombre, detalle, comisionPct, acreditacionDias, activo, orden: i } });
+  const pct = Object.fromEntries(MEDIOS.map(m => [m[0], m[2]]));
+  const cobro = (fecha, concepto, medio, monto, extra = {}) => prisma.cobro.create({ data: { fecha, concepto, medio, monto, comision: Math.round(monto * pct[medio]) / 100, ...extra } });
+  for (const c of await prisma.cuota.findMany({ where: { estado: 'Pagada' } })) await cobro(c.pagadaEn, 'Cuota de matrícula', c.medio, c.monto, { vetId: c.vetId, cuotaId: c.id, detalle: c.periodo });
+  const nVets = Object.keys(vetBy).length;
+  for (let m = 11; m >= 0; m--) {
+    const base = new Date(); base.setDate(1); base.setMonth(base.getMonth() - m);
+    const ahora = new Date(), tope = m === 0 ? Math.max(1, ahora.getDate()) : 27;
+    const f = () => { const d = new Date(base); d.setDate(int(1, tope)); d.setHours(int(9, 18), int(0, 59)); return d > ahora ? new Date(ahora - int(1, 72) * 3600e3) : d; };
+    if (m >= 6) for (let i = 0; i < nVets - int(1, 4); i++) await cobro(f(), 'Cuota de matrícula', pick(['Débito automático', 'Débito automático', 'Transferencia', 'Tarjeta', 'Mercado Pago']), 16000);
+    for (const mu of ['Godoy Cruz', 'Guaymallén']) if (m < 10) await cobro(f(), 'Servicio de zoonosis municipal', 'Transferencia', 380000, { detalle: `Municipalidad de ${mu}` });
+    for (let i = int(8, 18); i > 0; i--) await cobro(f(), 'Certificados', pick(['Mercado Pago', 'Mercado Pago', 'Tarjeta']), 6500, { detalle: 'Certificado de matrícula vigente' });
+    for (let i = int(1, 3); i > 0; i--) await cobro(f(), 'Derecho de inscripción', pick(['Transferencia', 'Mercado Pago']), 48000);
+    for (let i = int(1, 3); i > 0; i--) await cobro(f(), 'Habilitación e inspección', pick(['Transferencia', 'Mercado Pago']), 65000);
+    for (let i = int(0, 9); i > 0; i--) await cobro(f(), 'Cursos y jornadas', pick(['Mercado Pago', 'Tarjeta']), 15000);
+  }
+
+  const counts = await Promise.all(['vet', 'establecimiento', 'animal', 'evento', 'turno', 'venta', 'producto', 'mensaje', 'inspeccion', 'cobro'].map(m => prisma[m].count().then(c => `${m}: ${c}`)));
   console.log('Seed OK →', counts.join(' · '));
 }
 

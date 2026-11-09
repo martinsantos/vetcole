@@ -19,3 +19,6 @@
 .fm-fila{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .fm-fila:first-of-type{border-top:0}
 .fm-tipo{font-size:12.5px;padding:3px 10px;border-radius:999px}
+.modal.wide:has(.fm-modal){max-width:1180px}
+.fm-modal .fm-head{margin-top:0;border:0;padding:4px 40px 16px 0;background:none;border-bottom:1px solid var(--line);border-radius:0}
+.leg{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}

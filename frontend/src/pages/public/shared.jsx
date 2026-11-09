@@ -73,6 +73,7 @@ export function EstModal({ est, onClose, onTurno }) {
           <div><dt>Especies</dt><dd>{e.especies.join(', ')}</dd></div>
           {e.dt && <div><dt>Dirección técnica</dt><dd><Link to={`/profesional/${e.dt.mp}`} onClick={onClose}>{e.dt.titulo}</Link> · MP {e.dt.mp}</dd></div>}
           {e.dt && <div><dt>Habilitación</dt><dd>{e.habilitacion} · <Badge cls="b-ok">Vigente</Badge></dd></div>}
+          {e.acreditacion && <div><dt>Inspección del Colegio</dt><dd><Badge cls={e.acreditacion === 'Acreditado' ? 'b-ok' : e.acreditacion === 'No acreditado' ? 'b-bad' : 'b-warn'}>{e.acreditacion}</Badge>{e.acreditadoHasta && <span className="small muted"> · hasta {fdate(e.acreditadoHasta)}</span>}</dd></div>}
         </dl>
         {!!e.equipo?.length && <div className="ficha-equipo"><h3>Equipo profesional</h3>
           <div className="ficha-equipo-l">{e.equipo.map(v => (

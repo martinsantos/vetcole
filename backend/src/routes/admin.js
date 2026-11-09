@@ -1,4 +1,4 @@
-// Administración del Colegio: tablero, padrón (ABM), inscripciones, establecimientos, guardias, cobranzas, denuncias, salud pública, noticias.
+// Administración del Colegio: tablero, padrón (ABM), inscripciones, establecimientos, guardias, dinero y cobranzas, denuncias, salud pública, noticias.
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { prisma, ok, fail, h, parse, publicEst, zonaOf, ZONAS, addDays, vetName } from '../lib/core.js';
@@ -101,6 +101,53 @@ r.post('/inscripciones/:id/avanzar', h(async (req, res) => {
 r.get('/establecimientos', h(async (req, res) => {
   const list = await prisma.establecimiento.findMany({ include: estInclude, orderBy: { nombre: 'asc' } });
   ok(res, list.map(e => publicEst(e)));
+}));
+
+// Dinero: recaudación por mes, concepto y medio de pago.
+r.get('/dinero', h(async (req, res) => {
+  const hoy = new Date(), ini = new Date(hoy.getFullYear(), hoy.getMonth() - 11, 1), mesIni = new Date(hoy.getFullYear(), hoy.getMonth(), 1), anioIni = new Date(hoy.getFullYear(), 0, 1);
+  const [cobros, pend, medios] = await Promise.all([
+    prisma.cobro.findMany({ where: { fecha: { gte: ini } }, include: { vet: { select: { mp: true, nombre: true, apellido: true } } }, orderBy: { fecha: 'desc' } }),
+    prisma.cuota.findMany({ where: { estado: 'Pendiente' } }),
+    prisma.medioPago.findMany({ orderBy: { orden: 'asc' } }),
+  ]);
+  const suma = l => l.reduce((t, c) => t + c.monto, 0);
+  const meses = Array.from({ length: 12 }, (_, i) => { const d = new Date(ini.getFullYear(), ini.getMonth() + i, 1); return { key: `${d.getFullYear()}-${d.getMonth()}`, mes: d.toLocaleDateString('es-AR', { month: 'short' }).replace('.', ''), cuotas: 0, otros: 0 }; });
+  const porMes = Object.fromEntries(meses.map(m => [m.key, m]));
+  const porConcepto = {}, porMedio = {};
+  for (const c of cobros) {
+    const d = new Date(c.fecha), m = porMes[`${d.getFullYear()}-${d.getMonth()}`];
+    if (m) m[c.concepto === 'Cuota de matrícula' ? 'cuotas' : 'otros'] += c.monto;
+    porConcepto[c.concepto] = (porConcepto[c.concepto] || 0) + c.monto;
+    (porMedio[c.medio] ||= { monto: 0, cantidad: 0, comision: 0 });
+    porMedio[c.medio].monto += c.monto; porMedio[c.medio].cantidad++; porMedio[c.medio].comision += c.comision;
+  }
+  const delMes = cobros.filter(c => new Date(c.fecha) >= mesIni), delAnio = cobros.filter(c => new Date(c.fecha) >= anioIni);
+  const vencidas = pend.filter(c => new Date(c.vence) < hoy);
+  const vetsConDeuda = new Set(vencidas.map(c => c.vetId)).size, totalVets = await prisma.vet.count({ where: { estado: { in: ['Vigente', 'Suspendida'] } } });
+  ok(res, {
+    mes: { bruto: suma(delMes), comisiones: delMes.reduce((t, c) => t + c.comision, 0), cobros: delMes.length },
+    anio: { bruto: suma(delAnio), comisiones: delAnio.reduce((t, c) => t + c.comision, 0) },
+    aAcreditar: suma(cobros.filter(c => c.estado === 'A acreditar')),
+    pendiente: { monto: suma(pend), cuotas: pend.length, vencidas: vencidas.length },
+    morosidad: totalVets ? Math.round((vetsConDeuda / totalVets) * 100) : 0,
+    meses: meses.map(({ key, ...m }) => m),
+    porConcepto: Object.entries(porConcepto).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value),
+    porMedio: medios.map(m => ({ ...m, ...(porMedio[m.clave] || { monto: 0, cantidad: 0, comision: 0 }) })),
+    movimientos: cobros.slice(0, 80).map(c => ({ ...c, vet: c.vet ? { mp: c.vet.mp, nombre: `${c.vet.apellido}, ${c.vet.nombre}` } : null })),
+  });
+}));
+
+r.get('/medios-pago', h(async (req, res) => ok(res, await prisma.medioPago.findMany({ orderBy: { orden: 'asc' } }))));
+r.patch('/medios-pago/:id', h(async (req, res) => {
+  const b = req.body || {}, data = {};
+  if (b.activo !== undefined) data.activo = !!b.activo;
+  if (b.comisionPct !== undefined) { const v = Number(b.comisionPct); if (!(v >= 0 && v <= 30)) return fail(res, 400, 'La comisión tiene que estar entre 0 y 30 %.'); data.comisionPct = v; }
+  if (b.acreditacionDias !== undefined) { const v = Number(b.acreditacionDias); if (!(Number.isInteger(v) && v >= 0 && v <= 60)) return fail(res, 400, 'Los días de acreditación tienen que estar entre 0 y 60.'); data.acreditacionDias = v; }
+  if (b.detalle !== undefined) data.detalle = String(b.detalle).slice(0, 120);
+  const activos = await prisma.medioPago.count({ where: { activo: true, NOT: { id: Number(req.params.id) } } });
+  if (data.activo === false && !activos) return fail(res, 400, 'Tiene que quedar al menos un medio de pago habilitado.');
+  ok(res, await prisma.medioPago.update({ where: { id: Number(req.params.id) }, data }));
 }));
 
 r.get('/cobranzas', h(async (req, res) => {

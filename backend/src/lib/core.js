@@ -90,6 +90,8 @@ export const publicEst = (e, now = new Date()) => ({
   venceHab: e.venceHab,
   dt: e.dt ? { mp: e.dt.mp, titulo: vetName(e.dt) } : null,
   equipo: (e.equipo || []).map(q => q.vet && { mp: q.vet.mp, titulo: vetName(q.vet), especialidad: parse(q.vet.especialidadesJson)[0], turnosOnline: q.vet.turnosOnline }).filter(Boolean),
+  acreditacion: e.acreditacion || null,
+  acreditadoHasta: e.acreditadoHasta || null,
   status: openStatus(e, now),
 });
 

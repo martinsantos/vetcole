@@ -24,7 +24,8 @@ r.get('/me', authenticate, h(async (req, res) => ok(res, shape(req.user))));
 // Cuentas de la demo (sólo para la pantalla de ingreso de la demo).
 r.get('/demo-accounts', h(async (req, res) => ok(res, [
   { rol: 'VET', email: 'lucia.ferreyra@demo.colvet', label: 'Veterinaria · Dra. Lucía Ferreyra (MP 1342)', detalle: 'Portal del Colegio + consultorio' },
-  { rol: 'ADMIN', email: 'admin@demo.colvet', label: 'Administración del Colegio', detalle: 'Padrón, inscripciones, guardias' },
+  { rol: 'ADMIN', email: 'admin@demo.colvet', label: 'Administración del Colegio', detalle: 'Padrón, dinero, inspecciones, municipios' },
+  { rol: 'INSPECTOR', email: 'inspeccion@demo.colvet', label: 'Inspectora del Colegio · M.V. Andrea Quiroga', detalle: 'Agenda y formulario de revisión de establecimientos' },
   { rol: 'MUNICIPIO', email: 'zoonosis@godoycruz.demo', label: 'Zoonosis · Municipio de Godoy Cruz', detalle: 'Credenciales, campañas, mordeduras' },
   { rol: 'TUTOR', email: 'sofia.rios@demo.colvet', label: 'Tutora · Sofía Ríos', detalle: 'App: mascotas, turnos, mensajes' },
 ].map(a => ({ ...a, password: 'demo1234' })))));

@@ -17,13 +17,14 @@ model User {
   email       String     @unique
   password    String
   nombre      String
-  rol         String // ADMIN | VET | MUNICIPIO | TUTOR | FARMACIA
+  rol         String // ADMIN | VET | MUNICIPIO | TUTOR | INSPECTOR
   vetId       Int?       @unique
   vet         Vet?       @relation(fields: [vetId], references: [id])
   municipioId Int?
   municipio   Municipio? @relation(fields: [municipioId], references: [id])
   tutorId     Int?       @unique
   tutor       Tutor?     @relation(fields: [tutorId], references: [id])
+  inspecciones Inspeccion[]
   createdAt   DateTime   @default(now())
 }
 
@@ -57,6 +58,7 @@ model Vet {
   turnos              Turno[]
   recetas             Receta[]
   casos               CasoEpi[]
+  cobros              Cobro[]
   animalesCabecera    Animal[]
 }
 
@@ -79,6 +81,9 @@ model Establecimiento {
   dt             Vet?        @relation("DT", fields: [dtId], references: [id])
   turnosOnline   Boolean     @default(false)
   especiesJson   String      @default("[]")
+  acreditacion   String? // Acreditado | Acreditado con observaciones | No acreditado (resultado de la última inspección)
+  acreditadoHasta DateTime?
+  inspecciones   Inspeccion[]
   real           Boolean     @default(false) // tomado del listado público de guardias
   equipo         EquipoVet[]
   servicios      Servicio[]
@@ -438,4 +443,51 @@ model Mordedura {
   descripcion      String
   estado           String    @default("En observación") // En observación | Cerrada | Derivada
   observacionHasta DateTime?
+}
+
+// Inspección de un establecimiento por un inspector/a del Colegio. El resultado define su acreditación.
+model Inspeccion {
+  id            Int             @id @default(autoincrement())
+  numero        String          @unique // ACTA-2026-0001
+  estId         Int
+  est           Establecimiento @relation(fields: [estId], references: [id])
+  inspectorId   Int?
+  inspector     User?           @relation(fields: [inspectorId], references: [id])
+  motivo        String          @default("Control periódico") // Habilitación | Renovación | Control periódico | Denuncia | Reinspección
+  programada    DateTime
+  realizada     DateTime?
+  estado        String          @default("Programada") // Programada | En curso | Finalizada | Cancelada
+  resultado     String? // Acreditado | Acreditado con observaciones | No acreditado
+  checklistJson String          @default("{}") // { itemId: { r: 'si'|'no'|'na', obs } }
+  observaciones String?
+  plazoDias     Int?
+  responsable   String? // quien atendió la inspección en el establecimiento
+  createdAt     DateTime        @default(now())
+}
+
+// Dinero del Colegio: cada cobro con su concepto y su medio de pago.
+model Cobro {
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime
+  concepto   String // Cuota de matrícula | Certificados | Derecho de inscripción | Habilitación e inspección | Servicio de zoonosis municipal | Cursos y jornadas
+  detalle    String?
+  medio      String // clave de MedioPago
+  monto      Float
+  comision   Float    @default(0)
+  estado     String   @default("Acreditado") // Acreditado | A acreditar
+  vetId      Int?
+  vet        Vet?     @relation(fields: [vetId], references: [id])
+  cuotaId    Int?
+  referencia String?
+}
+
+model MedioPago {
+  id               Int     @id @default(autoincrement())
+  clave            String  @unique
+  nombre           String
+  detalle          String?
+  activo           Boolean @default(true)
+  comisionPct      Float   @default(0)
+  acreditacionDias Int     @default(0)
+  orden            Int     @default(0)
 }

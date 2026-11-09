@@ -12,6 +12,7 @@ import clinicRoutes from './routes/clinic.js';
 import adminRoutes from './routes/admin.js';
 import muniRoutes from './routes/muni.js';
 import tutorRoutes from './routes/tutor.js';
+import inspeccionRoutes from './routes/inspeccion.js';
 
 export const BASE_PATH = ('/' + String(process.env.BASE_PATH || '/').replace(/^\/+|\/+$/g, '')).replace(/^\/$/, '');
 
@@ -44,6 +45,7 @@ root.use(`${API}/clinic`, clinicRoutes);
 root.use(`${API}/admin`, adminRoutes);
 root.use(`${API}/muni`, muniRoutes);
 root.use(`${API}/tutor`, tutorRoutes);
+root.use(`${API}/inspeccion`, inspeccionRoutes);
 root.get(`${API}/health`, (req, res) => res.json({ success: true, data: { ok: true, time: new Date(), base: BASE_PATH || '/' } }));
 root.use(API, (req, res) => res.status(404).json({ success: false, message: 'Ruta no encontrada.' }));
 
