@@ -54,6 +54,14 @@ export function VetHome() {
           <Kpi label="Turnos hoy" value={d.turnosHoy} sub="en tu consultorio" />
           <Kpi label="Establecimientos" value={d.establecimientos.length} sub={d.establecimientos.some(e => e.esDT) ? 'incluye uno como DT' : 'donde atendés'} />
         </div>
+        <div className="vet-cred-home">
+          <CredencialCard vet={d.vet} alDia={!d.cuotaPendiente} />
+          <div>
+            <h3 style={{ marginTop: 0 }}>Tu credencial digital</h3>
+            <p className="small muted">Es la misma en tu perfil público, en la ficha del Colegio y en los establecimientos donde trabajás. El QR muestra tu matrícula vigente al instante.</p>
+            <div className="row" style={{ gap: 8 }}><Link className="btn btn-sm" to="/vet/credencial">Abrir credencial</Link><Link className="btn btn-sm" to={`/profesional/${v.mp}`}>Ver mi perfil público</Link>{c && <Link className="btn btn-sm btn-primary" to="/vet/cuotas">Pagar cuota {c.periodo}</Link>}</div>
+          </div>
+        </div>
         {d.establecimientos.filter(e => e.esDT).map(e => <GuardiaCard key={e.codigo} e={e} />)}
         <div className="grid g2" style={{ marginTop: 16 }}>
           <div className="card"><h3>Para hacer</h3>
@@ -108,13 +116,19 @@ export function Cuotas() {
   return (
     <>
       <PageHead kicker="Cuotas y pagos" title="Estado de cuenta"><Switch checked={false} onChange={v => toast(v ? 'Débito automático activado (demo)' : 'Débito automático desactivado')}>Débito automático</Switch></PageHead>
-      <Load q={q}>{list => (
+      <Load q={q}>{list => { const pend = list.filter(c => c.estado !== 'Pagada').sort((a, b) => new Date(a.vence) - new Date(b.vence)); const total = pend.reduce((t, c) => t + c.monto, 0); return (<>
+        <div className={`cuenta-box ${pend.length ? '' : 'ok'}`}>
+          {pend.length ? <>
+            <div><div className="small muted">Saldo a pagar</div><b className="cuenta-total">{money(total)}</b><div className="small">{pend.length} cuota{pend.length > 1 ? 's' : ''} · próximo vencimiento {fdate(pend[0].vence)}{new Date(pend[0].vence) < new Date() ? <span style={{ color: 'var(--bad)' }}> · vencida</span> : ''}</div></div>
+            <button className="btn btn-primary btn-lg" onClick={() => setPay(pend[0])}>Pagar {pend[0].periodo}</button>
+          </> : <div><b>Estás al día</b><div className="small muted">No tenés cuotas pendientes. Tu credencial muestra «cuota al día».</div></div>}
+        </div>
         <div className="tblwrap"><table className="tbl"><thead><tr><th>Período</th><th>Importe</th><th>Vencimiento</th><th>Estado</th><th /></tr></thead><tbody>
           {list.map(c => <tr key={c.id}><td><b>{c.periodo}</b></td><td>{money(c.monto)}</td><td>{fdate(c.vence)}</td>
             <td><Badge cls={c.estado === 'Pagada' ? 'b-ok' : 'b-warn'}>{c.estado}{c.pagadaEn ? ` · ${fdate(c.pagadaEn)}` : ''}</Badge></td>
             <td style={{ textAlign: 'right' }}>{c.estado === 'Pagada' ? <button className="btn btn-sm" onClick={() => toast('Comprobante descargado (demo)')}>Comprobante</button> : <button className="btn btn-sm btn-primary" onClick={() => setPay(c)}>Pagar</button>}</td></tr>)}
         </tbody></table></div>
-      )}</Load>
+      </>); }}</Load>
       <p className="tiny muted" style={{ marginTop: 10 }}>Los medios de pago los define el Colegio desde su administración.</p>
       <Modal open={!!pay} onClose={() => setPay(null)} title={`Pagar cuota ${pay?.periodo || ''}`} subtitle={pay ? `${money(pay.monto)} · vence ${fdate(pay.vence)}` : ''}>
         <Seg value={medioSel} onChange={setMedio} options={(medios || []).map(m => m.clave)} />
@@ -231,13 +245,9 @@ export function Establecimiento() {
           <Kpi label="Equipo" value={e.equipo.length} sub="profesionales vinculados" />
         </div>
         {e.habilitacion ? <EstKit e={e} idPrefix="est" /> : <div className="note">Este establecimiento todavía no tiene la habilitación cargada.</div>}
-        <div className="tiny muted mono" style={{ margin: '22px 0 8px' }}>Equipo · credenciales vinculadas</div>
-        <div className="grid g2">{e.equipo.map(v => (
-          <div key={v.mp} className="card flat row" style={{ padding: '10px 12px', flexWrap: 'nowrap' }}>
-            <Av style={{ width: 36, height: 36, fontSize: 12 }}>{v.titulo.split(' ').slice(1, 3).map(w => w[0]).join('')}</Av>
-            <div style={{ flex: 1, minWidth: 0 }}><b className="small">{v.titulo}</b><div className="tiny muted">MP {v.mp} · {v.especialidad}</div></div>
-            <Link className="btn btn-sm" to={`/verificar/${v.mp}`}>Verificar</Link>
-          </div>
+        <div className="tiny muted" style={{ margin: '22px 0 8px' }}>Equipo · credenciales vinculadas (la misma credencial digital de cada profesional)</div>
+        <div className="grid g3">{e.equipo.map(v => (
+          <Link key={v.mp} to={`/verificar/${v.mp}`} className="cred-link"><CredencialCard mini vet={{ ...v, estado: 'Vigente' }} alDia={false} /></Link>
         ))}</div>
         <button className="btn btn-sm" style={{ marginTop: 8 }} onClick={() => toast('Invitación enviada: el profesional acepta desde su portal')}>+ Vincular profesional</button>
       </section>

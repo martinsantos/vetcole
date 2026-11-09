@@ -86,6 +86,15 @@ for (const p of ['/muni', '/muni/credenciales', `/muni/animales/${luna.id}`, '/m
 await asUser('sofia.rios@demo.colvet');
 for (const p of ['/tutor', `/tutor/mascotas/${luna.id}`, '/tutor/turnos', '/tutor/mensajes', '/tutor/perfil']) await visit(p);
 
+// Veterinario/a: ve su credencial al ingresar y paga la cuota desde su estado de cuenta
+await asUser('lucia.ferreyra@demo.colvet');
+await page.goto(BASE + '/vet', { waitUntil: 'networkidle' }).catch(() => {});
+ok(!!(await page.$('.vet-cred-home .cred')), 'veterinario/a: la credencial se ve en el resumen al ingresar');
+await page.goto(BASE + '/vet/cuotas', { waitUntil: 'networkidle' }).catch(() => {});
+await page.click('.cuenta-box .btn-primary'); await page.waitForTimeout(400);
+await page.click('.modal .btn-primary.btn-block'); await page.waitForTimeout(1000);
+ok((await page.textContent('body')).includes('Estás al día'), 'veterinario/a: paga la cuota pendiente desde su estado de cuenta');
+
 // Colegio: ficha del matriculado como ventana emergente, dinero e inspecciones
 await asUser('admin@demo.colvet');
 await page.goto(BASE + '/admin/matriculados', { waitUntil: 'networkidle' }).catch(() => {});

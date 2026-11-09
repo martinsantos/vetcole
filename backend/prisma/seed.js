@@ -313,6 +313,9 @@ async function main() {
   await prisma.user.create({ data: { email: 'zoonosis@guaymallen.demo', password: pass, nombre: 'Zoonosis Guaymallén', rol: 'MUNICIPIO', municipioId: gm.id } });
   await prisma.user.create({ data: { email: 'sofia.rios@demo.colvet', password: pass, nombre: 'Sofía Ríos', rol: 'TUTOR', tutorId: sofia.id } });
 
+  // ── Cuota del mes próximo, ya emitida y a pagar (la ven todos los matriculados en su estado de cuenta)
+  for (const v of Object.values(vetBy)) if (v.estado !== 'Baja') await prisma.cuota.create({ data: { vetId: v.id, periodo: 'Diciembre 2026', monto: 18500, vence: new Date(2026, 11, 10), estado: 'Pendiente' } });
+
   // ── Inspecciones de establecimientos (rol INSPECTOR del Colegio)
   const inspector = await prisma.user.create({ data: { email: 'inspeccion@demo.colvet', password: pass, nombre: 'M.V. Andrea Quiroga (inspectora)', rol: 'INSPECTOR' } });
   const estsDT = await prisma.establecimiento.findMany({ where: { dtId: { not: null } }, orderBy: { id: 'asc' } });

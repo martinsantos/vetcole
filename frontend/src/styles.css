@@ -959,3 +959,29 @@ main:focus{outline:none}
 .acred-insp.ok{background:var(--ok-l);color:var(--ok)}
 .acred-insp.warn{background:var(--warn-l);color:var(--warn)}
 .acred-insp.bad{background:var(--bad-l);color:var(--bad)}
+/* credencial unificada (profesional y establecimiento) */
+.cred-tag{position:absolute;top:22px;right:20px;font-size:11px;font-weight:600;color:var(--leaf-2);text-transform:none}
+.cred-id{display:flex;gap:10px;align-items:center;margin-top:10px;max-width:66%}
+.cred-id .nm{margin-top:0}
+.cred-foto{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7);flex:none}
+.cred-sub{font-size:12px;opacity:.85;margin-top:2px}
+.cred-linea{font-size:12px;margin-top:8px;opacity:.95;font-variant-numeric:tabular-nums}
+.cred-linea b{font-size:15px}
+.cred-vig{font-size:10px;opacity:.75;margin-top:4px}
+.estcred{background:none}
+.cred.mini{min-height:150px;aspect-ratio:auto;padding:14px 16px}
+.cred.mini .cred-tag{top:16px;right:16px}
+.cred.mini .nm{font-size:16px}
+.cred.mini .cred-vig{display:none}
+.cred.mini .qr{width:64px;height:64px;padding:4px;right:12px;bottom:12px}
+.cred.mini .st{position:static;margin-top:8px}
+.vet-cred-home{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:center;margin:16px 0;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+@media(max-width:820px){.vet-cred-home{grid-template-columns:1fr}}
+.cred-link{display:block;color:#fff}
+.cred-link:hover .cred{transform:translateY(-2px)}
+.cuenta-box{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:18px 20px;margin-bottom:14px;border-radius:12px;background:var(--warn-l);border:1px solid #f1d39f}
+.cuenta-box.ok{background:var(--ok-l);border-color:#bfe3cf}
+.cuenta-total{font-size:30px;display:block;line-height:1.1;margin:2px 0}
+.oblea{background:radial-gradient(circle at 30% 25%,var(--plum) 0%,var(--plum-d) 70%)!important;box-shadow:0 0 0 6px #f3e7ef,0 10px 24px rgba(79,16,71,.3)!important}
+.ob-t{color:#f3c9e6!important}
+.pt-badge{background:var(--plum)!important}

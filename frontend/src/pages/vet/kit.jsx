@@ -21,38 +21,54 @@ export function QRSvg({ text }) {
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
 }
 
-export function CredencialCard({ vet, alDia = true }) {
-  const esp = vet.especialidades?.[0] || 'Clínica general';
+// Credencial digital del Colegio: el mismo diseño para profesionales y establecimientos (cambia el contenido).
+export function Credencial({ tag, nombre, sub, linea, estado, ok = true, vigencia, qr, mini, foto }) {
   return (
-    <div className="cred">
+    <div className={`cred ${mini ? 'mini' : ''}`}>
       <div className="lg"><img src={LOGO} alt="" /></div>
-      <div className="nm">{vet.titulo || `${vet.femenino ? 'Dra.' : 'Dr.'} ${vet.nombre} ${vet.apellido}`}</div>
-      <div style={{ fontSize: 12, opacity: 0.85, maxWidth: '62%' }}>{vet.femenino ? 'Médica Veterinaria' : 'Médico Veterinario'} · {esp}</div>
-      <div style={{ fontSize: 12, marginTop: 8, opacity: 0.9, fontFamily: 'var(--mono)' }}>MP <b style={{ fontSize: 16 }}>{vet.mp}</b>{vet.dni && <> &nbsp; DNI ••• {String(vet.dni).slice(-3)}</>}</div>
-      <div className="st">
-        <span className="badge b-ok" style={{ background: vet.estado === 'Vigente' ? '#d6f5e6' : '#fbe6e3', color: vet.estado === 'Vigente' ? undefined : 'var(--bad)' }}>● {vet.estado === 'Vigente' ? `Vigente${alDia ? ' · cuota al día' : ''}` : vet.estado}</span>
-        <div style={{ fontSize: 10, opacity: 0.7, marginTop: 4 }}>Ley 7825 · válida al {new Date().toLocaleDateString('es-AR')}</div>
+      {tag && <div className="cred-tag">{tag}</div>}
+      <div className="cred-id">
+        {foto && <img className="cred-foto" src={foto} alt="" />}
+        <div style={{ minWidth: 0 }}>
+          <div className="nm">{nombre}</div>
+          {sub && <div className="cred-sub">{sub}</div>}
+        </div>
       </div>
-      <div className="qr"><QRSvg text={verifyUrl(`/verificar/${vet.mp}`)} /></div>
+      {linea && <div className="cred-linea">{linea}</div>}
+      <div className="st">
+        <span className="badge b-ok" style={{ background: ok ? '#d6f5e6' : '#fbe6e3', color: ok ? undefined : 'var(--bad)' }}>● {estado}</span>
+        {vigencia && <div className="cred-vig">{vigencia}</div>}
+      </div>
+      <div className="qr"><QRSvg text={qr} /></div>
     </div>
+  );
+}
+
+export function CredencialCard({ vet, alDia = true, mini }) {
+  const esp = vet.especialidades?.[0] || vet.especialidad || 'Clínica general';
+  const vig = vet.estado === undefined || vet.estado === 'Vigente';
+  return (
+    <Credencial mini={mini} tag="Matrícula profesional" foto={mini ? null : vet.foto}
+      nombre={vet.titulo || `${vet.femenino ? 'Dra.' : 'Dr.'} ${vet.nombre} ${vet.apellido}`}
+      sub={`${vet.femenino ? 'Médica veterinaria' : 'Médico veterinario'} · ${esp}`}
+      linea={<>MP <b>{vet.mp}</b>{vet.dni && <> &nbsp; DNI ••• {String(vet.dni).slice(-3)}</>}</>}
+      ok={vig} estado={vig ? `Vigente${alDia ? ' · cuota al día' : ''}` : vet.estado}
+      vigencia={`Ley 7825 · válida al ${new Date().toLocaleDateString('es-AR')}`}
+      qr={verifyUrl(`/verificar/${vet.mp}`)} />
+  );
+}
+
+export function EstCredencial({ e, mini }) {
+  return (
+    <Credencial mini={mini} tag="Establecimiento habilitado" nombre={e.nombre} sub={`${e.tipo} · ${e.departamento}`}
+      linea={<>HAB. <b>{e.habilitacion || '—'}</b> &nbsp; DT MP <b>{e.dt?.mp || '—'}</b></>}
+      ok estado={e.acreditacion ? e.acreditacion : 'Habilitado'}
+      vigencia={`Vigente hasta ${fdate(e.venceHab)}`}
+      qr={verifyUrl(`/verificar/e/${e.codigo}`)} />
   );
 }
 
 const dtName = e => e.dt?.titulo || '—';
-
-export function EstCredencial({ e }) {
-  return (
-    <div className="cred estcred">
-      <div className="lg"><img src={LOGO} alt="" /></div>
-      <div className="ectag">✓ ESTABLECIMIENTO HABILITADO</div>
-      <div className="nm">{e.nombre}</div>
-      <div style={{ fontSize: 12, opacity: 0.85 }}>{e.tipo} · {e.departamento}</div>
-      <div className="ecrow"><span>HAB.</span><b>{e.habilitacion || '—'}</b><span>DT</span><b>MP {e.dt?.mp || '—'}</b></div>
-      <div className="st"><span className="badge b-ok" style={{ background: '#d6f5e6' }}>● Vigente hasta {fdate(e.venceHab)}</span></div>
-      <div className="qr"><QRSvg text={verifyUrl(`/verificar/e/${e.codigo}`)} /></div>
-    </div>
-  );
-}
 
 export function Oblea({ e }) {
   return (
