@@ -11,6 +11,7 @@ import Servicios from '../pages/public/Servicios.jsx';
 import IdentidadAnimal from '../pages/public/IdentidadAnimal.jsx';
 import EstandarLibreta from '../pages/public/EstandarLibreta.jsx';
 import Profesional from '../pages/public/Profesional.jsx';
+import Concepto from '../pages/public/Concepto.jsx';
 import { VerificarVet, VerificarEst } from '../pages/public/Verificar.jsx';
 import { Tramites, Inscripcion, Institucional, Noticias, Viajar, Mapa, Guardias, NotFound } from '../pages/public/Info.jsx';
 
@@ -40,6 +41,7 @@ export default function PublicApp() {
         <Route path="identidad-animal" element={<IdentidadAnimal />} />
         <Route path="estandar-libreta" element={<EstandarLibreta />} />
         <Route path="profesional/:mp" element={<Profesional />} />
+        <Route path="concepto" element={<Concepto />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

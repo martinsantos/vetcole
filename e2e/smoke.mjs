@@ -24,7 +24,7 @@ const visit = async (path, expectText) => {
 };
 
 // 1) Sitio público
-for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/profesional/1342', 'Credencial digital'], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/concepto', 'Abierto ahora'], ['/profesional/1342', 'Credencial digital'], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
 // Buscador de la portada: profesionales y establecimientos en la misma búsqueda
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
@@ -120,6 +120,9 @@ ok((await page.textContent('body')).includes('Luna'), 'el Colegio ve las credenc
 await page.goto(BASE + '/'); await page.click('.demobar nav a:has-text("Veterinario/a")'); await page.waitForURL('**/vet**');
 await page.click('a:has-text("Tablero del día")'); await page.waitForURL('**/vet/consultorio**');
 ok(page.url().includes('/vet/consultorio'), 'el consultorio está dentro del portal del veterinario/a');
+
+await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Inspector/a")'); await page.waitForURL('**/inspeccion**');
+ok((await page.textContent('body')).includes('Agenda de inspecciones'), 'barra de demo: opción Inspector/a');
 
 // 8) Celular: sin scroll horizontal
 const m = await browser.newPage({ viewport: { width: 390, height: 844 } });
