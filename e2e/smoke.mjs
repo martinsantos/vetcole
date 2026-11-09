@@ -40,8 +40,10 @@ await page.click('.vcard'); await page.waitForURL('**/profesional/**'); await pa
 await page.goto(BASE + '/directorio?tab=estab', { waitUntil: 'networkidle' }).catch(() => {});
 await page.click('.vcard'); await page.waitForTimeout(600);
 ok(!!(await page.$('.modal .ficha-mapa .leaflet-container')), 'ficha del establecimiento con mapa');
-await page.goto(BASE + '/directorio?vista=mapa', { waitUntil: 'networkidle' }).catch(() => {});
-ok((await page.$$('.dir-mapa .leaflet-marker-icon')).length > 5, 'directorio: vista de mapa con todos los puntos filtrados');
+await page.goto(BASE + '/directorio', { waitUntil: 'networkidle' }).catch(() => {});
+ok((await page.$$('.dir-split .dir-lista .vcard')).length > 10 && (await page.$$('.dir-split .dir-mapa .leaflet-marker-icon')).length > 5, 'directorio: lista y mapa lado a lado');
+await page.click('.dir-ver >> nth=1'); await page.waitForTimeout(700);
+ok(!!(await page.$('.dir-lista .vcard.sel')) && !!(await page.$('.dir-mapa .leaflet-popup')), 'directorio: «Ver en el mapa» ubica al profesional');
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
 await page.fill('.bsearch input', 'cirujia'); await page.waitForTimeout(300);
 { const t = await page.textContent('.bres'); ok(t.includes('más parecidos') && t.includes('Cirugía'), 'buscador: tolera errores de tipeo'); }

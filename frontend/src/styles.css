@@ -1089,3 +1089,29 @@ main:focus{outline:none}
 .ldoc-foot>div:first-child{flex:1;min-width:260px}
 .ldoc-foot p{margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
 .ldoc-foot p a{text-decoration:underline}
+
+/* ===== Directorio: lista y mapa lado a lado ===== */
+.dir-wrap{max-width:1360px}
+.dir-filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.dir-filtros input{flex:1 1 240px;min-width:200px;height:42px}
+.dir-filtros select{flex:0 1 210px;height:42px}
+.dir-filtros .chip{height:42px;border-radius:8px;padding:0 14px;font-size:14px;background:#fff}
+.dir-filtros .chip.on{background:var(--plum);border-color:var(--plum);color:#fff}
+.dir-limpiar{border:0;background:none;cursor:pointer;padding:0 6px}
+.dir-movil{display:none}
+.dir-split{display:grid;grid-template-columns:minmax(380px,460px) 1fr;gap:16px;align-items:start}
+.dir-lista{display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 130px);overflow-y:auto;padding-right:6px}
+.dir-cuenta{position:sticky;top:0;background:#faf8f6;padding:2px 0 6px;z-index:2}
+.dir-lista .vcard{align-items:flex-start;margin:0}
+.dir-lista .vcard.sel{border-color:var(--plum);box-shadow:0 0 0 2px #f3e7ef}
+.dir-ver{flex:none;align-self:center}
+.dir-split .dir-mapa{position:sticky;top:60px;height:calc(100vh - 130px);min-height:420px}
+.dir-split .dir-mapa>div:first-child{height:100%!important}
+@media(max-width:980px){
+  .dir-movil{display:inline-flex}
+  .dir-split{grid-template-columns:1fr}
+  .dir-lista{max-height:none;overflow:visible;padding-right:0}
+  .dir-split.ver-lista .dir-mapa,.dir-split.ver-mapa .dir-lista{display:none}
+  .dir-split .dir-mapa{position:static;height:70vh}
+  .dir-ver{display:none}
+}
