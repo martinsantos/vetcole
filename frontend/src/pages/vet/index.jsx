@@ -47,30 +47,21 @@ export function VetHome() {
     ].filter(Boolean);
     return (
       <>
-        <PageHead kicker={`Hola, ${v.nombre}`} title="Resumen"><Link className="btn" to="/vet/credencial">Mostrar credencial</Link></PageHead>
-        <div className="grid g4">
-          <Kpi label="Matrícula" value={v.estado} color={v.estado === 'Vigente' ? 'var(--ok)' : 'var(--bad)'} sub={`MP ${v.mp} · desde ${v.alta}`} />
-          <Kpi label="Cuota" value={c ? money(c.monto) : 'Al día'} sub={c ? `Vence ${fdate(c.vence)}` : 'Sin deuda'} color={c ? 'var(--warn)' : undefined} />
-          <Kpi label="Turnos hoy" value={d.turnosHoy} sub="en tu consultorio" />
-          <Kpi label="Establecimientos" value={d.establecimientos.length} sub={d.establecimientos.some(e => e.esDT) ? 'incluye uno como DT' : 'donde atendés'} />
-        </div>
-        <div className="vet-cred-home">
-          <CredencialCard vet={d.vet} alDia={!d.cuotaPendiente} />
-          <div>
-            <h3 style={{ marginTop: 0 }}>Tu credencial digital</h3>
-            <p className="small muted">Es la misma en tu perfil público, en la ficha del Colegio y en los establecimientos donde trabajás. El QR muestra tu matrícula vigente al instante.</p>
-            <div className="row" style={{ gap: 8 }}><Link className="btn btn-sm" to="/vet/credencial">Abrir credencial</Link><Link className="btn btn-sm" to={`/profesional/${v.mp}`}>Ver mi perfil público</Link>{c && <Link className="btn btn-sm btn-primary" to="/vet/cuotas">Pagar cuota {c.periodo}</Link>}</div>
+        <PageHead kicker={new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })} title={`Hola, ${v.nombre}`} />
+        <div className="hoy">
+          <div className="card hoy-lista">
+            <h3>Para hoy</h3>
+            {todos.map((x, i) => <div className="vet-todo" key={i}><span>{x.t}</span><Link className={`btn btn-sm ${i === 0 && c ? 'btn-primary' : ''}`} to={x.to}>{x.b}</Link></div>)}
+            {!todos.length && <p className="muted">No tenés pendientes.</p>}
+          </div>
+          <div className="hoy-cred">
+            <CredencialCard vet={d.vet} alDia={!d.cuotaPendiente} />
+            <div className="row" style={{ gap: 8, marginTop: 12 }}><Link className="btn btn-sm" to="/vet/credencial">Abrir credencial</Link><Link className="btn btn-sm" to={`/profesional/${v.mp}`}>Ver mi perfil público</Link></div>
           </div>
         </div>
         {d.establecimientos.filter(e => e.esDT).map(e => <GuardiaCard key={e.codigo} e={e} />)}
-        <div className="grid g2" style={{ marginTop: 16 }}>
-          <div className="card"><h3>Para hacer</h3>
-            {todos.map((x, i) => <div className="vet-todo" key={i}><span className="small">{x.t}</span><Link className="btn btn-sm" to={x.to}>{x.b}</Link></div>)}
-          </div>
-          <div className="card"><h3>Alertas sanitarias</h3>
-            {d.alertas.map(a => <div className="vet-todo" key={a.id}><div><b className="small">{a.evento}</b><div className="tiny muted">{a.departamento} · {a.casos} caso(s) · {a.especie}</div></div><span className="mono tiny muted">SE {a.semana}</span></div>)}
-            <Link className="btn btn-sm" style={{ marginTop: 10 }} to="/vet/casos">Notificar un caso</Link>
-          </div>
+        <div className="card" style={{ marginTop: 16 }}><div className="row between"><h3 style={{ margin: 0 }}>Alertas sanitarias de la provincia</h3><Link className="btn btn-sm" to="/vet/casos">Notificar un caso</Link></div>
+          <div className="grid g2" style={{ gap: '0 24px', marginTop: 8 }}>{d.alertas.map(a => <div className="vet-todo" key={a.id}><div><b className="small">{a.evento}</b><div className="tiny muted">{a.departamento} · {a.casos} caso(s) · {a.especie}</div></div><span className="tiny muted">SE {a.semana}</span></div>)}</div>
         </div>
       </>
     );

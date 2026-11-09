@@ -24,7 +24,7 @@ const visit = async (path, expectText) => {
 };
 
 // 1) Sitio público
-for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/concepto', 'Abierto ahora'], ['/profesional/1342', 'Credencial digital'], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
+for (const [p, t] of [['/', 'Guardias de hoy'], ['/directorio', ''], ['/directorio?turnos=1', ''], ['/mapa', ''], ['/guardias', 'Sin cobertura'], ['/libreta', ''], ['/libreta/MZA-000231', 'Luna'], ['/libreta/EQ-000017', 'Tormenta'], ['/verificar/1342', 'Ferreyra'], ['/verificar/552', ''], ['/verificar/e/e1', 'Consultorio Veterinario Parque'], ['/receta/RV-2026-000412', 'RV-2026-000412'], ['/tramites', ''], ['/inscripcion', ''], ['/institucional', ''], ['/noticias', 'Masterclass'], ['/viajar', ''], ['/datos', ''], ['/servicios', ''], ['/profesional/1342', 'Credencial digital'], ['/estandar-libreta', 'LSAA'], ['/directorio?vista=mapa', ''], ['/identidad-animal', 'Normativa y protocolos'], ['/ingresar', 'Lucía Ferreyra']]) await visit(p, t);
 
 // Buscador de la portada: profesionales y establecimientos en la misma búsqueda
 await page.goto(BASE + '/', { waitUntil: 'networkidle' }).catch(() => {});
@@ -89,7 +89,7 @@ for (const p of ['/tutor', `/tutor/mascotas/${luna.id}`, '/tutor/turnos', '/tuto
 // Veterinario/a: ve su credencial al ingresar y paga la cuota desde su estado de cuenta
 await asUser('lucia.ferreyra@demo.colvet');
 await page.goto(BASE + '/vet', { waitUntil: 'networkidle' }).catch(() => {});
-ok(!!(await page.$('.vet-cred-home .cred')), 'veterinario/a: la credencial se ve en el resumen al ingresar');
+ok(!!(await page.$('.hoy-cred .cred')), 'veterinario/a: la credencial se ve en el resumen al ingresar');
 await page.goto(BASE + '/vet/cuotas', { waitUntil: 'networkidle' }).catch(() => {});
 await page.click('.cuenta-box .btn-primary'); await page.waitForTimeout(400);
 await page.click('.modal .btn-primary.btn-block'); await page.waitForTimeout(1000);
@@ -118,7 +118,7 @@ ok(page.url().includes('/muni') && (await page.textContent('body')).includes('Op
 await page.goto(BASE + '/muni/credenciales', { waitUntil: 'networkidle' }).catch(() => {});
 ok((await page.textContent('body')).includes('Luna'), 'el Colegio ve las credenciales del municipio elegido');
 await page.goto(BASE + '/'); await page.click('.demobar nav a:has-text("Veterinario/a")'); await page.waitForURL('**/vet**');
-await page.click('a:has-text("Tablero del día")'); await page.waitForURL('**/vet/consultorio**');
+await page.click('.espacios a:has-text("Mi consultorio")'); await page.waitForURL('**/vet/consultorio**');
 ok(page.url().includes('/vet/consultorio'), 'el consultorio está dentro del portal del veterinario/a');
 
 await page.goto(BASE + '/'); if (await page.$('.demotab')) await page.click('.demotab'); await page.click('.demobar nav a:has-text("Inspector/a")'); await page.waitForURL('**/inspeccion**');

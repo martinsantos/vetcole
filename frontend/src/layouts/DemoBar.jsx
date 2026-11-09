@@ -8,7 +8,6 @@ import { toast } from '../components/ui.jsx';
 
 const APPS = [
   ['pub', 'Sitio público', '/', null],
-  ['b', 'Portada B (concepto)', '/concepto', null],
   ['vet', 'Veterinario/a', '/vet', 'lucia.ferreyra@demo.colvet'],
   ['admin', 'Colegio', '/admin', 'admin@demo.colvet'],
   ['insp', 'Inspector/a', '/inspeccion', 'inspeccion@demo.colvet'],
@@ -25,7 +24,7 @@ export default function DemoBar() {
   const nav = useNavigate(), { pathname } = useLocation();
   const user = useAuth(s => s.user);
   if (CLAUDE) window.__colvetNav = nav; // pruebas automáticas: navegar en el router en memoria
-  const cur = pathname.startsWith('/vet') ? 'vet' : pathname.startsWith('/inspeccion') ? (user?.rol === 'ADMIN' ? 'admin' : 'insp') : pathname.startsWith('/admin') || (pathname.startsWith('/muni') && user?.rol === 'ADMIN') ? 'admin' : pathname.startsWith('/tutor') ? 'tutor' : pathname.startsWith('/muni') ? '' : pathname.startsWith('/concepto') ? 'b' : 'pub';
+  const cur = pathname.startsWith('/vet') ? 'vet' : pathname.startsWith('/inspeccion') ? (user?.rol === 'ADMIN' ? 'admin' : 'insp') : pathname.startsWith('/admin') || (pathname.startsWith('/muni') && user?.rol === 'ADMIN') ? 'admin' : pathname.startsWith('/tutor') ? 'tutor' : pathname.startsWith('/muni') ? '' : 'pub';
   const go = async ([, , to, email]) => {
     if (!email || user?.email === email) return nav(to);
     try { await loginAs(email, nav, to); } catch (e) { toast(e.message, 'error'); }

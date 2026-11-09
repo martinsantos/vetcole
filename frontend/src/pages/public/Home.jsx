@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../../lib/api.js';
 import { fdate } from '../../lib/format.js';
-import { EstModal, useTurno, MapSection } from './shared.jsx';
+import { EstModal, useTurno, MapSection, UrgenciaModal } from './shared.jsx';
 import { BRAND } from '../../lib/brand.js';
 import heroFoto from '../../assets/hero-veterinaria.jpg';
 import { COLEGIO } from '../../content/colegio.js';
@@ -43,21 +43,26 @@ const AGENDA = [
 ];
 const enDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
 
-function GuardiasHoy() {
-  const { data } = useApi('/public/guardias');
+// Franja «Ahora»: lo urgente en una línea, sin ocupar la portada.
+function Ahora({ onUrgencia }) {
+  const { data: g } = useApi('/public/guardias');
+  const { data: prox } = useApi('/public/proximos-turnos');
   return (
-    <Link to="/guardias" className="card com-card">
-      <h3>Guardias de hoy</h3>
-      <p className="small muted">{data ? `${data.activas} clínicas con guardia activa y ${data.pasivas} a llamado.` : 'Clínicas que atienden urgencias ahora.'}</p>
-      <span className="lnk">Ver el tablero de guardia →</span>
-    </Link>
+    <section className="ahora" aria-label="Ahora"><div className="wrap ahora-in">
+      <span className="ahora-t"><i />Ahora</span>
+      <Link to="/guardias" className="ahora-i"><b>{g ? g.activas : '–'}</b><span>Guardias de hoy abiertas{g ? ` · ${g.pasivas} a llamado` : ''}</span></Link>
+      <Link to="/directorio?turnos=1" className="ahora-i"><b>{prox ? prox.length : '–'}</b><span>turnos libres próximos</span></Link>
+      <Link to="/verificar" className="ahora-i ahora-l"><span>Verificar una matrícula →</span></Link>
+      <button type="button" className="btn btn-danger" onClick={onUrgencia}>Urgencia: guardia más cercana</button>
+    </div></section>
   );
 }
 
 export default function Home() {
   const news = useNoticias(5);
   const agenda = (COLEGIO?.agenda || AGENDA).map(([d, ti, lugar]) => [typeof d === 'number' ? enDias(d) : new Date(`${d}T12:00:00`), ti, lugar]);
-  const [est, setEst] = useState(null);
+  const [est, setEst] = useState(null), [urg, setUrg] = useState(false);
+  const { data: stats } = useApi('/public/stats');
   const navigate = useNavigate();
   const t = useTurno();
   return (
@@ -73,25 +78,11 @@ export default function Home() {
         <span className="ihf-credit">Foto: Unsplash</span>
       </section>
 
-      <section className="sec"><div className="wrap">
-        <div className="sec-head"><h2>Veterinarias de turno y guardias</h2><Link className="lnk" to="/mapa">Abrir el mapa completo →</Link></div>
-        <p className="muted" style={{ margin: '-6px 0 14px' }}>Quién atiende urgencias ahora y los próximos turnos libres, en el mapa.</p>
-        <MapSection home initialChip="guardia" />
-      </div></section>
+      <Ahora onUrgencia={() => setUrg(true)} />
 
-      <LibretaDestacada />
-
-      <section className="sec"><div className="wrap">
-        <div className="sec-head"><h2>Matriculados</h2><Link className="lnk" to="/tramites">Todos los trámites →</Link></div>
-        <div className="accesos">{MATRICULADOS.map(([ti, d, to]) => (
-          <DemoLink key={ti} to={to} rol="vet" className="card acceso"><b>{ti}</b><span className="small muted">{d}</span></DemoLink>
-        ))}</div>
-        <p className="small muted" style={{ marginTop: 12 }}>¿Todavía no estás matriculado/a? <Link className="lnk" to="/inscripcion">Iniciá la matriculación</Link></p>
-      </div></section>
-
-      <section className="sec sec-alt"><div className="wrap news-grid">
+      <section className="sec"><div className="wrap news-grid">
         <div>
-          <div className="sec-head"><h2>Noticias</h2><Link className="lnk" to="/noticias">Ver todas →</Link></div>
+          <div className="sec-head"><h2>Noticias del Colegio</h2><Link className="lnk" to="/noticias">Ver todas →</Link></div>
           <div className="news-list">{(news || []).map((n, i) => (
             <NotaLink key={n.id} n={n} className={i === 0 ? 'news-main card' : 'news-item'}>
               {n.img && <img src={n.img} alt="" loading="lazy" />}
@@ -111,14 +102,27 @@ export default function Home() {
         </aside>
       </div></section>
 
+      <LibretaDestacada />
+
+      <section className="sec sec-alt"><div className="wrap">
+        <div className="sec-head"><h2>Veterinarias de turno y guardias</h2><Link className="lnk" to="/mapa">Abrir el mapa completo →</Link></div>
+        <p className="muted" style={{ margin: '-6px 0 14px' }}>Quién atiende urgencias ahora y los próximos turnos libres, en el mapa.</p>
+        <MapSection home initialChip="guardia" />
+      </div></section>
+
+      <section className="cifras"><div className="wrap cifras-in">
+        <div><b>{stats ? stats.padronPublicado : '—'}</b><span>profesionales matriculados</span></div>
+        <div><b>{stats ? stats.establecimientos : '—'}</b><span>establecimientos en el mapa</span></div>
+        <div><b>{stats ? stats.guardias : '—'}</b><span>clínicas con guardia declarada</span></div>
+        <div><b>{stats ? stats.departamentos : '—'}</b><span>departamentos de la provincia</span></div>
+      </div></section>
+
       <section className="sec"><div className="wrap">
-        <div className="sec-head"><h2>Para la comunidad</h2></div>
-        <div className="grid g4">
-          <Link to="/directorio" className="card com-card"><h3>Buscar un veterinario/a</h3><p className="small muted">Por especialidad, especie y departamento. Sólo matrículas vigentes.</p><span className="lnk">Ir al directorio →</span></Link>
-          <GuardiasHoy />
-          <Link to="/verificar" className="card com-card"><h3>Verificar una matrícula</h3><p className="small muted">Comprobá que quien atiende a tu animal esté matriculado/a.</p><span className="lnk">Verificar →</span></Link>
-          <Link to="/libreta" className="card com-card"><h3>Libreta sanitaria</h3><p className="small muted">Las vacunas de tu animal, firmadas por su veterinario/a.</p><span className="lnk">Consultar →</span></Link>
-        </div>
+        <div className="sec-head"><h2>Matriculados</h2><Link className="lnk" to="/tramites">Todos los trámites →</Link></div>
+        <div className="accesos">{MATRICULADOS.map(([ti, d, to]) => (
+          <DemoLink key={ti} to={to} rol="vet" className="card acceso"><b>{ti}</b><span className="small muted">{d}</span></DemoLink>
+        ))}</div>
+        <p className="small muted" style={{ marginTop: 12 }}>¿Todavía no estás matriculado/a? <Link className="lnk" to="/inscripcion">Iniciá la matriculación</Link></p>
       </div></section>
 
       <section className="sec sec-inst"><div className="wrap">
@@ -138,6 +142,7 @@ export default function Home() {
         </div>
       </div></section>
 
+      <UrgenciaModal open={urg} onClose={() => setUrg(false)} />
       <EstModal est={est} onClose={() => setEst(null)} onTurno={c => { setEst(null); t.open(c); }} />
       {t.modal}
     </>

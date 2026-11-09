@@ -6,7 +6,7 @@ import { useAuth } from '../lib/store.js';
 import { Av } from '../components/ui.jsx';
 import { ini } from '../lib/format.js';
 
-export default function AppShell({ items, dark, who, whoSub, accent, header }) {
+export default function AppShell({ items, dark, who, whoSub, accent, header, tabs }) {
   const logout = useAuth(s => s.logout), nav = useNavigate();
   return (
     <div className="shell">
@@ -23,7 +23,10 @@ export default function AppShell({ items, dark, who, whoSub, accent, header }) {
         <NavLink to="/" className="it">↩ Sitio público</NavLink>
         <a href={url('/')} className="it" onClick={e => { e.preventDefault(); logout(); nav('/'); }}>Salir</a>
       </aside>
-      <div className="content"><Outlet /></div>
+      <div className="content">
+        {tabs && <nav className="espacios" aria-label="Espacios">{tabs.map(t => <NavLink key={t.to} to={t.to} className={t.on ? 'on' : ''}><b>{t.label}</b><span>{t.sub}</span></NavLink>)}</nav>}
+        <Outlet />
+      </div>
     </div>
   );
 }

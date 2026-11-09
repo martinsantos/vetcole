@@ -985,3 +985,63 @@ main:focus{outline:none}
 .oblea{background:radial-gradient(circle at 30% 25%,var(--plum) 0%,var(--plum-d) 70%)!important;box-shadow:0 0 0 6px #f3e7ef,0 10px 24px rgba(79,16,71,.3)!important}
 .ob-t{color:#f3c9e6!important}
 .pt-badge{background:var(--plum)!important}
+
+/* ===== Portada editorial: franja «Ahora», noticias grandes y cifras ===== */
+.ahora{background:#fff;border-bottom:1px solid #ece4e9}
+.ahora-in{display:flex;align-items:center;gap:10px 28px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
+.ahora-t{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--plum-d)}
+.ahora-t i{width:9px;height:9px;border-radius:50%;background:#1aa36f;animation:lv 1.6s infinite}
+.ahora-i{display:inline-flex;align-items:baseline;gap:8px;color:var(--ink)}
+.ahora-i b{font-family:"Source Serif 4",Georgia,serif;font-size:26px;font-weight:600;line-height:1}
+.ahora-i span{font-size:14.5px;color:var(--ink-2)}
+.ahora-i:hover span{color:var(--plum);text-decoration:underline}
+.ahora-l span{color:var(--plum);font-weight:600}
+.ahora .btn-danger{margin-left:auto}
+@media(max-width:760px){.ahora .btn-danger{margin-left:0;width:100%}}
+.site-inst .news-main{grid-template-columns:minmax(220px,42%) 1fr;gap:28px;padding:0;border:0;background:none;align-items:center;margin-bottom:22px}
+.site-inst .news-main img{aspect-ratio:4/3;border-radius:10px}
+.site-inst .news-main h3{font-size:clamp(26px,3vw,36px);line-height:1.1;margin:8px 0 12px}
+.site-inst .news-main p{font-size:17px}
+@media(max-width:620px){.site-inst .news-main{grid-template-columns:1fr}}
+.cifras{background:var(--plum-d);color:#fff}
+.cifras-in{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding-top:38px;padding-bottom:38px}
+.cifras-in div{display:flex;flex-direction:column;gap:4px;border-left:1px solid rgba(255,255,255,.25);padding-left:18px}
+.cifras-in b{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(38px,4.6vw,58px);font-weight:600;line-height:1}
+.cifras-in span{color:#f0d9ea;font-size:15px}
+@media(max-width:700px){.cifras-in{grid-template-columns:1fr 1fr}}
+
+/* ===== Paneles internos con el mismo estilo que el sitio (títulos con serifa, bordó, fondos claros) ===== */
+.shell{background:#faf8f6}
+.shell h1,.shell h2,.shell h3,.modal h2,.modal h3{font-family:"Source Serif 4",Georgia,serif;font-weight:600;letter-spacing:-.01em!important;color:#1e1a1c}
+.shell .ph h2{font-size:clamp(26px,3vw,34px)}
+.shell .kpi b,.shell .cuenta-total{font-family:"Source Serif 4",Georgia,serif;font-weight:600}
+.shell .btn-primary,.modal .btn-primary{background:var(--plum);border-color:var(--plum);color:#fff}
+.shell .btn-primary:hover,.modal .btn-primary:hover{background:var(--plum-d);border-color:var(--plum-d);color:#fff}
+.shell .btn,.modal .btn{border-radius:6px}
+.shell .card{background:#fff;border-color:#e6dde2;border-radius:10px}
+.shell .kicker{color:var(--plum);font-size:14px;font-weight:600}
+.shell .content{padding-top:0}
+.side{background:#fff;border-right:1px solid #e6dde2}
+.side a.it{border-radius:6px;font-weight:500}
+.side a.it.on{background:#f3e7ef;color:var(--plum-d);box-shadow:inset 3px 0 0 var(--plum);font-weight:600}
+.side.dark{background:#2a1426}
+.side.dark a.it.on{box-shadow:inset 3px 0 0 #e6a9d6}
+.side.dark .new{background:#e6a9d6;color:#2a1426}
+.shell .tbl th{background:#faf7f9}
+.shell .content>.ph:first-child,.shell .content>a:first-child{margin-top:22px}
+.shell .content>:first-child:not(.espacios){margin-top:22px}
+/* espacios del portal del veterinario/a */
+.espacios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0 -28px 22px;padding:0 28px;background:#fff;border-bottom:1px solid #e6dde2}
+.espacios a{display:flex;flex-direction:column;gap:1px;padding:16px 4px 14px;margin-right:24px;color:var(--ink-2);border-bottom:3px solid transparent}
+.espacios a b{font-family:"Source Serif 4",Georgia,serif;font-size:19px;font-weight:600;color:inherit}
+.espacios a span{font-size:13px;color:var(--ink-3)}
+.espacios a.on{color:var(--plum-d);border-color:var(--plum)}
+.espacios a:hover b{color:var(--plum)}
+@media(max-width:700px){.espacios a span{display:none}.espacios a b{font-size:16px}}
+.hoy{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+@media(max-width:1000px){.hoy{grid-template-columns:1fr}}
+.hoy-lista h3{margin-top:0}
+.hoy-lista .vet-todo{padding:14px 0;font-size:15.5px}
+@media(max-width:860px){.espacios{margin:0 -16px 18px;padding:0 16px}.espacios a{margin-right:10px}}
+.shell .content{background:#faf8f6}
+.cred .nm{font-family:"Source Serif 4",Georgia,serif;font-weight:600}
