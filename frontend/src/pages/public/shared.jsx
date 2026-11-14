@@ -77,7 +77,7 @@ export function EstModal({ est, onClose, onTurno }) {
         </dl>
         {!!e.equipo?.length && <div className="ficha-equipo"><h3>Equipo profesional</h3>
           <div className="ficha-equipo-l">{e.equipo.map(v => (
-            <Link key={v.mp} to={`/profesional/${v.mp}`} onClick={onClose} className="ficha-pro"><Av style={{ width: 38, height: 38, fontSize: 13, borderRadius: '50%' }}>{ini(v.titulo.replace(/^Dra?\. /, ''))}</Av><span><b>{v.titulo}</b><span className="small muted">{v.especialidad}</span></span></Link>
+            <Link key={v.mp} to={`/profesional/${v.mp}`} onClick={onClose} className="ficha-pro"><Av style={{ width: 38, height: 38, fontSize: 16, borderRadius: '50%' }}>{ini(v.titulo.replace(/^Dra?\. /, ''))}</Av><span><b>{v.titulo}</b><span className="small muted">{v.especialidad}</span></span></Link>
           ))}</div></div>}
         <div className="ficha-pie">
           {e.dt && <QR text={verifyUrl(`/verificar/e/${e.codigo}`)} size={64} />}

@@ -146,3 +146,8 @@ Para probar: libretas `MZA-000231` (Luna), `MZA-000198` (Michi), `EQ-000017` (To
 - Homologación ante SENASA del módulo equino (Libreta Sanitaria Equina Digital, Res. 831/2026).
 - Interoperabilidad con el registro provincial de animales de compañía si se aprueba el proyecto de ley.
 - Asistente con un modelo de lenguaje restringido al contenido oficial (hoy responde con reglas y datos en vivo).
+
+## Desarrollo en Codex Cloud
+
+Para continuar la web y el sistema con una base de desarrollo independiente, ver
+[la preparación y el alcance inicial](deploy/CODEX-CLOUD.md).

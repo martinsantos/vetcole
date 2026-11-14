@@ -19,7 +19,7 @@ a.card.vcard{color:inherit}
 @media(max-width:520px){.perfiles{grid-template-columns:1fr}}
 
 .band-soft{background:#efe8da;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.lnk{font-weight:600;font-size:14px;color:var(--leaf)}
+.lnk{font-weight:600;font-size:var(--text-min);color:var(--leaf)}
 .lnk:hover{color:var(--plum)}
 
 .flow{display:grid;grid-template-columns:1fr 40px 1.1fr 40px 1fr;align-items:start}
@@ -27,7 +27,7 @@ a.card.vcard{color:inherit}
 .flow-col h3{margin:0 0 4px;font-size:16px}
 .flow-item{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;color:var(--ink)}
 .flow-item:hover{border-color:var(--ink)}
-.flow-item span{font-size:14px;color:var(--ink-2)}
+.flow-item span{font-size:var(--text-min);color:var(--ink-2)}
 .flow-arrow{align-self:center;height:2px;background:var(--leaf);margin:0 8px;position:relative}
 .flow-arrow:after{content:"";position:absolute;right:-2px;top:-5px;border:6px solid transparent;border-left-color:var(--leaf)}
 @media(max-width:1000px){
@@ -41,7 +41,7 @@ a.card.vcard{color:inherit}
 .acred.skel{height:150px}
 .acred-body{display:flex;justify-content:space-between;gap:12px;align-items:center}
 .acred-name{font-family:var(--serif);font-size:24px;display:block;line-height:1.1}
-.acred-foot{font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:8px;margin-top:12px}
+.acred-foot{font-size:var(--text-min);color:var(--ink-2);border-top:1px solid var(--line);padding-top:8px;margin-top:12px}
 @media(max-width:420px){.acred-body .qrbox{display:none}}
 
 .normas{align-items:stretch}
@@ -49,7 +49,7 @@ a.card.vcard{color:inherit}
 .norma h3{margin:0;font-size:16px;line-height:1.25}
 .norma p{margin:0}
 .norma .lnk{margin-top:auto;padding-top:4px}
-.estado{font-size:13px;font-weight:600}
+.estado{font-size:var(--text-min);font-weight:600}
 .estado:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:1px}
 .estado.b-ok{color:var(--ok)} .estado.b-warn{color:var(--warn)} .estado.b-grey{color:var(--ink-3)}
 
@@ -69,4 +69,4 @@ a.card.vcard{color:inherit}
 .hero .chips .chip.chip-urg{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
 .hero .chips .chip.chip-urg:hover{background:#a02f23;border-color:#a02f23}
 .estado.b-ok,.estado.b-warn,.estado.b-grey{background:none;padding:0}
-.hero .chips .chip{font-family:var(--sans);font-size:14px;padding:7px 12px}
+.hero .chips .chip{font-family:var(--sans);font-size:var(--text-min);padding:7px 12px}

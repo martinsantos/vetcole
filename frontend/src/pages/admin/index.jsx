@@ -255,7 +255,7 @@ export function Denuncias() {
       <Load q={q}>{list => (
         <div className="tblwrap"><table className="tbl"><thead><tr><th>N°</th><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Origen</th><th>Estado</th><th /></tr></thead><tbody>
           {list.map(d => <tr key={d.id}><td className="mono small">{d.numero}</td><td className="small">{fdate(d.createdAt)}</td><td><b className="small">{d.tipo}</b>{d.descripcion && <div className="tiny muted">{d.descripcion}</div>}</td><td className="small">{d.lugar}</td><td className="small muted">{d.origen}</td>
-            <td><select value={d.estado} onChange={e => cambiar(d, e.target.value).catch(err => toast(err.message, 'error'))} style={{ fontSize: 13, padding: '6px 8px' }}>{DEN_ESTADOS.map(x => <option key={x}>{x}</option>)}</select></td>
+            <td><select value={d.estado} onChange={e => cambiar(d, e.target.value).catch(err => toast(err.message, 'error'))} style={{ fontSize: 16, padding: '6px 8px' }}>{DEN_ESTADOS.map(x => <option key={x}>{x}</option>)}</select></td>
             <td style={{ textAlign: 'right' }}>{!d.estado.startsWith('Derivada') && d.estado !== 'Cerrada' && <AsyncBtn className="btn btn-sm" onClick={() => cambiar(d, 'Derivada a Tribunal de Disciplina')}>Derivar a Tribunal</AsyncBtn>}</td></tr>)}
           {!list.length && <tr><td colSpan={7}><Empty>No hay denuncias.</Empty></td></tr>}
         </tbody></table></div>

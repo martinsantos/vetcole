@@ -99,7 +99,7 @@ function CompraModal({ prov, productos, onClose, onSaved }) {
     <Modal open onClose={onClose} wide title={`Registrar compra · ${prov.nombre}`} subtitle="Ingresa el stock y actualiza el costo de cada producto">
       <Field label="Comprobante del proveedor"><input value={comp} onChange={e => setComp(e.target.value)} /></Field>
       {lines.map((l, i) => (
-        <div key={i} className="grid" style={{ gridTemplateColumns: '1fr 100px 140px 36px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+        <div key={i} className="grid cl-purchase-line" style={{ gap: 8, marginBottom: 8, alignItems: 'center' }}>
           <select value={l.productoId} onChange={e => set(i, 'productoId', e.target.value)}><option value="">Producto…</option>{productos.map(p => <option key={p.id} value={p.id}>{p.nombre} (stock {p.stock})</option>)}</select>
           <input type="number" min="1" value={l.cantidad} onChange={e => set(i, 'cantidad', e.target.value)} placeholder="Cant." />
           <input type="number" min="0" value={l.costo} onChange={e => set(i, 'costo', e.target.value)} placeholder="Costo unit." />

@@ -3,6 +3,10 @@
   "private": true,
   "description": "ColVet Digital — plataforma del Colegio de Veterinarios de Mendoza: Colegio + consultorio + zoonosis municipal + app del tutor. Demo.",
   "scripts": {
+    "cloud:setup": "node scripts/cloud.mjs setup",
+    "cloud:prepare": "node scripts/cloud.mjs prepare",
+    "cloud:start": "node scripts/cloud.mjs start",
+    "cloud:dev": "node scripts/cloud.mjs dev",
     "setup": "npm install --prefix backend && npm install --prefix frontend && npm run setup --prefix backend",
     "dev": "npm run dev --prefix backend & npm run dev --prefix frontend",
     "build": "npm run build --prefix frontend",

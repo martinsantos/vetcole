@@ -12,4 +12,4 @@
   body.print-only .modal-bg{position:static;background:none}
 }
 .vote-res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-.cnt{font-family:var(--mono);font-size:12px}
+.cnt{font-family:var(--mono);font-size:var(--text-min)}

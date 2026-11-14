@@ -5,7 +5,7 @@
 #   ./deploy/hostinger/deploy.sh relevar     # sólo lectura: qué proxy atiende www.ultimamilla.com.ar
 #   ./deploy/hostinger/deploy.sh app         # sube el código, construye la imagen en el VPS y levanta el contenedor
 #   ./deploy/hostinger/deploy.sh proxy       # SIMULA: muestra el cambio en el nginx del VPS sin tocar nada
-#   ./deploy/hostinger/deploy.sh proxy --aplicar   # aplica: backup + nginx -t + reload + rollback si falla
+#   ./deploy/hostinger/deploy.sh proxy --aplicar SHA256   # tras aprobación, aplica: backup + nginx -t + reload + rollback si falla
 #   ./deploy/hostinger/deploy.sh verificar   # prueba la URL pública
 #
 # Sólo toca lo de vetcole: /opt/vetcole, el contenedor y volumen "vetcole" (proyecto compose vetcole) y
@@ -24,7 +24,7 @@ relevar() {
   echo; echo "== ¿Quién escucha en 80/443?"
   ssh_ 'ss -ltnp 2>/dev/null | grep -E ":(80|443) " || netstat -ltnp 2>/dev/null | grep -E ":(80|443) "'
   echo; echo "== nginx del host"
-  ssh_ 'command -v nginx >/dev/null && nginx -v 2>&1; systemctl is-active nginx 2>/dev/null || true; grep -rlE "server_name[^;]*(www\.)?ultimamilla\.com\.ar" /etc/nginx 2>/dev/null || true'
+  ssh_ 'command -v nginx >/dev/null && nginx -v 2>&1; systemctl show umsa-sitrep-ingress.service umsa-clean-front.service -p Id -p ActiveState -p MainPID -p ExecStart -p ExecReload; grep -nE "listen|server_name|location.*vetcole" /srv/umsa-public-vhosts/ultimamilla.com.ar.conf'
   echo; echo "== Contenedores proxy (traefik/caddy/nginx-proxy-manager) y etiquetas de ruteo"
   ssh_ 'for c in $(docker ps --format "{{.Names}}"); do docker inspect -f "{{.Name}} {{.Config.Image}}" $c; done | grep -iE "traefik|caddy|nginx|proxy" || true'
   ssh_ 'for c in $(docker ps --format "{{.Names}}"); do echo "$c $(docker inspect --format "{{json .Config.Labels}}" $c)"; done | grep -iE "traefik|caddy" | grep -i ultimamilla | cut -c1-400 || true'
@@ -74,28 +74,34 @@ EOF
     # Sólo el proyecto vetcole: sin prune, sin tocar otros contenedores, redes ni volúmenes.
     docker compose -p vetcole build vetcole
     docker compose -p vetcole up -d vetcole
+    # Documentos comerciales persistentes, fuera del código y del repositorio público.
+    # Restaurar sólo estos dos archivos después de recrear el contenedor Vetcole.
+    if [ -d publicaciones/propuesta ]; then
+      for DOC in propuesta.html Propuesta-ColVet-Digital.pdf; do
+        test -f \"publicaciones/propuesta/\$DOC\"
+        docker cp \"publicaciones/propuesta/\$DOC\" \"vetcole:/app/frontend/dist/\$DOC\"
+      done
+    fi
     OK=0; for i in \$(seq 1 30); do if curl -sf http://127.0.0.1:${PUERTO}/casos/vetcole/api/v1/health >/dev/null; then OK=1; break; fi; sleep 2; done
     if [ \$OK != 1 ]; then echo 'ERROR: la demo no respondió. Logs:'; docker logs --tail 40 vetcole; exit 20; fi
     curl -s http://127.0.0.1:${PUERTO}/casos/vetcole/api/v1/health; echo"
 }
 
 proxy() {
-  # Sólo para nginx del host. Si el relevamiento muestra Traefik/Caddy, ver deploy/DEPLOY.md.
-  # Por defecto SIMULA: muestra el diff y no toca nada. Con --aplicar: backup, nginx -t, reload (graceful) y rollback si falla.
-  local APLICAR="${1:-}"
-  ssh_ "set -e; APLICAR='${APLICAR}'
-    CONF=\$(grep -rlE 'server_name[^;]*www\.ultimamilla\.com\.ar' /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | head -1)
-    [ -n \"\$CONF\" ] || { echo 'No encontré el server block de www.ultimamilla.com.ar en nginx del host. Revisá la salida de relevar.'; exit 2; }
-    echo \"server block: \$CONF\"
-    if grep -q 'casos/vetcole' \"\$CONF\"; then echo 'Ya estaba conectado.'; exit 0; fi
-    SNIP='    location = /casos/vetcole { return 301 /casos/vetcole/; }\n    location ^~ /casos/vetcole/ { proxy_pass http://127.0.0.1:${PUERTO}; proxy_http_version 1.1; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto \$scheme; client_max_body_size 2m; }'
-    # se inserta antes del primer 'location' de cada server block de www.ultimamilla.com.ar (más específico que el catch-all del sitio)
-    awk -v snip=\"\$SNIP\" 'BEGIN{gsub(/\\\\n/,\"\n\",snip)} /^[[:space:]]*server[[:space:]]*\\{/{want=0} /server_name[^;]*www\.ultimamilla\.com\.ar/{want=1} want && /^[[:space:]]*location/{print snip; want=0} {print}' \"\$CONF\" > /tmp/vetcole-nginx.conf
-    echo '--- cambio propuesto (diff):'; diff -u \"\$CONF\" /tmp/vetcole-nginx.conf || true
-    if [ \"\$APLICAR\" != '--aplicar' ]; then echo; echo 'SIMULACIÓN: no se modificó nada. Para aplicarlo: deploy.sh proxy --aplicar'; exit 0; fi
-    cp \"\$CONF\" \"\$CONF.bak-vetcole-\$(date +%Y%m%d%H%M%S)\"
-    cp /tmp/vetcole-nginx.conf \"\$CONF\"
-    if nginx -t; then systemctl reload nginx && echo 'nginx recargado'; else echo 'nginx -t falló: restauro el backup'; cp \"\$(ls -t \$CONF.bak-vetcole-* | head -1)\" \"\$CONF\"; nginx -t; exit 3; fi"
+  # La simulación ejecuta Python por stdin y no escribe archivos en el VPS.
+  # Aplicar requiere el hash exacto de una propuesta aprobada por el usuario.
+  local MODE=preview HASH= SCRIPT_DIR
+  if [ "$#" -gt 0 ]; then
+    if [ "$#" != 2 ] || [ "$1" != '--aplicar' ] || ! [[ "$2" =~ ^[a-f0-9]{64}$ ]]; then
+      echo 'Uso: deploy.sh proxy [--aplicar SHA256_DEL_DIFF_APROBADO]' >&2
+      return 2
+    fi
+    MODE=apply
+    HASH="$2"
+  fi
+  [[ "$PUERTO" =~ ^[0-9]{4,5}$ ]] || { echo 'Puerto inválido' >&2; return 2; }
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  ssh_ "python3 - ${PUERTO} ${MODE} ${HASH}" < "$SCRIPT_DIR/nginx_proxy.py"
 }
 
 verificar() {
@@ -107,7 +113,7 @@ verificar() {
 case "${1:-}" in
   relevar) relevar ;;
   app) app ;;
-  proxy) proxy "${2:-}" ;;
+  proxy) shift; proxy "$@" ;;
   verificar) verificar ;;
   *) sed -n 2,14p "$0"; exit 1 ;;
 esac

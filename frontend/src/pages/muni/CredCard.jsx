@@ -12,7 +12,7 @@ export default function CredCard({ animal, municipio, nro, estado, compact }) {
       <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}>
         <div>
           <div className="mono tiny" style={{ opacity: 0.8, letterSpacing: '.08em' }}>{municipio ? `MUNICIPIO DE ${String(municipio.nombre).toUpperCase()}` : 'COLEGIO DE VETERINARIOS · MENDOZA'}</div>
-          <div style={{ fontWeight: 700, fontSize: 13, marginTop: 2 }}>{titulo}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, marginTop: 2 }}>{titulo}</div>
         </div>
         <span className="credsigla">{sigla}</span>
       </div>

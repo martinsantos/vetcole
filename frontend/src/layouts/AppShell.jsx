@@ -1,6 +1,7 @@
 // Panel con barra lateral para Veterinario/a, Consultorio, Colegio y Municipio.
 // items: [{ to, label, icon?, badge?, section? }]
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { url } from '../lib/base.js';
 import { useAuth } from '../lib/store.js';
 import { Av } from '../components/ui.jsx';
@@ -8,9 +9,13 @@ import { ini } from '../lib/format.js';
 
 export default function AppShell({ items, dark, who, whoSub, accent, header, tabs }) {
   const logout = useAuth(s => s.logout), nav = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="shell">
-      <aside className={`side ${dark ? 'dark' : ''}`} style={accent ? { '--shell-accent': accent } : undefined}>
+      <button type="button" className="shell-menu" aria-controls="panel-menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+        <span>{menuOpen ? 'Cerrar menú' : '☰ Menú del panel'}</span><span>{who}</span>
+      </button>
+      <aside id="panel-menu" className={`side ${dark ? 'dark' : ''} ${menuOpen ? 'is-open' : ''}`} style={accent ? { '--shell-accent': accent } : undefined} onClick={e => { if (e.target.closest('a')) setMenuOpen(false); }}>
         <div className="who">
           <Av style={accent ? { background: accent, color: '#fff' } : dark ? { background: '#fff', color: 'var(--plum-dd)' } : undefined}>{ini(String(who).replace(/^(Dra?\.|Zoonosis)\s+/, ''))}</Av>
           <div><b className="small" style={dark ? { color: '#fff' } : undefined}>{who}</b><div className="tiny" style={{ opacity: 0.7 }}>{whoSub}</div></div>

@@ -4,4 +4,6 @@ dist/
 *.db-journal
 .env
 .DS_Store
+._*
+.local/
 frontend/dist-claude/

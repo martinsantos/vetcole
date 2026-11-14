@@ -148,8 +148,8 @@ export function Formulario() {
           <div className="small" style={{ marginTop: 6 }}>Director/a técnico/a: <b>{i.padron.dt ? `${i.padron.dt.titulo} · MP ${i.padron.dt.mp}` : 'sin designar'}</b>{i.padron.dt && <> <Badge cls={i.padron.dt.vigente ? 'b-ok' : 'b-bad'}>{i.padron.dt.vigente ? 'Matrícula vigente' : 'Matrícula no vigente'}</Badge></>}</div>
         </div>
         <div className="insp-res">
-          {cerrada ? <><span className="tiny muted">Resultado del acta</span><Badge cls={resCls(i.resultado)} style={{ fontSize: 14, padding: '6px 12px' }}>{i.resultado}</Badge><span className="tiny muted">{fdt(i.realizada)}{i.inspector ? ` · ${i.inspector}` : ''}</span></>
-            : <><span className="tiny muted">Resultado provisorio</span><Badge cls={resCls(ev.resultado)} style={{ fontSize: 14, padding: '6px 12px' }}>{ev.resultado}</Badge><div className="insp-prog"><i style={{ width: `${(ev.respondidos / ev.total) * 100}%` }} /></div><span className="tiny muted">{ev.respondidos} de {ev.total} ítems respondidos</span></>}
+          {cerrada ? <><span className="tiny muted">Resultado del acta</span><Badge cls={resCls(i.resultado)} style={{ fontSize: 16, padding: '6px 12px' }}>{i.resultado}</Badge><span className="tiny muted">{fdt(i.realizada)}{i.inspector ? ` · ${i.inspector}` : ''}</span></>
+            : <><span className="tiny muted">Resultado provisorio</span><Badge cls={resCls(ev.resultado)} style={{ fontSize: 16, padding: '6px 12px' }}>{ev.resultado}</Badge><div className="insp-prog"><i style={{ width: `${(ev.respondidos / ev.total) * 100}%` }} /></div><span className="tiny muted">{ev.respondidos} de {ev.total} ítems respondidos</span></>}
         </div>
       </div>
 

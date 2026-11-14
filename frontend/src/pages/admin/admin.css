@@ -14,11 +14,11 @@
 .fm-datos{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
 @media(max-width:560px){.fm-datos{grid-template-columns:1fr}}
 .fm-dato{display:flex;flex-direction:column;gap:1px}
-.fm-dato span{font-size:12.5px;color:var(--ink-3)}
-.fm-dato b{font-size:14.5px;font-weight:600}
+.fm-dato span{font-size:var(--text-min);color:var(--ink-3)}
+.fm-dato b{font-size:var(--text-min);font-weight:600}
 .fm-fila{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .fm-fila:first-of-type{border-top:0}
-.fm-tipo{font-size:12.5px;padding:3px 10px;border-radius:999px}
+.fm-tipo{font-size:var(--text-min);padding:3px 10px;border-radius:999px}
 .modal.wide:has(.fm-modal){max-width:1180px}
 .fm-modal .fm-head{margin-top:0;border:0;padding:4px 40px 16px 0;background:none;border-bottom:1px solid var(--line);border-radius:0}
 .leg{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}

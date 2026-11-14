@@ -35,7 +35,7 @@ export function Mensajes() {
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             {hilos.map(h => (
               <div key={h.tutor.id} className={`th ${sel === h.tutor.id ? 'on' : ''}`} onClick={() => setSel(h.tutor.id)}>
-                <Av style={{ width: 36, height: 36, fontSize: 12 }}>{ini(h.tutor.nombre)}</Av>
+                <Av style={{ width: 36, height: 36, fontSize: 16 }}>{ini(h.tutor.nombre)}</Av>
                 <div style={{ flex: 1, minWidth: 0 }}><div className="row between"><b className="small">{h.tutor.nombre}</b><span className="tiny muted">{fdate(h.ultimo.fecha)}</span></div><div className="tiny muted" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{h.ultimo.desdeClinica ? 'Vos: ' : ''}{h.ultimo.texto}</div></div>
                 {h.sinLeer > 0 && <Badge cls="b-warn">{h.sinLeer}</Badge>}
               </div>

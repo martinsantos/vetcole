@@ -74,7 +74,7 @@ export function ClinicHome() {
         <Kpi label="Cuentas por cobrar" value={money(data.cuentasPorCobrar)} sub="saldo de clientes" color={data.cuentasPorCobrar > 0 ? 'var(--warn)' : undefined} />
         <Kpi label="Mensajes sin leer" value={data.mensajesSinLeer} sub={`${data.recordatorios} recordatorios en 15 días`} />
       </div>
-      <div className="grid" style={{ gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', marginTop: 16, alignItems: 'start' }}>
+      <div className="grid cl-dashboard-grid" style={{ marginTop: 16, alignItems: 'start' }}>
         <div className="card">
           <div className="row between"><h3 style={{ margin: 0 }}>Turnos de hoy</h3><span className="tiny muted mono">Clic para cambiar estado</span></div>
           {!data.turnos.length ? <Empty>No hay turnos hoy.</Empty> : data.turnos.map(t => (

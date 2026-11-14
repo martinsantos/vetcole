@@ -34,7 +34,7 @@ export function Panel() {
         <Kpi label="En observación antirrábica" value={data.enObservacion} sub="10 días desde la mordedura" />
         <Kpi label="Perros potencialmente peligrosos" value={data.peligrosos} sub={<Link to="/muni/peligrosos">Ver registro</Link>} />
       </div>
-      <div className="grid g2" style={{ marginTop: 16, alignItems: 'start' }}>
+      <div className="grid g2 muni-charts" style={{ marginTop: 16 }}>
         <div className="card">
           <h3>Antirrábica por mes</h3>
           <div className="legend legend-sq small" style={{ marginBottom: 4 }}><span><i style={{ background: 'var(--leaf)' }} />Perros</span><span><i style={{ background: 'var(--leaf-2)' }} />Gatos</span></div>

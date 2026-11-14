@@ -22,13 +22,21 @@ Nunca hace `prune` ni reinicia otros contenedores. Aborta sin tocar nada si:
 ./deploy/hostinger/deploy.sh relevar            # 1. sólo lectura: contenedores, quién atiende 80/443, nginx, puerto libre
 ./deploy/hostinger/deploy.sh app                # 2. construye la imagen en el VPS y levanta la demo (sin token de GHCR)
 ./deploy/hostinger/deploy.sh proxy              # 3. SIMULA: muestra el diff del nginx, no cambia nada
-./deploy/hostinger/deploy.sh proxy --aplicar    # 4. backup + nginx -t + reload; si nginx -t falla, restaura el backup
+./deploy/hostinger/deploy.sh proxy --aplicar SHA256_APROBADO # 4. solo tras aprobar el diff y su hash
 ./deploy/hostinger/deploy.sh verificar          # 5. prueba la URL pública
 ```
 
-El paso `proxy` sirve si www.ultimamilla.com.ar lo atiende el **nginx del host**. Si `relevar` muestra Traefik, Caddy u otro proxy en contenedor, no se aplica: hay que agregar la ruta `/casos/vetcole` a ese proxy, con prioridad sobre el sitio Astro.
+### Nginx real de UMSA (relevado el 11/11/2026)
 
-Para sacar la demo: `cd /opt/vetcole && docker compose -p vetcole down`, y restaurar el `.bak-vetcole-*` del nginx.
+El servicio público es `umsa-sitrep-ingress.service` (compartido con SITREP, DGE y otros sitios). `nginx.service` está inactivo. La configuración principal es `/srv/umsa-migration/sitrep-public-ingress/40607817805-1/nginx.conf`, que incluye `/srv/umsa-public-vhosts/ultimamilla.com.ar.conf`. El sitio Astro usa `127.0.0.1:4322`. La instancia `umsa-clean-front.service` escucha en localhost y no se modifica.
+
+`proxy` usa `deploy/hostinger/nginx_proxy.py` por SSH (requiere Python 3 en el VPS). La simulación solo lee: imprime el diff y su SHA256 sin crear archivos remotos. Agrega únicamente las dos rutas de Vetcole al bloque HTTPS exacto de `www`, sin cambiar el HTTP, el apex, DGE ni otros vhosts. Si la estructura, el servicio, la configuración principal o una ruta Vetcole existente no coinciden, aborta.
+
+Para aplicar hace falta aprobación explícita del diff y pasar su SHA256. El hash liga la configuración principal, el vhost original y la propuesta (incluido el puerto); un cambio exige nueva revisión. Antes de modificar verifica la identidad del servicio y del contenedor, la salud de Vetcole y la configuración completa de nginx. Guarda el respaldo exacto en `/opt/vetcole/nginx-backups/`, fuera de cualquier glob de nginx. Luego modifica solo el vhost, valida nuevamente con `nginx -t -c` y ejecuta `systemctl reload umsa-sitrep-ingress.service` (HUP; no restart). Si falla la validación restaura sin recargar; si falla la recarga restaura, valida y solicita una recarga de la configuración anterior. Los fallos se devuelven al operador.
+
+La recarga es compartida por todos los vhosts de esa instancia. No ejecutar cambios concurrentes de nginx mientras se aplica. No usar el antiguo paso que escribía en `/etc/nginx` ni `systemctl reload nginx` en este VPS. La prueba de nginx real se reserva para el paso autorizado de aplicación: la simulación no la ejecuta.
+
+Para sacar la demo: `cd /opt/vetcole && docker compose -p vetcole down`. La reversión del proxy debe revisarse contra la configuración vigente: retirar solo el bloque `VETCOLE-BEGIN` / `VETCOLE-END`, validar con la configuración principal indicada y recargar el servicio correcto. No restaurar a ciegas un respaldo antiguo que pueda borrar cambios posteriores de otros sitios.
 
 ## 1. La imagen (automática)
 
@@ -57,7 +65,7 @@ El contenedor escucha sólo en `127.0.0.1:4310`. La base SQLite queda en el volu
 
 ## 3. Publicar la subruta (elegí uno)
 
-### Opción A: el sitio principal está en un servidor propio con nginx
+### Opción A: otro servidor con nginx convencional (no el UMSA actual)
 
 Incluí `deploy/nginx/vetcole.location.conf` dentro del `server { }` de `www.ultimamilla.com.ar` y recargá nginx:
 
@@ -89,6 +97,14 @@ Para que cada push a `main` actualice el servidor:
 El job hace `docker compose pull && up -d` en `/opt/vetcole`.
 
 ## Verificación
+
+### Propuesta comercial publicada (11/11/2026)
+
+- Infografía: `https://www.ultimamilla.com.ar/casos/vetcole/propuesta.html`
+- PDF: `https://www.ultimamilla.com.ar/casos/vetcole/Propuesta-ColVet-Digital.pdf`
+- Copia persistente de ambos archivos: `/opt/vetcole/publicaciones/propuesta/`.
+
+Son archivos estáticos servidos por Vetcole con su cabecera `X-Robots-Tag: noindex, nofollow`; el HTML también declara la meta robots. No requieren cambios de nginx ni reinicios para actualizar contenido. El paso `app` restaura exclusivamente esos dos archivos desde la copia persistente después de recrear Vetcole. Si se usa otro procedimiento de despliegue, debe preservarse o restaurarse esa copia antes de dar la actualización por terminada. No publicar la carpeta de cálculos internos ni incorporarla al repositorio público.
 
 - `https://www.ultimamilla.com.ar/casos/vetcole/` abre la home de la demo.
 - `https://www.ultimamilla.com.ar/casos/vetcole/api/v1/health` devuelve `"base":"/casos/vetcole"`.

@@ -9,7 +9,7 @@ import { useCached, useTurno, horario, FichaMapa, mapsUrl } from './shared.jsx';
 
 // Foto de perfil o, si no cargó una, sus iniciales.
 export function FotoVet({ vet, size = 48, className = '' }) {
-  const s = { width: size, height: size, fontSize: Math.round(size * 0.36) };
+  const s = { width: size, height: size, fontSize: Math.max(16, Math.round(size * 0.36)) };
   return vet.foto
     ? <img className={`foto-vet ${className}`} src={vet.foto} alt={`Foto de ${vet.titulo || vet.nombre}`} style={s} />
     : <span className={`foto-vet foto-ini ${className}`} style={s} aria-hidden="true">{ini(vet.nombre || vet.titulo)}</span>;

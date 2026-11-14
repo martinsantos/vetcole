@@ -81,10 +81,10 @@ Necesito que publiques una demo en el VPS de Hostinger de Última Milla (UMSA), 
    ```bash
    ./deploy/hostinger/deploy.sh proxy
    ```
-   Solo sirve si www.ultimamilla.com.ar lo atiende el **nginx del host**. Si lo atiende Traefik, Caddy o un proxy en contenedor, **no lo apliques**: proponeme cómo agregar la ruta `/casos/vetcole` a ese proxy, con prioridad sobre el sitio Astro, y esperá mi confirmación. El bloque que hay que agregar está en `deploy/nginx/vetcole.location.conf`: un `location ^~ /casos/vetcole/` con `proxy_pass http://127.0.0.1:4310`, sin recortar el prefijo.
+   Solo sirve si www.ultimamilla.com.ar lo atiende el **nginx del host**. Si lo atiende Traefik, Caddy o un proxy en contenedor, **no lo apliques**: proponeme cómo agregar la ruta `/casos/vetcole` a ese proxy, con prioridad sobre el sitio Astro, y esperá mi confirmación. En UMSA, el servicio real es `umsa-sitrep-ingress.service` y el vhost está en `/srv/umsa-public-vhosts/ultimamilla.com.ar.conf`; no usar `nginx.service` ni `/etc/nginx`. El script adaptado genera el diff solo en memoria y exige su SHA256 para aplicar. El bloque de referencia está en `deploy/nginx/vetcole.location.conf`: un `location ^~ /casos/vetcole/` con `proxy_pass http://127.0.0.1:4310`, sin recortar el prefijo.
 5. Aplicar, solo después de que yo confirme el diff. El script hace copia de respaldo, `nginx -t` y `reload`, y vuelve atrás si falla:
    ```bash
-   ./deploy/hostinger/deploy.sh proxy --aplicar
+   ./deploy/hostinger/deploy.sh proxy --aplicar SHA256_DEL_DIFF_APROBADO
    ```
 6. Verificar:
    ```bash
@@ -119,7 +119,7 @@ Necesito que publiques una demo en el VPS de Hostinger de Última Milla (UMSA), 
   ```bash
   ssh ultimamilla 'cd /opt/vetcole && docker compose -p vetcole down'
   ```
-  Después restaurá el `.bak-vetcole-*` del nginx que dejó el paso 5.
+  El respaldo queda en `/opt/vetcole/nginx-backups/`. Para retirar la ruta, revisar el archivo vigente y quitar solo el bloque Vetcole; no restaurar un respaldo antiguo sobre cambios posteriores de otros servicios. Validar con `nginx -t -c /srv/umsa-migration/sitrep-public-ingress/40607817805-1/nginx.conf` y recargar únicamente `umsa-sitrep-ingress.service`, tras aprobación.
 
 ## Qué tenés que devolverme
 

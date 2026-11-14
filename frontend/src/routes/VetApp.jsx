@@ -10,7 +10,7 @@ function ClinicPicker() {
   const { data } = useApi('/clinic/contexto');
   const clinicId = useAuth(s => s.clinicId), setClinic = useAuth(s => s.setClinic), nav = useNavigate();
   if (!data || data.todos.length < 2) return data ? <div className="tiny muted" style={{ padding: '0 10px 6px' }}>{data.actual.nombre}</div> : null;
-  return <select style={{ margin: '0 0 8px', fontSize: 13 }} value={clinicId || data.actual.id} onChange={e => { setClinic(Number(e.target.value)); nav('/vet/consultorio'); setTimeout(() => window.location.reload(), 50); }}>{data.todos.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}</select>;
+  return <select style={{ margin: '0 0 8px', fontSize: 16 }} value={clinicId || data.actual.id} onChange={e => { setClinic(Number(e.target.value)); nav('/vet/consultorio'); setTimeout(() => window.location.reload(), 50); }}>{data.todos.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}</select>;
 }
 
 export default function VetApp() {
